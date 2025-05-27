@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+  <!-- Load Cytoscape.js -->
+  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+  <!-- Load jQuery and other libraries -->
+  <script src="https://unpkg.com/layout-base/layout-base.js"></script>
+  <script src="https://unpkg.com/cose-base/cose-base.js"></script>
+  <script src="https://unpkg.com/cytoscape-fcose/cytoscape-fcose.js"></script>
+  <script>cytoscape.use(cytoscapeFcose);</script>
+    <script src="https://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+  <script src="https://cdn.bootcss.com/typeahead.js/0.11.1/typeahead.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap-treeview@1.2.0/dist/bootstrap-treeview.min.js"></script>
+  <!-- SheetJS library for XLSX parsing & writing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- jsPDF library for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- jsPDF-AutoTable plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <!-- Google Fonts for Montserrat -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    /* Remove the main window's scrollbars */
+    html, body {
+      overflow: hidden;
+      height: 100%;
+    }
+    body {
+      font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* PlaQuery Toolbar Styles - Start */
+    .main-toolbar {
+      background-color: #fff;
+      color: #333;
+      flex-wrap: wrap;
+      padding: 0 20px;
+      height: auto;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-bottom: 1px solid #ccc;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+    }
+    .app-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #377ba8;
+      font-size: 27px;
+      font-weight: bold;
+      margin-right: 40px;
+      transform: translateY(3px) !important;
+    }
+    .app-logo:hover {
+      text-decoration: none;
+      border-color: transparent;
+    }
+    .app-logo:hover .app-title {
+      color: #4a90d9 !important;
+      text-decoration: none;
+    }
+    .app-title {
+      font-size: 27px;
+      font-weight: bold;
+      font-family: 'Montserrat', sans-serif;
+      color: #377ba8 !important;
+      padding-bottom: 8px;
+    }
+    .main-toolbar .nav-tabs {
+      margin-bottom: 0;
+      border-bottom: none !important;
+    }
+    .main-toolbar .nav-tabs > li > a {
+      font-family: 'Montserrat', sans-serif !important;
+      font-size: 16px !important;
+      padding: 10px 15px;
+      line-height: 1.42857143;
+      border: 1px solid transparent;
+      border-radius: 4px 4px 0 0;
+      margin-right: 2px;
+      color: #0d6efd;
+      text-decoration: none;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+    .main-toolbar .nav-tabs > li > a:hover,
+    .main-toolbar .nav-tabs > li > a:focus {
+      border-color: #e9ecef #e9ecef #dee2e6; /* Bootstrap 5.1.3 hover border colors */
+      background-color: #f8f9fa; /* Bootstrap 5.1.3 hover background */
+      color: #0a58ca; /* Bootstrap 5.1.3 darker primary color for hover */
+    }
+
+    .main-toolbar .nav-tabs > li.active > a,
+    .main-toolbar .nav-tabs > li.active > a:hover,
+    .main-toolbar .nav-tabs > li.active > a:focus {
+      color: #0a58ca !important;
+      background-color: #f8f9fa !important;
+      border-color: #e9ecef #e9ecef #dee2e6 !important;
+      cursor: pointer;
+    }
+
+
+    /* Toolbar button styles */
+    .main-toolbar .toolbar-btn {
+      cursor: pointer;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 2px;
+      padding: 5px 8px;
+      font-size: 16px;
+    }
+    .main-toolbar .toolbar-btn:hover {
+      background-color: #ddd;
+    }
+    /* PlaQuery Toolbar Styles - End */
+
+    /* Keep existing network.html styles */
+    .nav-tabs {
+      border-bottom: none !important;
+    }
+    #zoom-container {
+      margin-left: auto;
+      background: rgba(255,255,255,0.8);
+      border-radius: 5px;
+      padding: 0;
+    }
+    #zoomInBtn, #zoomOutBtn, #hideSelectionBtn, #unhideSelectionBtn {
+      cursor: pointer;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 2px;
+      padding: 5px 8px;
+      font-size: 16px;
+    }
+    #zoomInBtn:hover, #zoomOutBtn:hover, #hideSelectionBtn:hover, #unhideSelectionBtn:hover {
+      background-color: #ddd;
+    }
+    #cy-container {
+      position: absolute;
+      top: 60px;
+      left: calc(30% + 11px);
+      right: 0;
+      bottom: 0;
+      height: calc(100vh - 60px);
+      z-index: 1;
+      background: #fafafa;
+    }
+    #cy {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.7;
+    }
+    .tooltip {
+      z-index: 10001 !important;
+    }
+    .tooltip-inner {
+      background-color: #555555;
+      color: #fff;
+    }
+    .tooltip.top .tooltip-arrow {
+      border-top-color: #555555;
+    }
+    .tooltip.right .tooltip-arrow {
+      border-right-color: #555555;
+    }
+    .tooltip.bottom .tooltip-arrow {
+      border-bottom-color: #555555;
+    }
+    .tooltip.left .tooltip-arrow {
+      border-left-color: #555555;
+    }
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 10001;
+      top: 0;
+      left: 0;
+      background-color: #8f8b8b;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
+    .sidebar a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #ffffff;
+      display: block;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    .sidebar a:hover {
+      color: #f1f1f1;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .sidebar .closebtn {
+      position: absolute;
+      top: 0;
+      right: 20px;
+      font-size: 36px;
+      padding: 11px;
+      line-height: 30px;
+      cursor: pointer;
+    }
+    .sidebar .closebtn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #f1f1f1;
+    }
+    .openbtn {
+      font-size: 20px;
+      cursor: pointer;
+      background-color: #8f8b8b;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      margin-right: 10px;
+    }
+    .openbtn:hover {
+      background-color: #444;
+    }
+    #main {
+      transition: margin-left .5s;
+      padding: 16px;
+      margin-top: 0;
+    }
+    .col-sm-4 {
+      position: absolute;
+      top: 60px;
+      bottom: 0;
+      left: 0;
+      max-width: 470px;
+      overflow-y: auto;
+      overflow-x: auto;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .panel {
+      max-width:430px;
+    }
+    #resizer {
+      position: absolute;
+      top: 60px;
+      left: calc(30% + 11px);
+      width: 5px;
+      bottom: 0;
+      background-color: #ccc;
+      cursor: col-resize;
+      z-index: 9998;
+    }
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      border-bottom: 1px solid black;
+    }
+    th {
+      border-top: 1px solid black;
+      border-bottom: 1px solid black;
+      border-left: none;
+      border-right: none;
+      text-align: center;
+      padding: 8px;
+    }
+    td {
+      border: none;
+      text-align: center;
+      padding: 8px;
+    }
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    .scoll-tree {
+      width: max-content;
+    }
+
+
+    #nodeTable, #edgeTable {
+      table-layout: auto;
+      width: auto;
+    }
+    #nodeTable th, #nodeTable td,
+    #edgeTable th, #edgeTable td {
+      min-width: 100px;
+      padding: 8px;
+      white-space: nowrap;
+    }
+
+    .modal {
+      z-index: 10002 !important;
+    }
+    .modal-backdrop {
+      z-index: 10000 !important;
+    }
+    .modal-dialog {
+      margin-top: 30px !important;
+      margin-bottom: 30px !important;
+    }
+    /* This targets the "Nodes & Edges" modal (myModal) */
+    #myModal .modal-dialog {
+      width: 1200px !important;
+      max-width: 1200px !important;
+      margin: 0 auto !important;
+      position: relative !important;
+      top: 50% !important;
+      transform: translateY(-50%) translateX(10.5%);
+    }
+    #myModal .modal-content {
+      display: flex;
+      flex-direction: column;
+      max-height: 80vh;
+    }
+    /* The header and footer remain; only the body scrolls */
+    #myModal .modal-header,
+    #myModal .modal-footer {
+      flex: 0 0 auto;
+    }
+    #myModal .modal-body {
+      flex: 1 1 auto;
+      display: flex;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .pinned-left {
+      flex: 0 0 15px;
+      position: sticky;
+      left: 0;
+      background: #fff;
+    }
+    .scrollable-content {
+      flex: 1 1 auto;
+      overflow-x: auto;
+      overflow-y: auto;
+      padding: 10px;
+      padding-left: 14px;
+    }
+    .table-separator {
+      margin: 40px 0;
+    }
+
+    #nodeSelectionModal .modal-dialog {
+      top: 30% !important;
+      transform: translateY(-30%) translateX(20px);
+      position: relative !important;
+    }
+
+    /* Help Modal styling remains the same */
+    #myModalHelp .modal-dialog {
+      width: 700px !important;
+      max-width: 700px !important;
+      margin: 0 auto !important;
+      position: relative !important;
+      top: 50% !important;
+      transform: translateY(-50%);
+    }
+    #myModalHelp .modal-content {
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+      max-height: 900px !important;
+    }
+    #myModalHelp .modal-body {
+      padding: 20px 40px !important;
+    }
+
+    /* Loading animation styles */
+    #loading {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      z-index: 100;
+      text-align: center;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto;
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #3498db;
+      border-radius: 50%;
+      animation: spin 2s linear infinite;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #resizer:hover {
+      cursor: col-resize;
+    }
+    .col-sm-4 {
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <!-- New PlaQuery-style Toolbar -->
+  <div class="main-toolbar">
+    <button class="openbtn" onclick="openNav()">☰</button>
+    <a href="#" class="app-logo">
+      <span class="app-title">PlaqueMS</span>
+    </a>
+    <!-- Left side navigation tabs -->
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'proteins' %}">Proteins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'plot' %}">Differential Expression Analysis</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'cy' %}">Protein Networks</a>
+      </li>
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'protein-abundance' %}">PlaQuery</a>
+        </li>
+      {% endif %}
+      {% if user.is_authenticated and user.is_staff %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+        </li>
+      {% endif %}
+    </ul>
+
+    <!-- Zoom buttons container -->
+    <div id="zoom-container">
+      <button id="zoomOutBtn" data-toggle="tooltip" title="Zoom Out">
+        <i class="bi bi-zoom-out"></i>
+      </button>
+      <button id="zoomInBtn" data-toggle="tooltip" title="Zoom In">
+        <i class="bi bi-zoom-in"></i>
+      </button>
+      <button id="hideSelectionBtn" onclick="hideSelection()" data-toggle="tooltip" title="Hide Selected">
+        <i class="bi bi-eye-slash"></i>
+      </button>
+      <button id="unhideSelectionBtn" onclick="unhideSelection()" data-toggle="tooltip" title="Unhide Selected">
+        <i class="bi bi-eye"></i>
+      </button>
+    </div>
+
+    <!-- Right side authentication tabs -->
+    <ul class="nav nav-tabs navbar-right" style="margin-left: auto;">
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Log In</a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <div class="col-sm-4">
+    <section class="panel">
+      <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <a data-toggle="modal" data-target="#myModalHelp">Help</a>
+        <a data-toggle="modal" data-target="#myModal" onclick="get_tabledata()">Nodes &amp; Edges</a>
+      </div>
+      <div id="main"></div>
+      <!-- Modal for tables -->
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myModalLabel">Nodes and Edges</h4>
+            </div>
+            <div class="modal-body">
+              <div class="pinned-left"></div>
+              <div class="scrollable-content">
+                <div class="scoll-tree">
+                  <a>Node Table</a>
+                  <table id="nodeTable"></table>
+                  <div class="table-separator"></div>
+                  <a>Edge Table</a>
+                  <table id="edgeTable"></table>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exportModal">
+                Export
+              </button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Help Modal -->
+      <div class="modal fade" id="myModalHelp" tabindex="-1" role="dialog" aria-labelledby="myModalLabelHelp" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myModalLabelHelp">How to use Cytoscape for Network Analysis:</h4>
+            </div>
+            <div class="modal-body">
+              <p><strong>1. Load a Network File:</strong></p>
+              <ul>
+                <li>Select a protein extraction method (NaCl, SDS, Olink, GuHCl).</li>
+                <li>Choose a plaque region (Periphery, Core).</li>
+                <li>Select a network file (network.txt).</li>
+              </ul>
+              <p><strong>2. Display the Network:</strong></p>
+              <ul>
+                <li>Click <em>"show network"</em> to choose which nodes (genes) to include.</li>
+                <li>After loading, click <em>"MCL clustering"</em> to view the clustered network using the MCL algorithm.</li>
+                <li>Use zoom in/out and hide/unhide buttons to adjust the view.</li>
+                <li>Hold Shift + Drag to select multiple nodes/edges.</li>
+                <li>Only selected elements can be hidden/unhidden.</li>
+              </ul>
+              <p><strong>3. Optional: Apply Differential Expression Coloring </strong></p>
+              <ul>
+                <li>After displaying the network, select a differential expression file from the dropdown.</li>
+                <li>Click <em>"do coloring"</em> to apply logFC-based color mapping to nodes.</li>
+                <li>This visually highlights upregulated (red) and downregulated (blue) genes.</li>
+                <li>Edge symbols indicate interactions:</li>
+                <ul>
+                  <li>Arrowhead(→): Activation or directed interaction.</li>
+                  <li>T-shaped head(⊥): Inhibition or suppression.</li>
+                </ul>
+              </ul>
+              <p><strong>4. Exporting Data:</strong></p>
+              <ul>
+                <li>Click <em>"download image"</em> to save the network as a PNG.</li>
+                <li>Click <em>"Nodes &amp; Edges"</em> to open a table of your selected nodes/edges.</li>
+                <li>Export data in CSV, XLXS, PDF, or TXT format.</li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Node Selection Modal -->
+      <div class="modal fade" id="nodeSelectionModal" tabindex="-1" role="dialog" aria-labelledby="nodeSelectionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="nodeSelectionLabel">Select Nodes for Network</h4>
+            </div>
+            <div class="modal-body">
+              <form id="nodeSelectionForm">
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="nodeOption" value="all" checked>
+                    Use All available genes
+                  </label>
+                </div>
+                <p id="warningAllGenes" class="help-block" style="display:none; margin-top:10px;">
+                  Note: using all available genes may take a long time to generate a network,
+                  depending on dataset size and number of interactions.
+                </p>
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="nodeOption" value="list">
+                    Select gene names from list
+                  </label>
+                </div>
+                <div id="geneListContainer" style="display:none; margin-top:10px;">
+                  <select id="geneSelect" multiple style="width:100%; height:150px;"></select>
+                </div>
+                <div class="radio" style="margin-top:10px;">
+                  <label>
+                    <input type="radio" name="nodeOption" value="upload">
+                    Upload your own list from a file
+                  </label>
+                </div>
+                <div id="uploadContainer" style="display:none; margin-top:10px;">
+                  <input type="file" id="geneFileInput" accept=".txt,.csv,.tsv,.xlsx">
+                  <p class="help-block">
+                    Accepted file formats: .txt, .csv, .tsv, .xlsx. For .xlsx, the first worksheet is used and the first column is assumed to contain gene names.
+                  </p>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" onclick="proceedWithNodeSelection()">Proceed</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Export Modal -->
+      <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="exportModalLabel">Export Table</h4>
+            </div>
+            <div class="modal-body">
+              <form id="exportForm">
+                <div class="form-group">
+                  <label for="exportFormat">Choose File Format</label>
+                  <select class="form-control" id="exportFormat">
+                    <option value="csv">CSV</option>
+                    <option value="xlsx">XLSX</option>
+                    <option value="pdf">PDF</option>
+                    <option value="txt">TXT</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="exportFileName">Save Table as</label>
+                  <input type="text" class="form-control" id="exportFileName" placeholder="Enter file name" oninput="checkExportFileName()">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" id="exportButton" disabled onclick="performExport()">Export</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Buttons -->
+      <!-- Button 1: Show Network (without clustering) -->
+      <button type="submit" onclick="openNodeSelectionModal()">Show network</button>
+      <!-- Button 2: MCL Clustering (applies MCL clustering to the current network) -->
+      <button type="submit" onclick="load_mcl_network()">MCL clustering</button>
+      <!-- Button 3: Download Image -->
+      <button id="downloadpng" onclick="downLoadImg()">Download image</button>
+      <div class="panel-heading">Please select a network file:</div>
+      <a id="selected-network" value=""></a>
+      <div id="network_tree"></div>
+
+      <div class="panel-heading">Apply Diff. Exp. results (logFC) to color nodes:</div>
+      <select id="select-diff" onchange="get_diff_file()"></select>
+      <button type="submit" onclick="do_coloring()">Do coloring</button>
+    </section>
+  </div>
+  <div id="cy-container">
+    <div id="cy"></div>
+    <div id="loading">
+      <div class="spinner"></div>
+    </div>
+  </div>
+  <script>
+    function adjustLayout() {
+      // Get the header element
+      const header = document.querySelector('.main-toolbar');
+      // Calculate its current height
+      const headerHeight = header ? header.offsetHeight : 60; // Fallback to 60px if not found
+
+      // Apply the header height as top padding to your body
+      // so that content is pushed below the fixed header
+      document.body.style.paddingTop = headerHeight + 'px';
+
+      // Adjust the sidebar's top offset so it starts right below the header
+      const sidebar = document.querySelector('.col-sm-4');
+      if (sidebar) {
+        sidebar.style.top = headerHeight + 'px';
+      }
+
+      // Also update the Cytoscape container so it starts below the header
+      const cyContainer = document.getElementById('cy-container');
+      if (cyContainer) {
+        cyContainer.style.top = headerHeight + 'px';
+      }
+    }
+
+    // Run once when the DOM content is loaded
+    document.addEventListener('DOMContentLoaded', adjustLayout);
+    // Update the layout on window resize
+    window.addEventListener('resize', adjustLayout);
+
+    // Global flag: only set true after "show network" succeeds
+    let isNetworkLoaded = false;
+    // We'll store the cluster count in a global variable
+    let numClusters = 0;
+
+    var logFile = null;
+    var tree = [];
+    window.cy = null; // Global Cytoscape instance
+
+    function loadDefaultSnippet() {
+      if (window.cy) {
+        window.cy.destroy();
+      }
+      window.cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: [
+          { data: { id: 'Cytoscape' }, position: { x: 150, y: 150 } },
+          { data: { id: 'example' }, position: { x: 300, y: 300 } },
+          { data: { id: 'edge1', source: 'Cytoscape', target: 'example', label: '' } }
+        ],
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'label': 'data(id)',
+              'text-valign': 'center',
+              'text-halign': 'center',
+              'font-size': '40px',
+              'color': '#fff',
+              'text-outline-color': '#999',
+              'text-outline-width': 6,
+              'background-color': '#999',
+              'shape': 'ellipse',
+              'width': 80,
+              'height': 80,
+              'border-width': 0
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'curve-style': 'bezier',
+              'width': 6,
+              'line-color': '#333',
+              'target-arrow-shape': 'triangle',
+              'target-arrow-color': '#333',
+              'arrow-scale': 1.2,
+              'label': '',
+              'opacity': 1
+            }
+          },
+        ],
+        layout: { name: 'preset' },
+        minZoom: 0.1,
+        maxZoom: 10,
+        boxSelectionEnabled: true
+      });
+      cy.fit(cy.elements(), 10);
+    }
+
+    function applyEdgeStyling() {
+      cy.style()
+        .selector('edge')
+        .style({
+          'curve-style': 'bezier',
+          'width': 0.5,
+          'line-color': '#666',
+          'arrow-scale': 0.7,
+          'label': '',
+          'opacity': 1
+        })
+        .selector('edge[directionality-positive = 1]')
+        .style({
+          'target-arrow-shape': 'triangle',
+          'target-arrow-color': '#666',
+          'arrow-scale': 0.7
+        })
+        .selector('edge[directionality-positive = 0]')
+        .style({
+          'target-arrow-shape': 'tee',
+          'target-arrow-color': '#666',
+          'arrow-scale': 0.4
+        })
+        .update();
+    }
+
+    function applySelectedStyle() {
+      cy.style()
+        .selector('node:selected')
+        .style({ 'background-color': 'yellow' })
+        .update();
+
+      cy.style()
+        .selector('edge:selected')
+        .style({
+          'line-color': 'red',
+          'target-arrow-color':
+          'red'
+        })
+        .update();
+    }
+
+    function removeInteractionLabels() {
+      if (window.cy) {
+        cy.style()
+          .selector('edge')
+          .style({ 'label': '', 'opacity': 1 })
+          .update();
+      }
+    }
+
+    // Custom color function reintroduced:
+    function applyCustomColorMapping() {
+      let maxAbs = 0;
+      cy.nodes().forEach(function(node) {
+        let logfc = parseFloat(node.data('logFC'));
+        if (!isNaN(logfc)) {
+          let absVal = Math.abs(logfc);
+          if (absVal > maxAbs) maxAbs = absVal;
+        }
+      });
+
+      cy.nodes().forEach(function(node) {
+        let logfc = parseFloat(node.data('logFC'));
+        let color;
+        if (isNaN(logfc)) {
+          color = '#ADD8E6';
+        } else if (logfc <= 0) {
+          let factor = (logfc + maxAbs) / maxAbs;
+          color = interpolateColor('#2166AC', '#F7F7F7', factor);
+        } else {
+          let factor = logfc / maxAbs;
+          color = interpolateColor('#F7F7F7', '#D6604D', factor);
+        }
+        node.style('background-color', color);
+      });
+    }
+
+    function updateNodeColor(node) {
+      let maxAbs = 0;
+      cy.nodes().forEach(function(n) {
+        let val = parseFloat(n.data('logFC'));
+        if (!isNaN(val)) {
+          let absVal = Math.abs(val);
+          if (absVal > maxAbs) maxAbs = absVal;
+        }
+      });
+      let logfc = parseFloat(node.data('logFC'));
+      let color;
+      if (isNaN(logfc)) {
+        color = '#ADD8E6';
+      } else if (logfc <= 0) {
+        color = interpolateColor('#2166AC', '#F7F7F7', (logfc + maxAbs) / maxAbs);
+      } else {
+        color = interpolateColor('#F7F7F7', '#D6604D', logfc / maxAbs);
+      }
+      node.style('background-color', color);
+    }
+
+    function interpolateColor(color1, color2, factor) {
+      let c1 = hexToRgb(color1);
+      let c2 = hexToRgb(color2);
+      let r = Math.round(c1.r + factor * (c2.r - c1.r));
+      let g = Math.round(c1.g + factor * (c2.g - c1.g));
+      let b = Math.round(c1.b + factor * (c2.b - c1.b));
+      return rgbToHex(r, g, b);
+    }
+
+    function hexToRgb(hex) {
+      hex = hex.replace('#', '');
+      let bigint = parseInt(hex, 16);
+      return {
+        r: (bigint >> 16) & 255,
+        g: (bigint >> 8) & 255,
+        b: bigint & 255
+      };
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+
+    function componentToHex(c) {
+      let hex = c.toString(16);
+      return hex.length === 1 ? "0" + hex : hex;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadDefaultSnippet();
+
+      let zoomInBtn = document.getElementById('zoomInBtn');
+      let zoomOutBtn = document.getElementById('zoomOutBtn');
+
+      if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', function() {
+          if (window.cy) {
+            let currentZoom = cy.zoom();
+            cy.zoom({
+              level: currentZoom + 0.2,
+              renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 }
+            });
+          }
+        });
+      }
+
+      if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', function() {
+          if (window.cy) {
+            let currentZoom = cy.zoom();
+            cy.zoom({
+              level: Math.max(0.1, currentZoom - 0.2),
+              renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 }
+            });
+          }
+        });
+      }
+
+      $('input[name="nodeOption"]').change(function() {
+        if (this.value === 'list') {
+          $("#geneListContainer").show();
+          $("#uploadContainer").hide();
+          $("#warningAllGenes").hide();
+        } else if (this.value === 'upload') {
+          $("#uploadContainer").show();
+          $("#geneListContainer").hide();
+          $("#warningAllGenes").hide();
+        } else {
+          $("#geneListContainer").hide();
+          $("#uploadContainer").hide();
+          $("#warningAllGenes").show();
+        }
+      });
+      $('input[name="nodeOption"]:checked').trigger('change');
+    });
+
+    window.onload = function() {
+      $.ajax({
+        type: "GET",
+        url: "/get_network_json",
+        success: function (res) {
+          function pruneEmpty(nodes) {
+            nodes.forEach(function(n){
+              if (Array.isArray(n.nodes)) {
+                if (n.nodes.length === 0) {
+                  delete n.nodes;
+                } else {
+                  pruneEmpty(n.nodes);
+                }
+              }
+            });
+          }
+          pruneEmpty(res.data.nodes);
+
+          $('#network_tree').treeview({
+            data: res.data.nodes,
+            expandIcon: 'glyphicon glyphicon-plus',
+            collapseIcon: 'glyphicon glyphicon-minus',
+            emptyIcon: 'glyphicon glyphicon-minus',
+            highlightSelected: true,
+            multiSelect: false,
+            onNodeSelected: function (event, data) {
+              if (data.tag != "network_file") {
+                alert("please select a network file");
+              } else {
+                document.getElementById("select-diff").options.length = 0;
+                document.getElementById("selected-network").value = data.id;
+                get_diff(data.id);
+                // Reset the network loaded flag when a new network file is selected
+                isNetworkLoaded = false;
+              }
+            }
+          });
+        }
+      });
+    };
+
+    function openNodeSelectionModal() {
+      let net = document.getElementById("selected-network").value;
+      if (!net) {
+        alert("please select a network file");
+        return;
+      }
+
+      $.ajax({
+        type: "GET",
+        url: "/get_gene_list/",
+        data: { network_id: net },
+        success: function(res) {
+          if (res.genes) {
+            let geneSelect = document.getElementById("geneSelect");
+            geneSelect.innerHTML = "";
+            res.genes.forEach(function(gene) {
+              let option = document.createElement("option");
+              option.value = gene;
+              option.text = gene;
+              geneSelect.add(option);
+            });
+
+            $("#geneSelect").off('mousedown').on('mousedown', 'option', function(e) {
+              e.preventDefault();
+              let select = $(this).parent();
+              let scrollTop = select.scrollTop();
+              let $opt = $(this);
+              $opt.prop('selected', !$opt.prop('selected'));
+              setTimeout(function() {
+                select.scrollTop(scrollTop);
+              }, 0);
+              return false;
+            });
+          }
+        }
+      });
+      $("#nodeSelectionModal").modal("show");
+    }
+
+    function proceedWithNodeSelection() {
+      let selectedOption = $('input[name="nodeOption"]:checked').val();
+      let nodeList = "";
+
+      if (selectedOption === "all") {
+        nodeList = "";
+        $("#nodeSelectionModal").modal("hide");
+        load_network_filtered(nodeList);
+      } else if (selectedOption === "list") {
+        let selectedGenes = $("#geneSelect").val();
+        if (!selectedGenes || selectedGenes.length < 2) {
+          alert("Please select at least two gene names from the list.");
+          return;
+        }
+        nodeList = selectedGenes.join(",");
+        $("#nodeSelectionModal").modal("hide");
+        load_network_filtered(nodeList);
+      } else if (selectedOption === "upload") {
+        let fileInput = document.getElementById("geneFileInput");
+        if (fileInput.files.length === 0) {
+          alert("Please upload a file.");
+          return;
+        }
+        let file = fileInput.files[0];
+        if (file.name.toLowerCase().endsWith('.xlsx')) {
+          let reader = new FileReader();
+          reader.onload = function(e) {
+            let data = e.target.result;
+            let workbook = XLSX.read(data, { type: 'binary' });
+            let firstSheetName = workbook.SheetNames[0];
+            let worksheet = workbook.Sheets[firstSheetName];
+            let csvData = XLSX.utils.sheet_to_csv(worksheet);
+            let genes = csvData.split(/[\n,\t]+/).map(s => s.trim()).filter(Boolean);
+            if (!genes.length) {
+              alert("No valid gene names found in the XLSX file.");
+              return;
+            }
+            nodeList = genes.join(",");
+            $("#nodeSelectionModal").modal("hide");
+            load_network_filtered(nodeList);
+          };
+          reader.readAsBinaryString(file);
+        } else {
+          let reader = new FileReader();
+          reader.onload = function(e) {
+            let content = e.target.result;
+            let genes = content.split(/[\n,\t]+/).map(s => s.trim()).filter(Boolean);
+            if (!genes.length) {
+              alert("No valid gene names found in file.");
+              return;
+            }
+            nodeList = genes.join(",");
+            $("#nodeSelectionModal").modal("hide");
+            load_network_filtered(nodeList);
+          };
+          reader.readAsText(file);
+        }
+      }
+    }
+
+    function fixInvalidFontFamilies(styleArray) {
+      // Loop through every rule in the style array and modify the font-family property if needed.
+      for (let i = 0; i < styleArray.length; i++) {
+        let rule = styleArray[i];
+        if (rule.css && rule.css['font-family']) {
+          if (rule.css['font-family'] === 'SansSerif.plain' ||
+              rule.css['font-family'] === 'Dialog.plain') {
+            rule.css['font-family'] = 'sans-serif';
+          }
+        }
+      }
+      return styleArray;
+    }
+
+    function load_network_filtered(node_list) {
+      let net = document.getElementById("selected-network").value;
+      if (!net) {
+        alert("please select a network file");
+        return;
+      }
+      $('#loading').show();
+      $.ajax({
+        type: "GET",
+        url: "/networks",
+        data: { network_id: net, node_list: node_list },
+        success: function (res) {
+          let fixedStyle = fixInvalidFontFamilies(res.style);
+          isNetworkLoaded = true;
+          $('#loading').hide();
+          if (window.cy) window.cy.destroy();
+        window.cy = cytoscape({
+          container: document.getElementById('cy'),
+          style: fixedStyle,
+          elements: { nodes: res.nodes, edges: res.edges },
+          layout: { name: 'fcose' },
+          minZoom: 0.1,
+          maxZoom: 10,
+          boxSelectionEnabled: true
+        });
+          cy.fit(cy.elements(), 10);
+          applyEdgeStyling();
+          removeInteractionLabels();
+          applySelectedStyle();
+
+          window.numClusters = res.numClusters || 0;
+
+          cy.on('zoom', function() {
+            let z = cy.zoom();
+            cy.edges().style('width', Math.max(0.5, 0.5 + 0.1 * (z - 1)));
+          });
+        },
+        error: function(xhr) {
+          isNetworkLoaded = false;
+          $('#loading').hide();
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            alert(xhr.responseJSON.error);
+          } else {
+            alert("Failed to load network. Make sure Cytoscape is running or installed.");
+          }
+        }
+      });
+    }
+
+    // New function to load the clustered network using MCL clustering.
+    function load_mcl_network() {
+      if (!isNetworkLoaded) {
+        alert("please select \"show network\" first");
+        return;
+      }
+      $('#loading').show();
+      $.ajax({
+        type: "GET",
+        url: "/mcl",
+        success: function(res) {
+          let fixedStyle = fixInvalidFontFamilies(res.style);
+          if(window.cy) window.cy.destroy();
+          window.cy = cytoscape({
+            container: document.getElementById('cy'),
+            style: fixedStyle,
+            elements: { nodes: res.nodes, edges: res.edges },
+            layout: { name: 'fcose' },
+            minZoom: 0.1,
+            maxZoom: 10,
+            boxSelectionEnabled: true
+          });
+          cy.fit(cy.elements(), 10);
+          applyEdgeStyling();
+          removeInteractionLabels();
+          applySelectedStyle();
+          window.numClusters = res.numClusters || 0;
+          $('#loading').hide();
+          cy.on('zoom', function() {
+            let z = cy.zoom();
+            cy.edges().style('width', Math.max(0.5, 0.5 + 0.1 * (z - 1)));
+          });
+        },
+        error: function(xhr) {
+          $('#loading').hide();
+          alert("Failed to load clustered network. Ensure Cytoscape is running.");
+        }
+      });
+    }
+
+    function get_diff(network_id) {
+      $.ajax({
+        type: "GET",
+        url: "/get_diff",
+        data: { network_id: network_id },
+        success: function (res) {
+          let doc_list = res.data;
+          let obj = document.getElementById("select-diff");
+          obj.options.length = 0;
+          for (let i = 0; i < doc_list.length; i++) {
+            obj.options.add(new Option(doc_list[i].filename, doc_list[i].doc_id));
+          }
+          if (doc_list.length > 0) {
+            logFile = doc_list[0].doc_id;
+          }
+        }
+      });
+    }
+
+    function get_diff_file() {
+      let obj = document.getElementById("select-diff");
+      logFile = obj.options[obj.selectedIndex].value;
+    }
+
+    function do_coloring() {
+      if (!isNetworkLoaded) {
+        alert("please select \"show network\" first");
+        return;
+      }
+      $('#loading').show();
+      $.ajax({
+        type: "GET",
+        url: "/color",
+        data: { doc_id: logFile },
+        success: function (res) {
+          console.log("Returned response:", res);
+          console.log("Style array:", JSON.stringify(res.style));
+          let fixedStyle = fixInvalidFontFamilies(res.style);
+          if (window.cy) window.cy.destroy();
+          window.cy = cytoscape({
+            container: document.getElementById('cy'),
+            style: fixedStyle,
+            elements: { nodes: res.nodes, edges: res.edges },
+            layout: { name: 'fcose' },
+            minZoom: 0.1,
+            maxZoom: 10,
+            boxSelectionEnabled: true
+          });
+          cy.fit(cy.elements(), 10);
+          applyEdgeStyling();
+          removeInteractionLabels();
+          applyCustomColorMapping();
+          applySelectedStyle();
+          // Override the node label color to dark black
+          cy.style().selector('node').style({ 'color': '#000000' }).update();
+          window.numClusters = res.numClusters || 0;
+          $('#loading').hide();
+          cy.on('select', 'node', function(evt) {
+            evt.target.style('background-color', 'yellow');
+          });
+          cy.on('unselect', 'node', function(evt) {
+            updateNodeColor(evt.target);
+          });
+          cy.on('zoom', function() {
+            let z = cy.zoom();
+            cy.edges().style('width', Math.max(0.5, 0.5 + 0.1 * (z - 1)));
+          });
+        },
+        error: function(xhr) {
+          $('#loading').hide();
+          alert("Error in coloring network");
+        }
+      });
+    }
+
+    function downLoadImg() {
+      if (!window.cy) return;
+      let text = window.cy.png({ 'output': 'blob' });
+      let file = new Blob([text], { type: "image/png" });
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(file);
+      a.style.display = 'none';
+      a.download = 'PlaqueMS.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function openNav() {
+      document.getElementById("mySidebar").style.width = "260px";
+      document.getElementById("main").style.marginLeft = "260px";
+    }
+
+    function closeNav() {
+      document.getElementById("mySidebar").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+    }
+
+    const nodeColumnMap = {
+      "ID": "SUID",
+      "Genes": "name",
+      "Cluster": "mclCluster",
+      "LogFC": "logFC",
+      "Lower.CI": "CI_L",
+      "Upper.CI": "CI_R",
+      "Ave.Expr": "AveExpr",
+      "t-statistic": "t",
+      "P.value": "P_Value",
+      "Adjusted.P.value": "adj_P_Val",
+      "B-statistic": "B"
+    };
+    const desiredNodeColumns = Object.keys(nodeColumnMap);
+
+    const edgeColumnMap = {
+      "ID": "SUID",
+      "Name": "name",
+      "Source": "source_original",
+      "Target": "target_original",
+      "Directionality-positive": "directionality_positive",
+      "MI": "MI",
+      "P.value": "pvalue",
+      "Directionality": "directionality"
+    };
+    const desiredEdgeColumns = Object.keys(edgeColumnMap);
+
+    function showNodeTable() {
+      if (!window.cy) return;
+      let jsonList = cy.$('node:selected').jsons();
+      if (!jsonList.length) return;
+
+      let columnsToShow = desiredNodeColumns.slice();
+      if (window.numClusters <= 1) {
+        columnsToShow = columnsToShow.filter(h => h !== "mclCluster");
+      }
+
+      let table = document.getElementById("nodeTable");
+      table.innerHTML = "";
+
+      let tr = document.createElement("tr");
+      columnsToShow.forEach(function(header) {
+        let th = document.createElement("th");
+        th.appendChild(document.createTextNode(header));
+        tr.appendChild(th);
+      });
+      table.appendChild(tr);
+
+      jsonList.forEach(function(item) {
+        let trval = document.createElement("tr");
+        let data = item.data;
+        columnsToShow.forEach(function(header) {
+          let actualKey = nodeColumnMap[header];
+          let tdval = document.createElement("td");
+          let value = data[actualKey] !== undefined ? data[actualKey] : "";
+          // Only apply numeric checks if 'value' is not empty and is a valid number
+          if (value !== "" && !isNaN(parseFloat(value)) && isFinite(value)) {
+            let numericVal = parseFloat(value);
+            // If this is the p-value or adjusted p-value column, show 3 decimals
+            if (header === "P.value" || header === "Adjusted.P.value") {
+              if (numericVal === 0) {
+                value = "~0";
+              } else if (numericVal >= 0.995) {
+                value = "~1";
+              } else if (numericVal < 0.001) {
+                value = numericVal.toExponential(2);
+              } else {
+                value = numericVal.toFixed(3);
+              }
+            } else {
+              if (numericVal === 0) {
+                value = "0";
+              } else if (Math.abs(numericVal) < 0.001) {
+                value = numericVal.toExponential(2);
+              } else if (numericVal % 1 === 0) {
+                value = numericVal.toString();
+              } else {
+                value = numericVal.toFixed(2);
+              }
+            }
+          }
+          tdval.innerText = value;
+          trval.appendChild(tdval);
+        });
+        table.appendChild(trval);
+      });
+    }
+
+
+    function showEdgeTable() {
+      if (!window.cy) return;
+      let jsonList = cy.$('edge:selected').jsons();
+      if (!jsonList.length) return;
+
+      let table = document.getElementById("edgeTable");
+      table.innerHTML = "";
+
+      let tr = document.createElement("tr");
+      desiredEdgeColumns.forEach(function(header) {
+        let th = document.createElement("th");
+        th.appendChild(document.createTextNode(header));
+        tr.appendChild(th);
+      });
+      table.appendChild(tr);
+
+      jsonList.forEach(function(item) {
+        let trval = document.createElement("tr");
+        let data = item.data;
+        desiredEdgeColumns.forEach(function(header) {
+          let actualKey = edgeColumnMap[header];
+          let tdval = document.createElement("td");
+          let value = data[actualKey] !== undefined ? data[actualKey] : "";
+          if (value !== "" && !isNaN(parseFloat(value)) && isFinite(value)) {
+            let numericVal = parseFloat(value);
+            if (header === "P.value") {
+              if (numericVal === 0) {
+                value = "~0";
+              } else if (numericVal >= 0.995) {
+                value = "~1";
+              } else if (numericVal < 0.001) {
+                value = numericVal.toExponential(2);
+              } else {
+                value = numericVal.toFixed(3);
+              }
+            } else {
+              if (numericVal === 0) {
+                value = "0";
+              } else if (Math.abs(numericVal) < 0.001) {
+                value = numericVal.toExponential(2);
+              } else if (numericVal % 1 === 0) {
+                value = numericVal.toString();
+              } else {
+                value = numericVal.toFixed(2);
+              }
+            }
+          }
+          tdval.innerText = value;
+          trval.appendChild(tdval);
+        });
+        table.appendChild(trval);
+      });
+    }
+
+    function get_tabledata() {
+      $("#nodeTable").html("");
+      $("#edgeTable").html("");
+      showNodeTable();
+      showEdgeTable();
+    }
+
+    async function exportTableData(format, fileName) {
+      let nodeRows = [];
+      $("#nodeTable tr").each(function() {
+        let row = [];
+        $(this).find("td, th").each(function() {
+          row.push($(this).text());
+        });
+        nodeRows.push(row);
+      });
+
+      let edgeRows = [];
+      $("#edgeTable tr").each(function() {
+        let row = [];
+        $(this).find("td, th").each(function() {
+          row.push($(this).text());
+        });
+        edgeRows.push(row);
+      });
+
+      if (nodeRows.length === 0 && edgeRows.length === 0) {
+        alert("No selected node or edge data to export.");
+        return;
+      }
+
+      switch (format) {
+        case 'csv':
+          exportAsCSV(nodeRows, edgeRows, fileName);
+          break;
+        case 'txt':
+          exportAsTXT(nodeRows, edgeRows, fileName);
+          break;
+        case 'xlsx':
+          exportAsXLSX(nodeRows, edgeRows, fileName);
+          break;
+        case 'pdf':
+          exportAsPDF(nodeRows, edgeRows, fileName);
+          break;
+        default:
+          alert("Unknown export format: " + format);
+      }
+    }
+
+    function exportAsCSV(nodeRows, edgeRows, fileName) {
+      let csv = "";
+      csv += "Node Table\n";
+      nodeRows.forEach(function(row) {
+        csv += row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(",") + "\n";
+      });
+      csv += "\nEdge Table\n";
+      edgeRows.forEach(function(row) {
+        csv += row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(",") + "\n";
+      });
+
+      let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      let url = URL.createObjectURL(blob);
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function exportAsTXT(nodeRows, edgeRows, fileName) {
+      let txt = "Node Table\n";
+      nodeRows.forEach(function(row) {
+        txt += row.join("\t") + "\n";
+      });
+      txt += "\nEdge Table\n";
+      edgeRows.forEach(function(row) {
+        txt += row.join("\t") + "\n";
+      });
+
+      let blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
+      let url = URL.createObjectURL(blob);
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function exportAsXLSX(nodeRows, edgeRows, fileName) {
+      let wb = XLSX.utils.book_new();
+
+      if (nodeRows.length > 0) {
+        let wsNode = XLSX.utils.aoa_to_sheet(nodeRows);
+        XLSX.utils.book_append_sheet(wb, wsNode, "Node Table");
+      }
+      if (edgeRows.length > 0) {
+        let wsEdge = XLSX.utils.aoa_to_sheet(edgeRows);
+        XLSX.utils.book_append_sheet(wb, wsEdge, "Edge Table");
+      }
+
+      let wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      let blob = new Blob([wbout], { type: "application/octet-stream" });
+      let url = URL.createObjectURL(blob);
+      let a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function exportAsPDF(nodeRows, edgeRows, fileName) {
+      const { jsPDF } = window.jspdf;
+      let doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
+      let startY = 30;
+      doc.setFontSize(12);
+
+      if (nodeRows.length > 1) {
+        let nodeHeaders = nodeRows[0];
+        let nodeBody = nodeRows.slice(1);
+        doc.text('Node Table', 40, startY);
+        startY += 10;
+        doc.autoTable({
+          head: [nodeHeaders],
+          body: nodeBody,
+          startY: startY,
+          theme: 'grid',
+          headStyles: {
+            fillColor: [128, 128, 128],
+            halign: 'center',
+            textColor: [255, 255, 255]
+          },
+          styles: {
+            fontSize: 8,
+            cellPadding: 3,
+            halign: 'center'
+          },
+          columnStyles: {
+            0: { cellWidth: 38 },
+            1: { cellWidth: 47 },
+            2: { cellWidth: 50 },
+            3: { cellWidth: 72 },
+            4: { cellWidth: 72 },
+            5: { cellWidth: 72 },
+            6: { cellWidth: 72 },
+            7: { cellWidth: 72 },
+            8: { cellWidth: 72 },
+            9: { cellWidth: 72 },
+            10: { cellWidth: 72 }
+          },
+          didDrawPage: (data) => {
+            startY = data.cursor.y;
+          }
+        });
+        startY = doc.lastAutoTable.finalY + 30;
+      }
+
+      if (edgeRows.length > 1) {
+        let edgeHeaders = edgeRows[0];
+        let edgeBody = edgeRows.slice(1);
+        doc.text('Edge Table', 40, startY);
+        startY += 10;
+        doc.autoTable({
+          head: [edgeHeaders],
+          body: edgeBody,
+          startY: startY,
+          theme: 'grid',
+          headStyles: {
+            fillColor: [128, 128, 128],
+            halign: 'center',
+            textColor: [255, 255, 255]
+          },
+          styles: {
+            fontSize: 8,
+            cellPadding: 3,
+            halign: 'center'
+          },
+          didDrawPage: (data) => {
+            startY = data.cursor.y;
+          }
+        });
+      }
+      doc.save(fileName);
+    }
+
+    function performExport() {
+      var format = document.getElementById("exportFormat").value;
+      var fileName = document.getElementById("exportFileName").value.trim();
+      if (!fileName) {
+        fileName = "table_data";
+      }
+      var extension = "";
+      switch(format) {
+        case "csv": extension = ".csv"; break;
+        case "xlsx": extension = ".xlsx"; break;
+        case "pdf": extension = ".pdf"; break;
+        case "txt": extension = ".txt"; break;
+      }
+      if (!fileName.toLowerCase().endsWith(extension)) {
+        fileName += extension;
+      }
+      $("#exportModal").modal("hide");
+      exportTableData(format, fileName);
+    }
+
+    function checkExportFileName() {
+      const fileNameValue = document.getElementById("exportFileName").value.trim();
+      const exportBtn = document.getElementById("exportButton");
+      exportBtn.disabled = !fileNameValue;
+    }
+
+    let isResizing = false;
+    let offsetX = 0;
+    document.addEventListener('mousedown', function(e) {
+      if (e.target.id === 'resizer') {
+        isResizing = true;
+        offsetX = e.clientX - document.getElementById('resizer').getBoundingClientRect().left;
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!isResizing) return;
+      let newLeft = e.clientX - offsetX;
+      if (newLeft < 210) newLeft = 210;
+      if (newLeft > 470) newLeft = 470;
+      document.getElementById('resizer').style.left = newLeft + 'px';
+      document.getElementById('cy-container').style.left = (newLeft + 5) + 'px';
+      document.querySelector('.col-sm-4').style.width = newLeft + 'px';
+    });
+    document.addEventListener('mouseup', function() {
+      isResizing = false;
+    });
+
+    function hideSelection() {
+      if (window.cy) {
+        let selected = cy.$(':selected');
+        selected.forEach(function(ele) {
+          ele.data('hideTemp', true);
+        });
+        selected.hide();
+      }
+    }
+
+    function unhideSelection() {
+      if (window.cy) {
+        cy.elements().filter(function(ele) {
+          return ele.data('hideTemp') === true;
+        }).show().forEach(function(ele) {
+          ele.removeData('hideTemp');
+        });
+      }
+    }
+
+    // Initialize Bootstrap tooltips
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip({
+        container: 'body',
+        placement: 'auto',
+        trigger: 'hover'
+      });
+    });
+  </script>
+  <div id="resizer"></div>
+</body>
+</html>
