@@ -705,7 +705,7 @@
       background-color: #f5f5f5;
     }
     .results-table td {
-      padding: 8px 15px !important;
+      padding: 8px 28px !important;
       border-bottom: 1px solid #eee;
       text-align: center !important;
       vertical-align: middle;
@@ -753,11 +753,14 @@
       background-color: #f8f9fa;
       padding: 6px 0;
       text-align: center;
-      border-bottom: 2px solid #ddd;
+      border-bottom: 2.5px solid #ddd;
     }
     .results-footer .pagination {
       display: inline-flex;
       margin: 0;
+    }
+    .results-footer.no-pagination {
+      padding: 20px 0;
     }
     .pagination .page-item .page-link {
       color: #377ba8;
@@ -952,12 +955,17 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-bottom: 1.5rem !important;
+      margin-bottom: 0 !important;
     }
 
     #predictForm .form-check.form-switch .form-check-label {
       position: relative;
       top: 1px;
+    }
+
+    #predictForm .filters-container {
+      margin-bottom: 15px !important;
+      margin-top: 27.5px !important;
     }
 
     #errorBox {
@@ -1025,6 +1033,24 @@
 
     .search-submit-btn:hover {
       background-color: #4a90d9;
+    }
+
+    /* blur everything when loading */
+    .blur {
+      filter: blur(6px);
+      transition: filter 0.4s ease;
+      pointer-events: none;
+    }
+
+    /* disable scrolling of the table container */
+    .no-scroll {
+      overflow: hidden;
+    }
+
+    /* disable pagination clicks */
+    .pagination.disabled {
+      pointer-events: none;
+      opacity: 0.5;
     }
 
     /* Media queries for responsive behavior */
@@ -1184,9 +1210,11 @@
             </label>
           </div>
 
-          <button type="submit" class="btn btn-primary w-100" id="submitBtn">
-            Predict
-          </button>
+          <div style="text-align: center; margin-top: 14px;">
+            <button type="submit" class="search-submit-btn" id="submitBtn">
+              Predict
+            </button>
+          </div>
         </form>
       </div>
 
@@ -1594,7 +1622,7 @@
         </div>
       </div>
       <div class="results-wrapper" style="position: relative;">
-        <div class="progress-container" id="progress-container">
+        <div class="progress-container" id="progress-container" style="display:none;">
           <div class="progress-bar" id="progress-bar"></div>
         </div>
         <div id="results-table-container" class="results-table-container">
@@ -1749,10 +1777,14 @@
     const table = document.getElementById("results-table"),
           wrap  = document.querySelector('.results-table-container'),
           pag   = document.getElementById('pagination'),
+          footerNav = document.querySelector(".results-footer"),
           empty = document.querySelectorAll('#empty-state > *'),
           cont  = document.getElementById("progress-container"),
           bar   = document.getElementById("progress-bar");
-    if (table.style.display !== "none") table.classList.add("blur");
+    if (table.style.display !== "none") {
+      table.classList.add("blur");
+      footerNav?.classList.add("blur");
+    }  
     wrap.classList.add('no-scroll');
     if (pag) pag.classList.add('disabled');
     empty.forEach(el => el.style.visibility = 'hidden');
@@ -1764,6 +1796,7 @@
     const table = document.getElementById("results-table"),
           wrap  = document.querySelector('.results-table-container'),
           pag   = document.getElementById('pagination'),
+          footerNav = document.querySelector(".results-footer"),
           empty = document.querySelectorAll('#empty-state > *'),
           cont  = document.getElementById("progress-container"),
           bar   = document.getElementById("progress-bar");
@@ -1772,11 +1805,29 @@
     setTimeout(() => {
       cont.style.display = "none";
       table.classList.remove("blur");
+      footerNav?.classList.remove("blur");
       empty.forEach(el => el.style.visibility = 'visible');
       wrap.classList.remove('no-scroll');
       if (pag) pag.classList.remove('disabled');
       wrap.scrollLeft = 0;
     }, 200);
+  }
+
+  // Format numbers to 2 decimals
+  function formatValue(key, value) {
+    if (value === null || value === undefined) {
+      return 'N/A';
+    }
+    if (typeof value === 'number') {
+      if (key === 'Age' || key == 'Pack-Years') {
+        // For Age, display as an integer.
+        return Math.round(value).toString();
+      } else {
+        // For other numeric values, display with two decimals.
+        return value.toFixed(2);
+      }
+    }
+    return value.toString();
   }
 
   // Predict form AJAX
@@ -1794,10 +1845,9 @@
         return;
       }
       $err.addClass('d-none').empty();
-      clearResults();
-      $btn.prop('disabled',true)
-          .html('<span class="spinner-border spinner-border-sm me-2"></span>Predicting…');
+      $btn.prop('disabled', true);
       const prog = showLoadingAnimation();
+
       const fd   = new FormData(this);
       // hidden input already contains model_key
       $.ajax({
@@ -1807,6 +1857,7 @@
         processData : false,
         contentType : false,
         success     : json => {
+          clearResults();
           currentResultsSource = 'predict';
           const transformed = json.results.map(r => ({
             'Subject ID':                   r.subject_id,
@@ -1826,11 +1877,10 @@
         error       : xhr => showError(xhr.responseJSON?.error || 'Unexpected error'),
         complete    : () => {
           hideLoadingAnimation(prog);
-          $btn.prop('disabled',false).text('Predict');
+          $btn.prop('disabled',false);
         }
       });
     });
-    $('#sample_file').on('change', clearResults);
   })();
 
   // Patient search form AJAX
@@ -1842,9 +1892,12 @@
       return;
     }
     $('#errorBox').addClass('d-none').empty();
-    clearResults();
     const prog = showLoadingAnimation();
     const formData = new FormData(this);
+
+    // include the selected model key
+    formData.append('model_key', modelKey);
+
     // append all existing filter inputs by name
     $('#search-histology-checkboxes input:checked').each(function() {
       formData.append('histology', $(this).val());
@@ -1894,16 +1947,18 @@
       processData: false,
       contentType: false,
       success: json => {
+        clearResults();
         currentResultsSource = 'search';
         const transformed = json.results.map(r => {
           const res = {
             'Subject ID': r.patient_id,
+            'Experiment' : r.experiment,
             'Predicted Calcification Status': r.class_name,
             'P(calcified)': (r.probability_calcified*100).toFixed(2)+'%',
             'P(non-calcified)': (r.probability_noncalc*100).toFixed(2)+'%'
           };
           Object.keys(r).forEach(key => {
-            if (!['patient_id','class_name','probability_calcified','probability_noncalc','missing_fraction'].includes(key)) {
+            if (!['patient_id','experiment','class_name','probability_calcified','probability_noncalc','missing_fraction'].includes(key)) {
               res[ formatColumnName(key) ] = r[key];
             }
           });
@@ -1911,6 +1966,12 @@
         });
         fullRecords = transformed;
         displayResults(transformed);
+        if (Array.isArray(json.warnings) && json.warnings.length) {
+          const txt = json.warnings.map(w =>
+            `${w.patient_id}: ${Math.round(w.missing_fraction*100)}% of required proteins missing; prediction may be unreliable`
+          ).join('<br>');
+          showError('Subjects below threshold:<br>' + txt);
+        }
       },
       error: xhr => showError(xhr.responseJSON?.error || 'Unexpected error'),
       complete: () => hideLoadingAnimation(prog)
@@ -1935,9 +1996,19 @@
     // build header
     thead.innerHTML = '';
     const headerRow  = document.createElement('tr'),
-          coreCols   = ['Subject ID','Predicted Calcification Status','P(calcified)','P(non-calcified)'],
-          allCols    = Object.keys(records[0]),
-          extraCols  = allCols.filter(c=>!coreCols.includes(c));
+          allCols    = Object.keys(records[0]);
+    
+    const coreCols = ['Subject ID'];
+    if (allCols.includes('Experiment')) { 
+      coreCols.push('Experiment');
+    }
+    coreCols.push(
+      'Predicted Calcification Status',
+      'P(calcified)',
+      'P(non-calcified)'
+    );
+      
+    const extraCols  = allCols.filter(c=>!coreCols.includes(c));
 
     coreCols.forEach(c => {
       if (allCols.includes(c)) {
@@ -1977,7 +2048,9 @@
       const tr = document.createElement('tr');
       cols.forEach(col => {
         const td = document.createElement('td');
-        td.textContent = rec[col] != null ? rec[col] : 'N/A';
+        td.textContent = rec[col] != null
+          ? formatValue(col, rec[col])
+          : 'N/A';
         tr.appendChild(td);
       });
       tbody.appendChild(tr);
@@ -2006,10 +2079,16 @@
   }
 
   function generatePagination(total, current, perPage) {
-    const pagination = document.getElementById('pagination');
+    const pagination = document.getElementById('pagination'),
+          footerNav  = document.querySelector('.results-footer');
     pagination.innerHTML = '';
     const totalPages = Math.ceil(total/perPage);
-    if (totalPages <= 1) { pagination.style.display='none'; return; }
+    if (totalPages <= 1) {
+      pagination.style.display='none';
+      footerNav && footerNav.classList.add('no-pagination');
+      return;
+    }
+    footerNav && footerNav.classList.remove('no-pagination');
     pagination.style.display='inline-flex';
     // prev
     const prevLi = document.createElement('li');
@@ -2066,7 +2145,12 @@
     `;
     empty.style.display = 'flex';
     const footerNav = document.querySelector('.results-footer');
-    if (footerNav) footerNav.style.display='none';
+    const pagination = document.getElementById('pagination');
+    if (pagination)      pagination.style.display = 'none';
+    if (footerNav) {
+      footerNav.style.display = 'block';         // keep it visible
+      footerNav.classList.add('no-pagination');   // add our “thick” style
+    }
   }
 
   function showError(msg) {

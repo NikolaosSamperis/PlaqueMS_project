@@ -496,7 +496,7 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
         if ultrasound and ultrasound[0] != 'Select Plaque Ultrasound':
             additional_columns.append("pt.Ultrasound AS Ultrasound")
         if calcified and calcified[0] != 'Filter by Calcification':
-            additional_columns.append("pt.`Calcified by description` AS Calcification")
+            additional_columns.append("pt.`Calcified by description` AS `Calcification (desc.)`")
         for c in clinical_conditions:
             alias = c.replace(" ", "_")
             additional_columns.append(f"pt.`{c}` AS `{alias}`")
@@ -523,7 +523,15 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
             else:
                 additional_columns.append(f"toFloat(pt.`{marker}`) AS `{marker}`")
 
-    return_cols = ",\n    ".join(additional_columns)
+    seen = set()
+    unique_cols = []
+    for col in additional_columns:
+        alias = col.split(" AS ")[-1].strip("`")
+        if alias not in seen:
+            seen.add(alias)
+            unique_cols.append(col)
+    return_cols = ",\n      ".join(unique_cols)
+
     meta_q = f"""
     MATCH (pt:Patient {{id:$pid}})
     RETURN
@@ -687,6 +695,7 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
         for pid in patient_ids:
             # Metadata
             meta_rec = session.run(meta_q, pid=pid).single().data()
+            meta_rec["experiment"] = exp_name 
 
             # Merge core + periphery for missing names
             abund = dict(core_map.get(pid, {}))
