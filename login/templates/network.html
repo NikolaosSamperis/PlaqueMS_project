@@ -1,3 +1,4 @@
+{% load navigation %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -430,7 +431,7 @@
   <!-- New PlaQuery-style Toolbar -->
   <div class="main-toolbar">
     <button class="openbtn" onclick="openNav()">☰</button>
-    <a href="#" class="app-logo">
+    <a class="app-logo">
       <span class="app-title">PlaqueMS</span>
     </a>
     <!-- Left side navigation tabs -->
@@ -444,7 +445,7 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'plot' %}">Differential Expression Analysis</a>
       </li>
-      <li class="nav-item active">
+      <li class="nav-item {% active 'cy' %}">
         <a class="nav-link" href="{% url 'cy' %}">Protein Networks</a>
       </li>
       {% if user.is_authenticated %}
@@ -677,6 +678,25 @@
     </div>
   </div>
   <script>
+    // Move .active to the tab just clicked; skip tabs with .keep-active (PlaQuery)
+    $(function () {
+      $('.main-toolbar .nav-tabs').on('pointerdown', '.nav-link', function (e) {
+        const $li = $(this).parent('.nav-item'),
+              $nav = $li.closest('.nav-tabs'),
+              href = this.getAttribute('href');
+
+        if (href === '#') {
+          e.preventDefault();
+        } else {
+          e.preventDefault();
+          setTimeout(() => { window.location.href = href; }, 150);
+        }
+
+        $nav.find('.nav-item.active').not('.keep-active').removeClass('active');
+        $li.addClass('active');
+      });
+    });
+
     function adjustLayout() {
       // Get the header element
       const header = document.querySelector('.main-toolbar');

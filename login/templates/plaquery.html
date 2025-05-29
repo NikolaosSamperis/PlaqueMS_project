@@ -1,3 +1,4 @@
+{% load navigation %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -837,7 +838,7 @@
 <body>
   <!-- Top Toolbar from plot.html -->
   <div class="main-toolbar" style="border-bottom: none;">
-    <a href="#" class="app-logo">
+    <a class="app-logo">
       <span class="app-title">PlaqueMS</span>
     </a>
     <ul class="nav nav-tabs">
@@ -854,7 +855,7 @@
         <a class="nav-link" href="{% url 'cy' %}">Protein Networks</a>
       </li>
       {% if user.is_authenticated %}
-        <li class="nav-item active">
+        <li class="nav-item active keep-active">
           <a class="nav-link" href="{% url 'protein-abundance' %}">PlaQuery</a>
         </li>
       {% endif %}
@@ -880,8 +881,8 @@
 
   <!-- Bottom Toolbar (original from plaquery.html) - with login/logout removed -->
   <div class="main-toolbar">
-    <ul class="nav nav-tabs" style="display: flex; justify-content: center; width: 100%;">
-      <li class="nav-item active">
+    <ul class="nav nav-tabs bottom-placeholder-tabs" style="display: flex; justify-content: center; width: 100%;">
+      <li class="nav-item {% active 'protein-abundance' %}">
         <a class="nav-link" href="{% url 'protein-abundance' %}">Protein Abundance</a>
       </li>
       <li class="nav-item">
@@ -1414,6 +1415,34 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script>
+    // Move .active to the tab just clicked; remove any other active tab. (top toolbar)
+    $(function () {
+      $('.main-toolbar .nav-tabs:not(.bottom-placeholder-tabs)')
+        .on('pointerdown', '.nav-link', function (e) {
+          const $li  = $(this).parent('.nav-item'),
+                $nav = $li.closest('.nav-tabs');
+          if (this.getAttribute('href') === '#') e.preventDefault();
+          $nav.find('.nav-item.active').removeClass('active');
+          $li.addClass('active');
+          if (!$li.hasClass('keep-active')) {
+            $('.bottom-placeholder-tabs .nav-item.active').removeClass('active');
+          }
+        });
+    });
+    
+    // Move .active to the tab just clicked; skip tabs with .keep-active (PlaQuery) (bottom toolbar)
+    $(function () {
+      $('.bottom-placeholder-tabs').on('click', '.nav-link', function (e) {
+        if ($(this).attr('href') === '#') e.preventDefault();
+
+        const $li  = $(this).parent('.nav-item'),
+              $nav = $li.closest('.nav-tabs');
+
+        $nav.find('.nav-item.active').not('.keep-active').removeClass('active');
+        $li.addClass('active');
+      });
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
       const table          = document.getElementById('results-table');
       const thead     = document.querySelector('#results-table thead');

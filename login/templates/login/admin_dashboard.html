@@ -1,3 +1,4 @@
+{% load navigation %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -183,7 +184,7 @@
 <body>
     <!-- New PlaQuery-style Toolbar -->
     <div class="main-toolbar">
-        <a href="{% url 'home' %}" class="app-logo">
+        <a class="app-logo">
           <span class="app-title">PlaqueMS</span>
         </a>
         <ul class="nav nav-tabs">
@@ -203,7 +204,7 @@
                 <a class="nav-link" href="{% url 'protein-abundance' %}">PlaQuery</a>
             </li>
             {% if user.is_authenticated and user.is_staff %}
-            <li class="nav-item active">
+            <li class="nav-item {% active 'admin_dashboard' %}">
               <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
             </li>
             {% endif %}
@@ -340,7 +341,20 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+    // Move .active to the tab just clicked; skip tabs with .keep-active (PlaQuery)
+    $(function () {
+      $('.main-toolbar .nav-tabs')
+        .on('pointerdown', '.nav-link', function (e) {
+          const $li  = $(this).parent('.nav-item'),
+                $nav = $li.closest('.nav-tabs');
+          if (this.getAttribute('href') === '#') e.preventDefault();
+          $nav.find('.nav-item.active').not('.keep-active').removeClass('active');
+          $li.addClass('active');
+        });
+    });
+    
     document.addEventListener('DOMContentLoaded', function() {
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function(event) {
