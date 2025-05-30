@@ -170,9 +170,9 @@ def get_abundance_data(request):
         round(avg(r.abundance)*100)/100 AS AvgAbundance,
         round(min(r.abundance)*100)/100 AS MinAbundance,
         round(max(r.abundance)*100)/100 AS MaxAbundance,
-        round(stdev(r.abundance)*100)/100 AS StdAbundance
+        round(stdev(r.abundance)*100)/100 AS StdDeviation
     }}
-    WITH Protein, SampleArea, Experiment, AvgAbundance, MinAbundance, MaxAbundance, StdAbundance
+    WITH Protein, SampleArea, Experiment, AvgAbundance, MinAbundance, MaxAbundance, StdDeviation
     MATCH (s:Sample)-[r:ABUNDANCE]->(p:Protein)
     WHERE Protein IN p.name
         AND s.area       = SampleArea
@@ -302,7 +302,7 @@ def get_abundance_data(request):
         "AvgAbundance",
         "MinAbundance",
         "MaxAbundance",
-        "StdAbundance"
+        "StdDeviation"
     ]
 
     # Build additional columns.
@@ -316,7 +316,7 @@ def get_abundance_data(request):
             "pt.Symptoms AS Symptoms",
             "pt.Histology AS Histology",
             "pt.Ultrasound AS Ultrasound",
-            "pt.`Calcified by description` AS Calcification"
+            "pt.`Calcified by description` AS `Calcification (description)`",
         ])
         # Include all clinical conditions by default (update these names if needed)
         additional_columns.extend([
@@ -329,7 +329,7 @@ def get_abundance_data(request):
             "pt.`Chronic obstructive pulmonary disease` AS `COPD`",
             "pt.`Coronary artery disease` AS `Coronary artery disease`",
             "pt.`Diabetes mellitus type 2` AS `Diabetes mellitus type 2`",
-            "pt.`High Stenosis(≥90%)` AS `High Stenosis(≥90%)`",
+            "pt.`High Stenosis(≥90%)` AS `High stenosis(≥90%)`",
             "pt.`Hyperlipidemia` AS `Hyperlipidemia`",
             "pt.`Hypertension` AS `Hypertension`",
             "pt.`Peripheral artery disease` AS `Peripheral artery disease`",
@@ -385,7 +385,7 @@ def get_abundance_data(request):
         if ultrasound and ultrasound[0] != 'Select Plaque Ultrasound':
             additional_columns.append("pt.Ultrasound AS Ultrasound")
         if calcified and calcified[0] != 'Filter by Calcification':
-            additional_columns.append("pt.`Calcified by description` AS Calcification")
+            additional_columns.append("pt.`Calcified by description` AS `Calcification (description)`")
         for condition in clinical_conditions:
             alias = condition.replace(" ", "_")
             additional_columns.append(f"pt.`{condition}` AS `{alias}`")

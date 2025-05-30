@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
   <!-- Google Fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap">
   <style>
     html {
       font-family: sans-serif;
@@ -798,14 +799,13 @@
       width: 0%;
       background: repeating-linear-gradient(
         55deg,
-        #377ba8,
+        #377ba8 0,
         #377ba8 10px,
         #2f6394 10px,
         #2f6394 20px
       );
-      background-size: 20px 100%;
-      animation: stripeAnimation 1s linear infinite;
-      transition: width 0.4s ease;
+      background-size: 20px 20px;
+      animation: stripeAnimation 0.5s linear infinite;
       transition: width 0.4s ease;
     }
     .blur {
@@ -844,53 +844,67 @@
       transform: scale(0.95);
     }
 
-    #modal-tag-box .bootstrap-tagsinput{
-      display:flex;
-      flex-wrap:wrap;
-      align-content  : flex-start;
-      align-items:flex-start;
-      gap:4px;
-      min-height:150px;
-      resize:vertical;
-      max-height:300px;
-      overflow: auto;
-      white-space:normal;
+    .tooltip.calc-tooltip {
+      opacity: 1 !important;
+      pointer-events: none !important;
     }
-    #modal-count-box{
-      width: 55px;
-      height: 37px;
-      font-size: 0.8rem;
-      text-align:center;
-      padding: 0;
+    
+    .tooltip.calc-tooltip .tooltip-inner {
+      background-color: #f6dc9a !important;
+      color:            #272727 !important;
+      z-index:          10002 !important;
+      font-size: 14px !important;
+      border-radius: 6px !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 300 !important;
+      display:inline-block;
+      max-width:265px;
+      width:fit-content;
+      padding:8px 12px !important;
+      pointer-events: none !important;
     }
-    .modal-content{
-      padding: 0 2rem;
-      border-radius: 0.5rem;
+
+    .tooltip.calc-hyphen .tooltip-inner{
+      hyphens:auto !important;
+      text-align: justify !important;
+      text-justify: inter-word !important;
     }
-    .modal-header{
-      align-items: center;
+
+    @supports not (width:fit-content){
+      .tooltip.calc-tooltip .tooltip-inner{
+        width:auto;
+        max-width:265px;
+      }
     }
-    .modal-header .btn-close{
-      position: absolute;
-      right: 3rem;
-      transform: translateY(6px) !important;
+
+    .tooltip.calc-tooltip .tooltip-arrow::before {
+      content: "" !important;
+      position: absolute !important;
+      border-style: solid !important;
     }
-    #modal-tag-box .bootstrap-tagsinput .tag,
-    #modal-tag-box .bootstrap-tagsinput .tt-input,
-    #modal-tag-box .bootstrap-tagsinput .tt-hint{
-      height      : 26px;
-      line-height : 26px;
-      padding     : 0 4px;
-      display     : inline-flex;
-      align-items : center;
+
+    .tooltip.calc-tooltip.bs-tooltip-top .tooltip-arrow::before {
+      border-width: 0.6rem 0.6rem 0    0.6rem !important;
+      border-color: #f6dc9a transparent transparent transparent !important;
+      margin-top: 2.5px !important;
     }
-    #proteinListModal .btn-primary{
-      background-color:#377ba8;
-      border:none;
-      color:#fff;
+
+    .tooltip.calc-tooltip.bs-tooltip-right .tooltip-arrow::before {
+      border-width: 0.6rem 0.6rem 0.6rem 0    !important;
+      border-color: transparent #f6dc9a transparent transparent !important;
+      margin-right: 2.5px !important;
     }
-    #proteinListModal .btn-primary:hover{
-      background-color:#4a90d9;
+
+    .tooltip.calc-tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+      border-width: 0    0.6rem 0.6rem 0.6rem !important;
+      border-color: transparent transparent #f6dc9a transparent !important;
+      margin-bottom: 2.5px !important;
+    }
+
+    .tooltip.calc-tooltip.bs-tooltip-left .tooltip-arrow::before {
+      border-width: 0.6rem 0    0.6rem 0.6rem !important;
+      border-color: transparent transparent transparent #f6dc9a !important;
+      margin-left: 2.5px !important;
     }
 
     .model-option {
@@ -1050,7 +1064,7 @@
       border: none;
       padding: 10px 30px;
       font-weight: 500;
-      cursor: pointer;
+      cursor: pointer !important;
       border-radius: 6px;
       transition: background-color 0.3s ease;
       margin-top: 20px;
@@ -1289,8 +1303,8 @@
             <div class="filter-element">
               <div class="multiselect">
                 <div class="selectBox animated-button" onclick="toggleCheckboxes('search-histology-checkboxes')">
-                  <select class="filter-select" aria-label="Select Plaque Histology">
-                    <option selected>Select Plaque Histology</option>
+                  <select class="filter-select" aria-label="Filter Plaque Histology">
+                    <option selected>Filter Plaque Histology</option>
                   </select>
                   <div class="overSelect"></div>
                 </div>
@@ -1309,8 +1323,8 @@
             <div class="filter-element">
               <div class="multiselect">
                 <div class="selectBox animated-button" onclick="toggleCheckboxes('search-ultrasound-checkboxes')">
-                  <select class="filter-select" aria-label="Select Plaque Ultrasound">
-                    <option selected>Select Plaque Ultrasound</option>
+                  <select class="filter-select" aria-label="Filter Plaque Ultrasound">
+                    <option selected>Filter Plaque Ultrasound</option>
                   </select>
                   <div class="overSelect"></div>
                 </div>
@@ -1423,7 +1437,7 @@
                     <input type="checkbox" id="search_clin_9" value="Diabetes mellitus type 2"> Diabetes mellitus type 2
                   </label>
                   <label for="search_clin_10">
-                    <input type="checkbox" id="search_clin_10" value="High Stenosis(≥90%)"> High Stenosis(≥90%)
+                    <input type="checkbox" id="search_clin_10" value="High Stenosis(≥90%)"> High stenosis(≥90%)
                   </label>
                   <label for="search_clin_11">
                     <input type="checkbox" id="search_clin_11" value="Hyperlipidemia"> Hyperlipidemia
@@ -1476,7 +1490,7 @@
               <div class="multiselect">
                 <div class="selectBox animated-button" onclick="toggleCheckboxes('search-calcification-checkboxes')">
                   <select class="filter-select" aria-label="Calcification by description">
-                    <option selected>Calcification by Desc.</option>
+                    <option selected>Calcification (description)</option>
                   </select>
                   <div class="overSelect"></div>
                 </div>
@@ -1661,7 +1675,7 @@
             <thead>
               <tr>
                 <th>Subject ID</th>
-                <th>Predicted Calcification Status</th>
+                <th>Predicted calcification status</th>
                 <th>P(calcified)</th>
                 <th>P(non-calcified)</th>
               </tr>
@@ -1700,9 +1714,17 @@
   $(function () {
     $('.main-toolbar .nav-tabs:not(.bottom-placeholder-tabs)')
       .on('pointerdown', '.nav-link', function (e) {
-        const $li  = $(this).parent('.nav-item'),
+        const href = this.getAttribute('href'),
+              $li  = $(this).parent('.nav-item'),
               $nav = $li.closest('.nav-tabs');
-        if (this.getAttribute('href') === '#') e.preventDefault();
+
+        if (href === '#') {
+          e.preventDefault();
+        } else {
+          e.preventDefault();
+          setTimeout(() => { window.location.href = href; }, 150);
+        }
+
         $nav.find('.nav-item.active').removeClass('active');
         $li.addClass('active');
         if (!$li.hasClass('keep-active')) {
@@ -1714,13 +1736,42 @@
   // Move .active to the tab just clicked; skip tabs with .keep-active (bottom toolbar)
   $(function () {
     $('.bottom-placeholder-tabs').on('click', '.nav-link', function (e) {
-      if ($(this).attr('href') === '#') e.preventDefault();
-
-      const $li  = $(this).parent('.nav-item'),
+      const href = $(this).attr('href'),
+            $li  = $(this).parent('.nav-item'),
             $nav = $li.closest('.nav-tabs');
+
+      if (href === '#') {
+        e.preventDefault();
+      } else {
+        e.preventDefault();
+        setTimeout(() => { window.location.href = href; }, 150);
+      }
 
       $nav.find('.nav-item.active').not('.keep-active').removeClass('active');
       $li.addClass('active');
+    });
+  });
+
+  //Tooltip
+  document.addEventListener('DOMContentLoaded', function () {
+    new bootstrap.Tooltip(document.body, {
+      selector: '[data-bs-toggle="tooltip"]',
+      trigger: 'hover',
+      container: 'body',
+      offset: [0, -10],
+      placement: function(tip, trigger) {
+        if (!tip.parentNode) {
+          tip.style.position = 'absolute';
+          tip.style.left     = '-9999px';
+          tip.style.top      = '-9999px';
+          document.body.appendChild(tip);
+        }
+        const bubbleHeight = tip.offsetHeight;
+        const spaceAbove   = trigger.getBoundingClientRect().top;
+      // prefer TOP, but flip to BOTTOM when the clearance above is < 1.5 × bubble height.                                   */
+        return (spaceAbove >= 1.2 * bubbleHeight) ? 'top' : 'bottom';
+      },
+      fallbackPlacements: ['top', 'bottom']
     });
   });
 
@@ -1919,7 +1970,7 @@
           currentResultsSource = 'predict';
           const transformed = json.results.map(r => ({
             'Subject ID':                   r.subject_id,
-            'Predicted Calcification Status': r.class_name,
+            'Predicted calcification status': r.class_name,
             'P(calcified)':                 (r.probability_calcified * 100).toFixed(2) + '%',
             'P(non-calcified)':             (r.probability_noncalc * 100).toFixed(2) + '%'
           }));
@@ -2011,7 +2062,7 @@
           const res = {
             'Subject ID': r.patient_id,
             'Experiment' : r.experiment,
-            'Predicted Calcification Status': r.class_name,
+            'Predicted calcification status': r.class_name,
             'P(calcified)': (r.probability_calcified*100).toFixed(2)+'%',
             'P(non-calcified)': (r.probability_noncalc*100).toFixed(2)+'%'
           };
@@ -2052,7 +2103,7 @@
       thead.style.display = 'none';
       emptyState.innerHTML = `
         <i class="fas fa-search-minus fa-4x"></i>
-        <p>No results for the selected search / filter combination.</p>
+        <p>No results for the current search / filter combination.</p>
       `;
       emptyState.style.display = 'flex';
       if (footerNav) {
@@ -2073,7 +2124,7 @@
       coreCols.push('Experiment');
     }
     coreCols.push(
-      'Predicted Calcification Status',
+      'Predicted calcification status',
       'P(calcified)',
       'P(non-calcified)'
     );
@@ -2090,6 +2141,16 @@
     extraCols.forEach(c => {
       const th = document.createElement('th');
       th.textContent = c;
+      if (c === 'Calcification (desc.)') {
+        th.setAttribute('data-bs-toggle','tooltip');
+        th.setAttribute('title','Calcification status was determined through duplex ultrasound and CT angiography imaging, verified histologically by an experienced surgeon and pathologist. Validation included quantitative CT-based scoring (modified Agatston score), achieving high correlation (p<0.001).');
+        th.setAttribute('data-bs-custom-class', 'calc-tooltip calc-hyphen');
+      }
+      if (c === 'COPD') {
+        th.setAttribute('data-bs-toggle','tooltip');
+        th.setAttribute('title','Chronic Obstructive Pulmonary Disease');
+        th.setAttribute('data-bs-custom-class', 'calc-tooltip');
+      }
       headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
@@ -2143,9 +2204,16 @@
   }
 
   function formatColumnName(key) {
-    return key
-      .replace(/_/g,' ')
-      .replace(/\b\w/g, l => l.toUpperCase());
+    if (key === 'Predicted Calcification Status') {
+      return 'Predicted calcification status';
+    }
+    if (
+      key === 'High stenosis(≥90%)' ||
+      key === 'High_Stenosis(≥90%)'
+    ) {
+      return 'High stenosis(≥90%)';
+    }
+    return key.replace(/_/g,' ');
   }
 
   function generatePagination(total, current, perPage) {

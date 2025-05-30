@@ -447,7 +447,7 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
             "pt.`Chronic obstructive pulmonary disease` AS `COPD`",
             "pt.`Coronary artery disease` AS `Coronary artery disease`",
             "pt.`Diabetes mellitus type 2` AS `Diabetes mellitus type 2`",
-            "pt.`High Stenosis(≥90%)` AS `High Stenosis(≥90%)`",
+            "pt.`High Stenosis(≥90%)` AS `High stenosis(≥90%)`",
             "pt.`Hyperlipidemia` AS `Hyperlipidemia`",
             "pt.`Hypertension` AS `Hypertension`",
             "pt.`Peripheral artery disease` AS `Peripheral artery disease`",
@@ -473,7 +473,7 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
             "pt.BMI AS BMI",
             "CASE WHEN pt.`Never smoker` = 'yes' THEN 0 ELSE pt.`Pack-years` END AS `Pack-years`",
             # cardiovascular biomarkers
-            "toFloat(pt.`Cholesterol(total)`) AS `Cholesterol(total)`",
+            "toFloat(pt.`Cholesterol(total)`) AS `Cholesterol (total)`",
             "toFloat(pt.`HDL`) AS `HDL`",
             "toFloat(pt.`High-sensitivity CRP`) AS `High-sensitivity CRP`",
             "toFloat(pt.`Ultrasensitive CRP`) AS `Ultrasensitive CRP`",
