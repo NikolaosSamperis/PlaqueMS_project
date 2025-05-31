@@ -298,6 +298,7 @@
     .bootstrap-tagsinput .tag [data-role="remove"]:hover {
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
     }
+
     .search-options {
       display: flex;
       background-color: transparent;
@@ -911,6 +912,7 @@
     #proteinListModal .btn-primary:hover{
       background-color:#4a90d9;
     }
+
   </style>
 </head>
 <body>
@@ -1458,7 +1460,12 @@
         <div class="modal-body">
           <!-- Upload area -->
           <div class="mb-3">
-            <label class="form-label fw-semibold">Import TSV file</label>
+            <label class="form-label fw-semibold">
+              Import TSV file.
+              <span class="text-muted" style="font-size: 0.875rem;">
+                 (Max detected proteins allowed: <code>50</code>)
+              </span>
+            </label>
             <div class="d-flex gap-2">
               <input class="form-control" type="file" id="tsvFile"
                   accept=".tsv,.txt,text/tab-separated-values">
@@ -1663,6 +1670,10 @@
               name: 'proteins',
               limit: 1,
               source: (q, sync) => {
+                // only start searching after 3 characters
+                if (q.length < 3) {
+                  return sync([]); // no hints before 3 chars
+              }
                 proteinTypeahead.search(q, results => {
                   const lc = q.toLowerCase();
                   results.sort((a, b) =>
@@ -1678,6 +1689,16 @@
             addOnBlur: false,
             confirmKeys: [9, 13],
             delimiterRegex: /[\r\n\t]+/
+          });
+
+          // cancel any new “tag add” once there are already 50 tags
+          $tags.on('beforeItemAdd', function(event) {
+            const currentCount = $tags.tagsinput('items').length;
+            if (currentCount >= 50) {
+              event.cancel = true;
+              // show a warning:
+              alert('You can only add up to 50 proteins at a time.');
+            }
           });
 
           // search bar
@@ -1858,6 +1879,29 @@
       delimiterRegex: /[\t\r\n]+/
     });
 
+    // Enforce “no literal 5” and “max 50 detected” in one handler
+    $('#modal-protein-tags').on('beforeItemAdd', function(event) {
+      const candidate = ('' + event.item).trim().toLowerCase();
+      if (candidate === '5') {
+        event.cancel = true;
+        return;
+      }
+
+      // 2) count how many “valid” (dictionary‐matched, excluding “5”) tags are already present
+      const allItems = $('#modal-protein-tags').tagsinput('items');
+      const uniqueValid = [...new Set(
+        allItems.map(t => t.trim().toLowerCase())
+      )].filter(name =>
+        name !== '5' && window.validProteins.has(name)
+      );
+      // 3) if there are already 50 detected proteins, block new additions
+      if (uniqueValid.length >= 50) {
+        event.cancel = true;
+        alert('You can only add up to 50 detected proteins at a time.');
+      }
+    });
+
+
     /* placeholder logic */
     const $modalInput = $('#modal-protein-tags')
                         .tagsinput('input')
@@ -1883,7 +1927,12 @@
       // 1) normalise to lower-case, 2) de-duplicate, 3) keep only dictionary hits
       const uniqueValid = [...new Set(
         items.map(t => t.trim().toLowerCase())
-      )].filter(name => window.validProteins.has(name));
+      )].filter(name =>
+        // ignore a literal "5" even if it's in the Set
+        name !== '5'
+        &&
+        window.validProteins.has(name)
+      );
 
       $('#modal-count-box').val(uniqueValid.length);
     }
@@ -1893,10 +1942,31 @@
     updateModalCount();
 
     function addProteinsFromText (text) {
-      text.split(/[\t\r\n]+/)
-          .map(t => t.trim())
-          .filter(Boolean)
-          .forEach(t => $('#modal-protein-tags').tagsinput('add', t));
+      // 1) split, trim, filter out empty lines
+      const allProteins = text
+        .split(/[\t\r\n]+/)
+        .map(t => t.trim())
+        .filter(Boolean)
+      
+      // 2) filter out “5” explicitly and anything not in the dictionary
+      const detected = allProteins.filter(name => {
+        const lc = name.toLowerCase();
+        return lc !== '5' && window.validProteins.has(lc);
+      });
+
+
+      // 3) if >50 detected, only add the first 50 and warn once
+      if (detected.length > 50) {
+        detected.slice(0, 50).forEach(t => {
+          $('#modal-protein-tags').tagsinput('add', t);
+        });
+        alert('Loaded only the first 50 detected proteins from your file.');
+      } else {
+        // otherwise, add them all
+        detected.forEach(t => {
+          $('#modal-protein-tags').tagsinput('add', t);
+        });
+      }
     }
 
     document.getElementById('tsvFile').addEventListener('change', e => {
