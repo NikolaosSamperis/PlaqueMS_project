@@ -361,12 +361,12 @@ def get_abundance_data(request):
         additional_columns.append("CASE WHEN pt.`Never smoker` = 'yes' THEN 0 ELSE pt.`Pack-years` END AS `Pack-years`")
         # Default cardiovascular biomarkers.
         additional_columns.extend([
-            "toFloat(pt.`Cholesterol(total)`) AS `Total cholesterol (mg/dL)`",
-            "toFloat(pt.`HDL`) AS `HDL (mg/dL)`",
-            "toFloat(pt.`LDL`) AS `LDL (mg/dL)`",
-            "toFloat(pt.`Triglycerides`) AS `Triglycerides (mg/dL)`",
-            "toFloat(pt.`High-sensitivity CRP`) AS `High-sensitivity CRP (mg/dL)`",
-            "toFloat(pt.`Ultrasensitive CRP`) AS `Ultrasensitive CRP (mg/dL)`",
+            "toFloat(pt.`Cholesterol(total)`) AS `Total cholesterol(mg/dL)`",
+            "toFloat(pt.`HDL`) AS `HDL(mg/dL)`",
+            "toFloat(pt.`LDL`) AS `LDL(mg/dL)`",
+            "toFloat(pt.`Triglycerides`) AS `Triglycerides(mg/dL)`",
+            "toFloat(pt.`High-sensitivity CRP`) AS `High-sensitivity CRP(mg/dL)`",
+            "toFloat(pt.`Ultrasensitive CRP`) AS `Ultrasensitive CRP(mg/dL)`",
             "toFloat(pt.`Pre-surgery BP(diastolic)`) AS `Pre-surgery BP(diastolic)`",
             "toFloat(pt.`Pre-surgery BP(systolic)`) AS `Pre-surgery BP(systolic)`",
             "pt.`Contralateral stenosis(≥60%)` AS `Contralateral stenosis(≥60%)`",

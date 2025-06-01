@@ -101,111 +101,124 @@ def _load(model_key: str = "cellular"):
 
 # ── read upload (matrix OR two-column) ───────────────────────────────────
 def _read_file(f) -> tuple[pd.DataFrame, str]:
-    name       = f.name.lower()
-    is_excel   = name.endswith((".xlsx", ".xls"))
+    try:
+        name       = f.name.lower()
+        is_excel   = name.endswith((".xlsx", ".xls"))
 
-    if is_excel:
-        df = pd.read_excel(f, header=0, index_col=0)
-        for col in df.columns:
-            if df[col].dtype == object:
-                df[col] = clean_numeric_series(df[col])
-
-        # ensure all columns numeric
-        if not all(np.issubdtype(dt, np.number) for dt in df.dtypes):
-            bad = [c for c, dt in df.dtypes.items() if not np.issubdtype(dt, np.number)]
-            raise ValueError(f"Columns {bad!r} could not be converted to numbers.")
-    else:
-        raw = f.read().decode("utf-8", errors="replace")
-        raw = "\n".join(line.strip("\t,") for line in raw.splitlines())
-        first_line = raw.lstrip().splitlines()[0]
-
-        # ── pick explicit sep by extension ───────────────────────────
-        if name.endswith((".tsv", ".txt")):
-            sep = "\t"
-        elif name.endswith(".csv"):
-            sep = ","
-        else:
-            # fallback: count tabs vs commas
-            sep = "\t" if first_line.count("\t") > first_line.count(",") else ","
-
-        # reject any line that has two separators in a row
-        for i, line in enumerate(raw.splitlines(), start=1):
-            if sep * 2 in line:
-                raise ValueError(
-                    f"Invalid input at line {i}: "
-                    f"found two consecutive separators {sep!r}{sep!r}"
-                )
-
-        df = pd.read_csv(
-            io.StringIO(raw),
-            sep=sep,
-            header=0,
-            index_col=0,
-            engine="python",
-        )
-
-    # Replace any blank or whitespace-only cell with NaN
-    df = df.replace(r'^\s*$', np.nan, regex=True)
-
-    # helper
-    def _looks_numeric(x):
-        try:
-            float(str(x))
-            return True
-        except ValueError:
-            return False
-
-    # 2) header-less **two-column** fallback ------------------------------
-    if (
-        df.shape[1] == 1
-        and (
-            _looks_numeric(df.columns[0])
-            or str(df.columns[0]).strip() == ""
-            or str(df.columns[0]).startswith("Unnamed")
-        )
-    ):
-        # reload without header
         if is_excel:
-            f.seek(0)
-            df = pd.read_excel(f, header=None)          # index_col later
+            df = pd.read_excel(f, header=0, index_col=0)
+            for col in df.columns:
+                if df[col].dtype == object:
+                    df[col] = clean_numeric_series(df[col])
+
+            # ensure all columns numeric
+            if not all(np.issubdtype(dt, np.number) for dt in df.dtypes):
+                bad = [c for c, dt in df.dtypes.items() if not np.issubdtype(dt, np.number)]
+                raise ValueError(f"Columns {bad!r} could not be converted to numbers.")
         else:
-            df = pd.read_csv(io.StringIO(raw), header=None,
-                             sep=None, engine="python")
-        df.columns = ["Protein", "Abundance"]
-        df["Protein"] = df["Protein"].apply(_clean)
-        return df, "long"
+            raw = f.read().decode("utf-8", errors="replace")
+            raw = "\n".join(line.strip("\t,") for line in raw.splitlines())
+            first_line = raw.lstrip().splitlines()[0]
 
-    # 3) header-less **matrix** fallback (all column labels ints) ---------
-    if all(isinstance(c, (int, np.integer)) for c in df.columns):
-        if is_excel:
-            f.seek(0)
-            df = pd.read_excel(f, header=None, index_col=0)
-        else:
-            df = pd.read_csv(io.StringIO(raw), header=None, index_col=0,
-                             sep=sep, engine="python")
-        # give numeric IDs 1,2,3,…
-        df.columns = [str(i + 1) for i in range(df.shape[1])]
+            # ── pick explicit sep by extension ───────────────────────────
+            if name.endswith((".tsv", ".txt")):
+                sep = "\t"
+            elif name.endswith(".csv"):
+                sep = ","
+            else:
+                # fallback: count tabs vs commas
+                sep = "\t" if first_line.count("\t") > first_line.count(",") else ","
 
-    # 4) if header row existed but is blank ('' or Unnamed) ---------------
-    if df.columns.str.match(r"^\s*$|^Unnamed").all():
-        df.columns = [str(i + 1) for i in range(df.shape[1])]
+            # reject any line that has two separators in a row
+            for i, line in enumerate(raw.splitlines(), start=1):
+                if sep * 2 in line:
+                    raise ValueError(
+                        f"Invalid input at line {i}: "
+                        f"found two consecutive separators {sep!r}{sep!r}"
+                    )
 
-    # 5) normalise protein names & decide layout --------------------------
-    df.index = df.index.map(_clean)
-    # discard columns that are completely empty
-    df = df.dropna(axis=1, how='all')
-    # rename anonymous columns that still contain data
-    rename_map = {}
-    for idx, col in enumerate(df.columns, start=1):
-        col_str = str(col).strip()
-        if col_str == "" or col_str.startswith("Unnamed"):
-            rename_map[col] = f"Subject_{idx}"
-    if rename_map:
-        df = df.rename(columns=rename_map)
+            df = pd.read_csv(
+                io.StringIO(raw),
+                sep=sep,
+                header=0,
+                index_col=0,
+                engine="python",
+            )
 
-    # decide layout and return
-    layout   = "wide" if df.index.nunique() > 1 else "long"
-    return df, layout
+        # Replace any blank or whitespace-only cell with NaN
+        df = df.replace(r'^\s*$', np.nan, regex=True)
+
+        # helper
+        def _looks_numeric(x):
+            try:
+                float(str(x))
+                return True
+            except ValueError:
+                return False
+
+        # 2) header-less **two-column** fallback ------------------------------
+        if (
+            df.shape[1] == 1
+            and (
+                _looks_numeric(df.columns[0])
+                or str(df.columns[0]).strip() == ""
+                or str(df.columns[0]).startswith("Unnamed")
+            )
+        ):
+            # reload without header
+            if is_excel:
+                f.seek(0)
+                df = pd.read_excel(f, header=None)          # index_col later
+            else:
+                df = pd.read_csv(io.StringIO(raw), header=None,
+                                sep=None, engine="python")
+            df.columns = ["Protein", "Abundance"]
+            df["Protein"] = df["Protein"].apply(_clean)
+            return df, "long"
+
+        # 3) header-less **matrix** fallback (all column labels ints) ---------
+        if all(isinstance(c, (int, np.integer)) for c in df.columns):
+            if is_excel:
+                f.seek(0)
+                df = pd.read_excel(f, header=None, index_col=0)
+            else:
+                df = pd.read_csv(io.StringIO(raw), header=None, index_col=0,
+                                sep=sep, engine="python")
+            # give numeric IDs 1,2,3,…
+            df.columns = [str(i + 1) for i in range(df.shape[1])]
+
+        # 4) if header row existed but is blank ('' or Unnamed) ---------------
+        if df.columns.str.match(r"^\s*$|^Unnamed").all():
+            df.columns = [str(i + 1) for i in range(df.shape[1])]
+
+        # 5) normalise protein names & decide layout --------------------------
+        df.index = df.index.map(_clean)
+        # discard columns that are completely empty
+        df = df.dropna(axis=1, how='all')
+        # rename anonymous columns that still contain data
+        rename_map = {}
+        for idx, col in enumerate(df.columns, start=1):
+            col_str = str(col).strip()
+            if col_str == "" or col_str.startswith("Unnamed"):
+                rename_map[col] = f"Subject_{idx}"
+        if rename_map:
+            df = df.rename(columns=rename_map)
+
+        # decide layout and return
+        layout   = "wide" if df.index.nunique() > 1 else "long"
+        return df, layout
+        
+    except Exception as e:
+        # If this is an explicit ValueError raised above, re-raise it untouched
+        if isinstance(e, ValueError):
+            raise
+
+        # Otherwise, raise a unified “unsupported format” message
+        raise ValueError(
+            "Unsupported file format or structure. Please upload a CSV/TSV/XLS(X) with either:\n"
+            "  • A two-column table (Protein, Abundance) OR\n"
+            "  • A Proteins×Subjects matrix (protein names in column 1, numeric abundances in the body)."
+        )
 
 # ── build feature matrix ─────────────────────────────────────────────────
 def _vectors(df: pd.DataFrame, feats: list[str], layout: str):
@@ -224,7 +237,7 @@ def _vectors(df: pd.DataFrame, feats: list[str], layout: str):
 
         missing_frac = len(missing) / len(feats)
         if missing_frac > 0.50:
-            raise ValueError("More than 50% of required proteins are missing")
+            raise ValueError("More than 50% of required proteins are missing. Prediction cannot be performed.")
         elif missing_frac > 0.25:
             warnings.warn("")
 
@@ -246,7 +259,7 @@ def _vectors(df: pd.DataFrame, feats: list[str], layout: str):
 
         missing_frac = len(missing) / len(feats)
         if missing_frac > 0.50:
-            raise ValueError("More than 50% of required proteins are missing")
+            raise ValueError("More than 50% of required proteins are missing. Prediction cannot be performed.")
         elif missing_frac > 0.25:
             warnings.warn("")
 
@@ -517,12 +530,12 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
             "pt.BMI AS BMI",
             "CASE WHEN pt.`Never smoker` = 'yes' THEN 0 ELSE pt.`Pack-years` END AS `Pack-years`",
             # cardiovascular biomarkers
-            "toFloat(pt.`Cholesterol(total)`) AS `Total cholesterol (mg/dL)`",
-            "toFloat(pt.`HDL`) AS `HDL (mg/dL)`",
-            "toFloat(pt.`LDL`) AS `LDL (mg/dL)`",
-            "toFloat(pt.`Triglycerides`) AS `Triglycerides (mg/dL)`",
-            "toFloat(pt.`High-sensitivity CRP`) AS `High-sensitivity CRP (mg/dL)`",
-            "toFloat(pt.`Ultrasensitive CRP`) AS `Ultrasensitive CRP (mg/dL)`",
+            "toFloat(pt.`Cholesterol(total)`) AS `Total cholesterol(mg/dL)`",
+            "toFloat(pt.`HDL`) AS `HDL(mg/dL)`",
+            "toFloat(pt.`LDL`) AS `LDL(mg/dL)`",
+            "toFloat(pt.`Triglycerides`) AS `Triglycerides(mg/dL)`",
+            "toFloat(pt.`High-sensitivity CRP`) AS `High-sensitivity CRP(mg/dL)`",
+            "toFloat(pt.`Ultrasensitive CRP`) AS `Ultrasensitive CRP(mg/dL)`",
             "toFloat(pt.`Pre-surgery BP(diastolic)`) AS `Pre-surgery BP(diastolic)`",
             "toFloat(pt.`Pre-surgery BP(systolic)`) AS `Pre-surgery BP(systolic)`",
             "pt.`Contralateral stenosis(≥60%)` AS `Contralateral stenosis(≥60%)`",

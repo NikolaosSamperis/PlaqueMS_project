@@ -707,7 +707,7 @@
       background-color: #f5f5f5;
     }
     .results-table td {
-      padding: 8px 28px !important;
+      padding: 8px 29px !important;
       border-bottom: 1px solid #eee;
       text-align: center !important;
       vertical-align: middle;
@@ -922,6 +922,11 @@
       background-color: #377ba8;
       color: white;
     }
+
+    #model-validation {
+      text-align: left;
+    }
+
     /* ▸ Keep default colours for switches / checkboxes, even when they are :valid */
     .was-validated .form-switch .form-check-input:valid,
     .form-switch      .form-check-input.is-valid           {         /* switch OFF  */
@@ -1203,9 +1208,23 @@
             <label class="form-label fw-semibold small" for="sample_file">
               Upload your protein abundance table (accepted formats: .csv, .tsv, xls, xlsx)
             </label>
-            <input class="form-control"
-                  type="file" name="sample_file" id="sample_file"
-                  accept=".csv,.tsv,.txt,.xlsx,.xls" required>
+            <div class="d-flex gap-2" style="width: 92%; margin: 0 auto;">
+              <input
+                class="form-control"
+                type="file"
+                name="sample_file" 
+                id="sample_file"
+                accept=".csv,.tsv,.txt,.xlsx,.xls" 
+                required
+              />
+              <button
+                type="button"
+                id="clearSample"
+                class="btn btn-outline-danger"
+              >
+                Clear
+              </button>
+            </div>
             <div class="form-text">
               Upload either two-column (<code>Protein, Abundance</code>) for one subject <br> or a matrix
               (<code>Proteins × Subjects</code>) for many.
@@ -1752,6 +1771,12 @@
     });
   });
 
+  // Clear button functionality
+  document.getElementById('clearSample').addEventListener('click', function() {
+    const fileInput = document.getElementById('sample_file');
+    fileInput.value = '';
+  });
+
   //Tooltip
   document.addEventListener('DOMContentLoaded', function () {
     new bootstrap.Tooltip(document.body, {
@@ -1988,10 +2013,13 @@
             showError('Subjects flagged for missing data:<br>' + txt);
           }
         },
-        error       : xhr => showError(xhr.responseJSON?.error || 'Unexpected error'),
+        error       : xhr => {
+          clearResults();
+          showError(xhr.responseJSON?.error || 'Unexpected error');
+        },
         complete    : () => {
           hideLoadingAnimation(prog);
-          $btn.prop('disabled',false);
+          $btn.prop('disabled', false);
         }
       });
     });
@@ -2000,12 +2028,19 @@
   // Patient search form AJAX
   $('#patientSearchForm').on('submit', function(e) {
     e.preventDefault();
+    // Clear out any "invalid" styling that might still be on the calc‐pred form
+    $('#predictForm').removeClass('was-validated');
+    $('#sample_file').removeClass('is-invalid');
+    // Hide the “please select a prediction model” message in calc‐pred
+    $('#model-validation').addClass('d-none');
+    const $btn = $('#searchBtn');
     const modelKey = $('#search_model_key_hidden').val();
     if (!modelKey) {
       showError('Please select a prediction model for patient search');
       return;
     }
     $('#errorBox').addClass('d-none').empty();
+    $btn.prop('disabled', true);
     const prog = showLoadingAnimation();
     const formData = new FormData(this);
 
@@ -2093,9 +2128,13 @@
           showError('Subjects flagged for missing data:<br>' + txt);
         }
       },
-      error: xhr => showError(xhr.responseJSON?.error || 'Unexpected error'),
+      error: xhr => {
+        clearResults();
+        showError(xhr.responseJSON?.error || 'Unexpected error');
+      },
       complete: () => {
         hideLoadingAnimation(prog);
+        $btn.prop('disabled', false);
       }
     });
   });
@@ -2232,22 +2271,22 @@
       return 'High stenosis(≥90%)';
     }
     if (key === 'Cholesterol(total)') {
-      return 'Total cholesterol (mg/dL)';
+      return 'Total cholesterol(mg/dL)';
     }
     if (key === 'HDL') {
-      return 'HDL (mg/dL)';
+      return 'HDL(mg/dL)';
     }
     if (key === 'LDL') {
-      return 'LDL (mg/dL)';
+      return 'LDL(mg/dL)';
     }
     if (key === 'Triglycerides') {
-      return 'Triglycerides (mg/dL)';
+      return 'Triglycerides(mg/dL)';
     }
     if (key === 'High-sensitivity CRP') {
-      return 'High-sensitivity CRP (mg/dL)';
+      return 'High-sensitivity CRP(mg/dL)';
     }
     if (key === 'Ultrasensitive CRP') {
-      return 'Ultrasensitive CRP (mg/dL)';
+      return 'Ultrasensitive CRP(mg/dL)';
     }
     return key.replace(/_/g,' ');
   }

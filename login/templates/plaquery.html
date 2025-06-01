@@ -1483,7 +1483,14 @@
 
           <!-- Read-only counter --------------------------------------------- -->
           <div class="d-flex align-items-start mb-0">
-            <label class="form-label fw-semibold me-2 mt-1">Detected proteins</label>
+            <label
+             id="detected-proteins-label"
+             class="form-label fw-semibold me-2 mt-1"
+             data-bs-toggle="tooltip"
+             data-bs-custom-class="calc-tooltip calc-hyphen"
+             title="Only proteins present in the dictionary will be counted here. Not every protein is detected, but most dictionary entries do exist in the database.">
+             Detected proteins
+            </label>
             <input id="modal-count-box" class="form-control" readonly>
           </div>
         </div>
@@ -1575,6 +1582,25 @@
         },
         fallbackPlacements: ['top', 'bottom']
       });
+      // Now override just the “Detected proteins” label:
+      const lbl = document.getElementById('detected-proteins-label');
+      if (lbl) {
+        // If there is already a Tooltip instance on this element, dispose it:
+        lbl._tooltip && lbl._tooltip.dispose();
+
+        // Create a fresh Tooltip on only this one element, with offset [0, 8]:
+        new bootstrap.Tooltip(lbl, {
+          trigger: 'hover',
+          container: 'body',
+          offset: [0, 4],
+          placement: function (tip, trigger) {
+            const bubbleHeight = tip.offsetHeight;
+            const spaceAbove   = trigger.getBoundingClientRect().top;
+            return (spaceAbove >= 1.2 * bubbleHeight) ? 'top' : 'bottom';
+          },
+          fallbackPlacements: ['top', 'bottom']
+        });
+      }
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -2457,12 +2483,12 @@
         MaxAbundance: 'Max Abundance',
         StdDeviation: 'Std. Deviation',
         "High_Stenosis(≥90%)": 'High stenosis(≥90%)',
-        "Cholesterol(total)": 'Total cholesterol (mg/dL)',
-        "HDL": 'HDL (mg/dL)',
-        "LDL": 'LDL (mg/dL)',
-        "Triglycerides": 'Triglycerides (mg/dL)',
-        "High-sensitivity CRP": 'High-sensitivity CRP (mg/dL)',
-        "Ultrasensitive CRP": 'Ultrasensitive CRP (mg/dL)'
+        "Cholesterol(total)": 'Total cholesterol(mg/dL)',
+        "HDL": 'HDL(mg/dL)',
+        "LDL": 'LDL(mg/dL)',
+        "Triglycerides": 'Triglycerides(mg/dL)',
+        "High-sensitivity CRP": 'High-sensitivity CRP(mg/dL)',
+        "Ultrasensitive CRP": 'Ultrasensitive CRP(mg/dL)'
       };
       return mapping[key] || key.replace(/_/g, ' ');
     }
