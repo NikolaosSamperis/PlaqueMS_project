@@ -1237,7 +1237,7 @@
       <div class="multiselect">
         <div class="selectBox animated-button" onclick="toggleCheckboxes('calcification-checkboxes')">
           <select class="filter-select" aria-label="Filter by Calcification">
-            <option selected>Calcification (description)</option>
+            <option selected>Calcification (clinical)</option>
           </select>
           <div class="overSelect"></div>
         </div>
@@ -1344,20 +1344,20 @@
             HDL
           </label>
           <label onclick="event.stopPropagation();">
-            <input type="checkbox" value="High-sensitivity CRP" name="cvbiomarker">
-            High-sensitivity CRP
-          </label>
-          <label onclick="event.stopPropagation();">
-            <input type="checkbox" value="Ultrasensitive CRP" name="cvbiomarker">
-            Ultrasensitive CRP
-          </label>
-          <label onclick="event.stopPropagation();">
             <input type="checkbox" value="LDL" name="cvbiomarker">
             LDL
           </label>
           <label onclick="event.stopPropagation();">
             <input type="checkbox" value="Triglycerides" name="cvbiomarker">
             Triglycerides
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="High-sensitivity CRP" name="cvbiomarker">
+            High-sensitivity CRP
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="Ultrasensitive CRP" name="cvbiomarker">
+            Ultrasensitive CRP
           </label>
           <label onclick="event.stopPropagation();">
             <input type="checkbox" value="Pre-surgery BP(diastolic)" name="cvbiomarker">
@@ -1941,32 +1941,66 @@
       .on('itemAdded itemRemoved', updateModalCount);
     updateModalCount();
 
-    function addProteinsFromText (text) {
-      // 1) split, trim, filter out empty lines
+    function addProteinsFromText(text) {
+      // 1) Split the input text by tabs/newlines, trim whitespace, and drop empty lines.
       const allProteins = text
         .split(/[\t\r\n]+/)
         .map(t => t.trim())
-        .filter(Boolean)
-      
-      // 2) filter out “5” explicitly and anything not in the dictionary
-      const detected = allProteins.filter(name => {
+        .filter(Boolean);
+
+      // 1a) Build a map from lowercaseName → the first original‐cased string seen for that key.
+      const firstSeen = {};
+      allProteins.forEach(name => {
         const lc = name.toLowerCase();
-        return lc !== '5' && window.validProteins.has(lc);
+        if (!(lc in firstSeen)) {
+          firstSeen[lc] = name;
+        }
       });
 
+      // 2) Figure out which tokens are “valid” (in window.validProteins and not literally "5")
+      const filtered = allProteins.filter(name => {
+        const lc = name.toLowerCase();
+        return (
+          lc !== '5' &&
+          lc !== 'protein' && 
+          window.validProteins.has(lc)
+        );
+      });
 
-      // 3) if >50 detected, only add the first 50 and warn once
-      if (detected.length > 50) {
-        detected.slice(0, 50).forEach(t => {
-          $('#modal-protein-tags').tagsinput('add', t);
-        });
+      // 3) Deduplicate at the lowercase level by creating a Set of all lowercase valid hits.
+      const validLcSet = new Set(filtered.map(n => n.toLowerCase()));
+
+      // 4) Map each valid lowercase key back to its canonical form:
+      //    - If firstSeen[lc] exactly matches one variant in window.proteinVariants[lc], use it.
+      //    - Else if there's exactly one canonical variant, use that.
+      //    - Else fall back to the lowercase key.
+      const uniqueValid = Array.from(validLcSet).map(lcName => {
+        const variants = window.proteinVariants[lcName] || [];
+        const original = firstSeen[lcName];
+
+        if (variants.includes(original)) {
+          return original;
+        } else if (variants.length === 1) {
+          return variants[0];
+        } else {
+          return lcName;
+        }
+      });
+
+      // 5) Enforce a 50‐item limit on uniqueValid (the “detected” proteins).
+      const toAddValid = uniqueValid.length > 50
+        ? uniqueValid.slice(0, 50)
+        : uniqueValid;
+
+      if (uniqueValid.length > 50) {
         alert('Loaded only the first 50 detected proteins from your file.');
-      } else {
-        // otherwise, add them all
-        detected.forEach(t => {
-          $('#modal-protein-tags').tagsinput('add', t);
-        });
       }
+
+      // 6) Clear any existing tags and add only the capped valid proteins.
+      $('#modal-protein-tags').tagsinput('removeAll');
+      toAddValid.forEach(t => {
+        $('#modal-protein-tags').tagsinput('add', t);
+      });
     }
 
     document.getElementById('tsvFile').addEventListener('change', e => {
@@ -2334,7 +2368,7 @@
               th.title = 'Maximum protein abundance in experiment and tissue area across patients';
               th.dataset.bsCustomClass = 'calc-tooltip';
               break;
-            case 'Calcification (description)':
+            case 'Calcification (clinical)':
               th.dataset.bsToggle = 'tooltip';
               th.title = 'Calcification status was determined through duplex ultrasound and CT angiography imaging, verified histologically by an experienced surgeon and pathologist. Validation included quantitative CT-based scoring (modified Agatston score), achieving high correlation (p<0.001).';
               th.dataset.bsCustomClass = 'calc-tooltip calc-hyphen';
@@ -2342,6 +2376,11 @@
             case 'COPD':
               th.dataset.bsToggle = 'tooltip';
               th.title = 'Chronic Obstructive Pulmonary Disease';
+              th.dataset.bsCustomClass = 'calc-tooltip';
+              break;
+            case 'ARB therapy':
+              th.dataset.bsToggle = 'tooltip';
+              th.title = 'Angiotensin Receptor Blockers';
               th.dataset.bsCustomClass = 'calc-tooltip';
               break;
           }
@@ -2417,7 +2456,13 @@
         MinAbundance: 'Min Abundance',
         MaxAbundance: 'Max Abundance',
         StdDeviation: 'Std. Deviation',
-        "High_Stenosis(≥90%)": 'High stenosis(≥90%)'
+        "High_Stenosis(≥90%)": 'High stenosis(≥90%)',
+        "Cholesterol(total)": 'Total cholesterol (mg/dL)',
+        "HDL": 'HDL (mg/dL)',
+        "LDL": 'LDL (mg/dL)',
+        "Triglycerides": 'Triglycerides (mg/dL)',
+        "High-sensitivity CRP": 'High-sensitivity CRP (mg/dL)',
+        "Ultrasensitive CRP": 'Ultrasensitive CRP (mg/dL)'
       };
       return mapping[key] || key.replace(/_/g, ' ');
     }

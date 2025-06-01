@@ -1490,7 +1490,7 @@
               <div class="multiselect">
                 <div class="selectBox animated-button" onclick="toggleCheckboxes('search-calcification-checkboxes')">
                   <select class="filter-select" aria-label="Calcification by description">
-                    <option selected>Calcification (description)</option>
+                    <option selected>Calcification (clinical)</option>
                   </select>
                   <div class="overSelect"></div>
                 </div>
@@ -1600,20 +1600,20 @@
                     HDL
                   </label>
                   <label onclick="event.stopPropagation();">
-                    <input type="checkbox" value="High-sensitivity CRP" name="cvbiomarker">
-                    High-sensitivity CRP
-                  </label>
-                  <label onclick="event.stopPropagation();">
-                    <input type="checkbox" value="Ultrasensitive CRP" name="cvbiomarker">
-                    Ultrasensitive CRP
-                  </label>
-                  <label onclick="event.stopPropagation();">
                     <input type="checkbox" value="LDL" name="cvbiomarker">
                     LDL
                   </label>
                   <label onclick="event.stopPropagation();">
                     <input type="checkbox" value="Triglycerides" name="cvbiomarker">
                     Triglycerides
+                  </label>
+                  <label onclick="event.stopPropagation();">
+                    <input type="checkbox" value="High-sensitivity CRP" name="cvbiomarker">
+                    High-sensitivity CRP
+                  </label>
+                  <label onclick="event.stopPropagation();">
+                    <input type="checkbox" value="Ultrasensitive CRP" name="cvbiomarker">
+                    Ultrasensitive CRP
                   </label>
                   <label onclick="event.stopPropagation();">
                     <input type="checkbox" value="Pre-surgery BP(diastolic)" name="cvbiomarker">
@@ -1977,10 +1977,15 @@
           fullRecords = transformed;
           displayResults(transformed);
           if (Array.isArray(json.warnings) && json.warnings.length) {
-            const txt = json.warnings.map(w =>
-              `${w.subject_id}: ${Math.round(w.missing_fraction*100)}% of required proteins missing; prediction may be unreliable`
-            ).join('<br>');
-            showError('Subjects below threshold:<br>' + txt);
+            const txt = json.warnings.map(w => {
+              const pct = Math.round(w.missing_fraction * 100);
+              if (w.missing_fraction > 0.50) {
+                return `${w.subject_id} skipped: ${pct}% of required proteins missing.`;
+              } else if (w.missing_fraction > 0.25) {
+                return `${w.subject_id}: ${pct}% of required proteins missing; prediction may be unreliable.`;
+              }
+            }).join('<br>');
+            showError('Subjects flagged for missing data:<br>' + txt);
           }
         },
         error       : xhr => showError(xhr.responseJSON?.error || 'Unexpected error'),
@@ -2076,14 +2081,22 @@
         fullRecords = transformed;
         displayResults(transformed);
         if (Array.isArray(json.warnings) && json.warnings.length) {
-          const txt = json.warnings.map(w =>
-            `${w.patient_id}: ${Math.round(w.missing_fraction*100)}% of required proteins missing; prediction may be unreliable`
-          ).join('<br>');
-          showError('Subjects below threshold:<br>' + txt);
+          // If missing_frac > 50%, show “skipped” message; otherwise show “unreliable” message (>25% and <=50%)
+          const txt = json.warnings.map(w => {
+            const pct = Math.round(w.missing_fraction * 100);
+            if (w.missing_fraction > 0.50) {
+              return `${w.patient_id} skipped: ${pct}% of required proteins missing.`;
+            } else if (w.missing_fraction > 0.25){
+              return `${w.patient_id}: ${pct}% of required proteins missing; prediction may be unreliable.`;
+            }
+          }).join('<br>');
+          showError('Subjects flagged for missing data:<br>' + txt);
         }
       },
       error: xhr => showError(xhr.responseJSON?.error || 'Unexpected error'),
-      complete: () => hideLoadingAnimation(prog)
+      complete: () => {
+        hideLoadingAnimation(prog);
+      }
     });
   });
 
@@ -2141,7 +2154,7 @@
     extraCols.forEach(c => {
       const th = document.createElement('th');
       th.textContent = c;
-      if (c === 'Calcification (desc.)') {
+      if (c === 'Calcification (clinical)') {
         th.setAttribute('data-bs-toggle','tooltip');
         th.setAttribute('title','Calcification status was determined through duplex ultrasound and CT angiography imaging, verified histologically by an experienced surgeon and pathologist. Validation included quantitative CT-based scoring (modified Agatston score), achieving high correlation (p<0.001).');
         th.setAttribute('data-bs-custom-class', 'calc-tooltip calc-hyphen');
@@ -2149,6 +2162,11 @@
       if (c === 'COPD') {
         th.setAttribute('data-bs-toggle','tooltip');
         th.setAttribute('title','Chronic Obstructive Pulmonary Disease');
+        th.setAttribute('data-bs-custom-class', 'calc-tooltip');
+      }
+      if (c === 'ARB therapy') {
+        th.setAttribute('data-bs-toggle','tooltip');
+        th.setAttribute('title','Angiotensin Receptor Blockers');
         th.setAttribute('data-bs-custom-class', 'calc-tooltip');
       }
       headerRow.appendChild(th);
@@ -2212,6 +2230,24 @@
       key === 'High_Stenosis(≥90%)'
     ) {
       return 'High stenosis(≥90%)';
+    }
+    if (key === 'Cholesterol(total)') {
+      return 'Total cholesterol (mg/dL)';
+    }
+    if (key === 'HDL') {
+      return 'HDL (mg/dL)';
+    }
+    if (key === 'LDL') {
+      return 'LDL (mg/dL)';
+    }
+    if (key === 'Triglycerides') {
+      return 'Triglycerides (mg/dL)';
+    }
+    if (key === 'High-sensitivity CRP') {
+      return 'High-sensitivity CRP (mg/dL)';
+    }
+    if (key === 'Ultrasensitive CRP') {
+      return 'Ultrasensitive CRP (mg/dL)';
     }
     return key.replace(/_/g,' ');
   }

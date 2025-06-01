@@ -1,4 +1,5 @@
 from __future__ import annotations
+import warnings
 import io, os, math, joblib, re, numpy as np, pandas as pd
 from scipy.special import expit
 from functools import lru_cache
@@ -143,6 +144,9 @@ def _read_file(f) -> tuple[pd.DataFrame, str]:
             engine="python",
         )
 
+    # Replace any blank or whitespace-only cell with NaN
+    df = df.replace(r'^\s*$', np.nan, regex=True)
+
     # helper
     def _looks_numeric(x):
         try:
@@ -207,31 +211,49 @@ def _read_file(f) -> tuple[pd.DataFrame, str]:
 def _vectors(df: pd.DataFrame, feats: list[str], layout: str):
     if layout == "long":                # two-column upload
         s = df.set_index("Protein")["Abundance"]
-        # allow up to 25% of proteins to be entirely absent
-        missing = [p for p in feats if p not in s.index]
-        max_missing = math.floor(len(feats) * 0.25)
-        if len(missing) > max_missing:
-            raise ValueError(
-                f"Too many proteins missing ({len(missing)}/{len(feats)}); "
-                f"max allowed is {max_missing}"
-            )
+
+        # compute how many required features are absent or zero
+        missing = []
+        for p in feats:
+            if p not in s.index:
+                missing.append(p)
+            else:
+                val = s[p]
+                if pd.isna(val) or (val == 0):
+                    missing.append(p)
+
+        missing_frac = len(missing) / len(feats)
+        if missing_frac > 0.50:
+            raise ValueError("More than 50% of required proteins are missing")
+        elif missing_frac > 0.25:
+            warnings.warn("")
+
         row = s.reindex(feats).to_frame().T
         row.index = ["Subject_1"]                       # Subject ID
+        row = row.replace(0, np.nan)
         return row.index.tolist(), row                  # ← DataFrame
 
     else:
         # wide matrix upload
-        # allow up to 25% of proteins to be entirely absent
-        missing = [p for p in feats if p not in df.index]
-        max_missing = math.floor(len(feats) * 0.25)
-        if len(missing) > max_missing:
-            raise ValueError(
-                f"Too many proteins missing ({len(missing)}/{len(feats)}); "
-                f"max allowed is {max_missing}"
-            )
-        mat = df.reindex(feats).astype(float).T   # rows = subjects
+        missing = []
+        for p in feats:
+            if p not in df.index:
+                missing.append(p)
+            else:
+                row_vals = df.loc[p]
+                if row_vals.isna().all() or (row_vals.fillna(0) == 0).all():
+                    missing.append(p)
 
+        missing_frac = len(missing) / len(feats)
+        if missing_frac > 0.50:
+            raise ValueError("More than 50% of required proteins are missing")
+        elif missing_frac > 0.25:
+            warnings.warn("")
+
+        mat = df.reindex(feats).astype(float).T   # rows = subjects
+        mat = mat.replace(0, np.nan)
         return mat.index.tolist(), mat            # DataFrame (n × n_feats)
+
 
 # ── Neo4j helper (from plaquery_views.py) ───────────────────────────────
 def get_neo4j_db():
@@ -345,17 +367,39 @@ def calc_prediction_upload_view(request: HttpRequest) -> JsonResponse:
             if (Xdf <= 0).any().any():
                 raise ValueError("Log₂ transform needs all abundances > 0")
             Xdf = np.log2(Xdf)
+        
+        filtered_subjects = []
+        warnings_list = []
 
-        # compute fraction missing per subject
-        miss_frac = Xdf.isna().mean(axis=1)
-        threshold = 0.3
-        warnings_list = [
-            {
-                "subject_id": str(sid),
-                "missing_fraction": float(frac),
-            }
-            for sid, frac in miss_frac.items() if frac > threshold
-        ]
+        for sid in Xdf.index:
+            # Identify missing_names as those features that are NaN or zero
+            missing_names = [
+                f for f in feats
+                if (pd.isna(Xdf.at[sid, f])) or (Xdf.at[sid, f] == 0)
+            ]
+            missing_frac = len(missing_names) / len(feats)
+
+            # Skip if >50% missing
+            if missing_frac > 0.50:
+                warnings_list.append({
+                    "subject_id":       str(sid),
+                    "missing_fraction": float(missing_frac),
+                    "skipped":          True
+                })
+                continue
+
+            # Warn if >25% and ≤50% missing
+            if missing_frac > 0.25:
+                warnings_list.append({
+                    "subject_id": str(sid),
+                    "missing_fraction": float(missing_frac),
+                })
+
+            # Otherwise (≤25%) → proceed silently
+            filtered_subjects.append(sid)
+
+        # Subset Xdf to only include subjects that passed the >50% check
+        Xdf = Xdf.loc[filtered_subjects]
 
         # impute ALL missing → scale → predict
         X_imp_arr = imputer.transform(Xdf)
@@ -436,7 +480,7 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
             "pt.Symptoms AS Symptoms",
             "pt.Histology AS Histology",
             "pt.Ultrasound AS Ultrasound",
-            "pt.`Calcified by description` AS `Calcification (desc.)`",
+            "pt.`Calcified by description` AS `Calcification (clinical)`",
             # clinical conditions
             "pt.`Acute infection` AS `Acute infection`",
             "pt.`Acute myocardial infarction` AS `Acute myocardial infarction`",
@@ -473,12 +517,12 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
             "pt.BMI AS BMI",
             "CASE WHEN pt.`Never smoker` = 'yes' THEN 0 ELSE pt.`Pack-years` END AS `Pack-years`",
             # cardiovascular biomarkers
-            "toFloat(pt.`Cholesterol(total)`) AS `Cholesterol (total)`",
-            "toFloat(pt.`HDL`) AS `HDL`",
-            "toFloat(pt.`High-sensitivity CRP`) AS `High-sensitivity CRP`",
-            "toFloat(pt.`Ultrasensitive CRP`) AS `Ultrasensitive CRP`",
-            "toFloat(pt.`LDL`) AS `LDL`",
-            "toFloat(pt.`Triglycerides`) AS `Triglycerides`",
+            "toFloat(pt.`Cholesterol(total)`) AS `Total cholesterol (mg/dL)`",
+            "toFloat(pt.`HDL`) AS `HDL (mg/dL)`",
+            "toFloat(pt.`LDL`) AS `LDL (mg/dL)`",
+            "toFloat(pt.`Triglycerides`) AS `Triglycerides (mg/dL)`",
+            "toFloat(pt.`High-sensitivity CRP`) AS `High-sensitivity CRP (mg/dL)`",
+            "toFloat(pt.`Ultrasensitive CRP`) AS `Ultrasensitive CRP (mg/dL)`",
             "toFloat(pt.`Pre-surgery BP(diastolic)`) AS `Pre-surgery BP(diastolic)`",
             "toFloat(pt.`Pre-surgery BP(systolic)`) AS `Pre-surgery BP(systolic)`",
             "pt.`Contralateral stenosis(≥60%)` AS `Contralateral stenosis(≥60%)`",
@@ -496,7 +540,7 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
         if ultrasound and ultrasound[0] != 'Select Plaque Ultrasound':
             additional_columns.append("pt.Ultrasound AS Ultrasound")
         if calcified and calcified[0] != 'Filter by Calcification':
-            additional_columns.append("pt.`Calcified by description` AS `Calcification (desc.)`")
+            additional_columns.append("pt.`Calcified by description` AS `Calcification (clinical)`")
         for c in clinical_conditions:
             alias = c.replace(" ", "_")
             additional_columns.append(f"pt.`{c}` AS `{alias}`")
@@ -699,26 +743,51 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
 
             # Merge core + periphery for missing names
             abund = dict(core_map.get(pid, {}))
-            missing_names = [f for f in feats if f not in abund]
-            max_missing   = math.floor(len(feats) * 0.25)
-            if len(missing_names) > max_missing:
-                continue  # skip patient
-
-            # Fill from periphery
-            pm = peri_map.get(pid, {})
-            for f in missing_names:
-                if f in pm:
+            pm    = peri_map.get(pid, {})
+            # First, find which features are missing in core (absent, None, or zero)
+            missing_names = [
+                f for f in feats
+                if (f not in abund) or (abund.get(f) is None) or (abund.get(f) == 0)
+            ]
+            # Immediately fill those from periphery (if available and non-zero)
+            for f in list(missing_names):
+                if (f in pm) and (pm[f] is not None) and (pm[f] != 0):
                     abund[f] = pm[f]
+            # Now re-compute what's still missing (after having tried periphery)
+            missing_names = [
+                f for f in feats
+                if (f not in abund) or (abund.get(f) is None) or (abund.get(f) == 0)
+            ]
+
+            # Compute missing_fraction, then skip or warn as needed
+            total_feats  = len(feats)
+            missing_frac = len(missing_names) / total_feats
+
+            # SKIP if more than 50% features are missing
+            if missing_frac > 0.50:
+                warnings_list.append({
+                    "patient_id":      pid,
+                    "missing_fraction": float(missing_frac)
+                })
+                continue
+
+            # WARN (but do not skip) if more than 25% and up to 50% missing
+            if missing_frac > 0.25:
+                warnings_list.append({
+                    "patient_id":      pid,
+                    "missing_fraction": float(missing_frac)
+                })
 
             # Build DataFrame & check missing‐value fraction
-            row = pd.DataFrame([[abund.get(f) for f in feats]],
-                               index=[pid], columns=feats, dtype=float)
-            miss_frac = row.isna().mean(axis=1).iloc[0]
-            if miss_frac > 0.3:
-                warnings_list.append({
-                    "patient_id": pid,
-                    "missing_fraction": float(miss_frac),
-                })
+            row = pd.DataFrame(
+                [[
+                    abund[f] if (f in abund and abund.get(f) not in (None, 0)) else np.nan
+                    for f in feats
+                ]],
+                index=[pid],
+                columns=feats,
+                dtype=float
+            )
 
             # Impute, scale, predict
             X_imp_arr = imputer.transform(row)
@@ -739,7 +808,7 @@ def calc_prediction_filter_view(request: HttpRequest) -> JsonResponse:
                 "class_name":            "calcified" if pred else "non-calcified",
                 "probability_calcified": float(probas[0][1]),
                 "probability_noncalc":   float(probas[0][0]),
-                "missing_fraction":      float(miss_frac),
+                "missing_fraction":      float(missing_frac)
             })
 
     driver.close()
