@@ -253,10 +253,6 @@
       width: auto !important;
       overflow: hidden;
     }
-    .tt-menu,
-    .bootstrap-tagsinput .tt-menu{
-      display:none !important;
-    }
     .bootstrap-tagsinput .tt-hint {
       width: 100% !important;
       white-space: pre !important;
@@ -274,6 +270,10 @@
       z-index: 2;
       background: transparent;
       box-sizing: border-box;
+    }
+    .tt-menu,
+    .bootstrap-tagsinput .tt-menu {
+      display: none !important;
     }
     .bootstrap-tagsinput .tag {
       background-color: #377ba8;
@@ -1514,8 +1514,8 @@
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script>
@@ -1603,7 +1603,7 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
       const table          = document.getElementById('results-table');
       const thead     = document.querySelector('#results-table thead');
       const emptyState     = document.getElementById('empty-state');
@@ -1733,6 +1733,108 @@
           // modal input
           const $modalTags = $('#modal-protein-tags');
           attachProteinNormaliser($modalTags, proteinVariants);
+
+          /* ---------- initialise tag-input inside the modal ------------------ */
+          $modalTags.tagsinput({
+            freeInput    : true,
+            trimValue    : true,
+            confirmKeys  : [9, 13],
+            delimiterRegex: /[\t\r\n]+/
+          });
+
+          // Enforce “no literal 5” and “max 50 detected” in one handler
+          $modalTags.on('beforeItemAdd', function(event) {
+            const candidate = ('' + event.item).trim().toLowerCase();
+            if (candidate === '5') {
+              event.cancel = true;
+              return;
+            }
+
+            // 2) count how many “valid” (dictionary‐matched, excluding “5”) tags are already present
+            const allItems = $modalTags.tagsinput('items');
+            const uniqueValid = [...new Set(
+              allItems.map(t => t.trim().toLowerCase())
+            )].filter(name =>
+              name !== '5' && window.validProteins.has(name)
+            );
+            // 3) if there are already 50 detected proteins, block new additions
+            if (uniqueValid.length >= 50) {
+                event.cancel = true;
+                alert('You can only add up to 50 detected proteins at a time.');
+            }
+          });
+
+          /* placeholder logic */
+          const $modalInput = $modalTags
+              .tagsinput('input')
+              .attr('placeholder', '…or paste a list');
+
+          function togglePlaceholder() {
+            const hasItems = $modalTags.tagsinput('items').length > 0;
+            $modalInput.attr('placeholder', hasItems ? '' : '…or paste a list');
+          }
+
+          $modalTags.on('itemAdded itemRemoved', togglePlaceholder);
+          togglePlaceholder();
+
+          $('#clear-upload-btn').on('click', () => {
+            $modalTags.tagsinput('removeAll');
+            togglePlaceholder();
+          });
+
+          /* live counter */
+          function updateModalCount () {
+            const items = $modalTags.tagsinput('items');
+
+            // 1) normalise to lower-case, 2) de-duplicate, 3) keep only dictionary hits
+            const uniqueValid = [...new Set(
+              items.map(t => t.trim().toLowerCase())
+            )].filter(name =>
+              // ignore a literal "5" even if it's in the Set
+              name !== '5' && window.validProteins.has(name)
+            );
+
+            $('#modal-count-box').val(uniqueValid.length);
+          }
+
+          $modalTags.on('itemAdded itemRemoved', updateModalCount);
+          updateModalCount();
+
+          document.getElementById('clear-upload-btn')
+            .addEventListener('click', () => {
+            document.getElementById('tsvFile').value = '';
+            $modalTags.tagsinput('removeAll');
+            updateModalCount();
+          });
+
+          document.getElementById('tsvFile').addEventListener('change', e => {
+            const input = e.target;
+            const file  = input.files[0];
+            if (!file) return;
+
+            // reject anything but .tsv or .txt
+            if (!/\.tsv$|\.txt$/i.test(file.name)) {
+              alert('Please select a .tsv or .txt file with tab/newline separated values');
+              input.value = '';
+              return;
+            }
+
+            // valid extension → read it
+            const reader = new FileReader();
+            reader.onload = ev => {
+              const text = ev.target.result;
+
+              // now check for at least one tab _or_ one newline
+              if (!(/\t/.test(text) || /\r?\n/.test(text))) {
+                alert('This file doesn’t appear to contain tab or newline separated values. Please use a TSV or TXT with the correct delimiters.');
+                return;
+              }
+
+              // looks OK → parse
+              addProteinsFromText(text);
+            };
+            reader.readAsText(file);
+          });
 
           /* --------------- caching useful elements ------------ */
           const rawInput        = $tags.tagsinput('input')[0];
@@ -1897,76 +1999,6 @@
       new bootstrap.Modal(document.getElementById('proteinListModal')).show();
     }
 
-    /* ---------- initialise tag-input inside the modal ------------------ */
-    $('#modal-protein-tags').tagsinput({
-      freeInput    : true,
-      trimValue    : true,
-      confirmKeys  : [9, 13],
-      delimiterRegex: /[\t\r\n]+/
-    });
-
-    // Enforce “no literal 5” and “max 50 detected” in one handler
-    $('#modal-protein-tags').on('beforeItemAdd', function(event) {
-      const candidate = ('' + event.item).trim().toLowerCase();
-      if (candidate === '5') {
-        event.cancel = true;
-        return;
-      }
-
-      // 2) count how many “valid” (dictionary‐matched, excluding “5”) tags are already present
-      const allItems = $('#modal-protein-tags').tagsinput('items');
-      const uniqueValid = [...new Set(
-        allItems.map(t => t.trim().toLowerCase())
-      )].filter(name =>
-        name !== '5' && window.validProteins.has(name)
-      );
-      // 3) if there are already 50 detected proteins, block new additions
-      if (uniqueValid.length >= 50) {
-        event.cancel = true;
-        alert('You can only add up to 50 detected proteins at a time.');
-      }
-    });
-
-
-    /* placeholder logic */
-    const $modalInput = $('#modal-protein-tags')
-                        .tagsinput('input')
-                        .attr('placeholder', '…or paste a list');
-
-    function togglePlaceholder() {
-      const hasItems = $('#modal-protein-tags').tagsinput('items').length > 0;
-      $modalInput.attr('placeholder', hasItems ? '' : '…or paste a list');
-    }
-
-    $('#modal-protein-tags').on('itemAdded itemRemoved', togglePlaceholder);
-    togglePlaceholder();
-
-    $('#clear-upload-btn').on('click', () => {
-      $('#modal-protein-tags').tagsinput('removeAll');
-      togglePlaceholder();
-    });
-
-    /* live counter */
-    function updateModalCount () {
-      const items = $('#modal-protein-tags').tagsinput('items');
-
-      // 1) normalise to lower-case, 2) de-duplicate, 3) keep only dictionary hits
-      const uniqueValid = [...new Set(
-        items.map(t => t.trim().toLowerCase())
-      )].filter(name =>
-        // ignore a literal "5" even if it's in the Set
-        name !== '5'
-        &&
-        window.validProteins.has(name)
-      );
-
-      $('#modal-count-box').val(uniqueValid.length);
-    }
-
-    $('#modal-protein-tags')
-      .on('itemAdded itemRemoved', updateModalCount);
-    updateModalCount();
-
     function addProteinsFromText(text) {
       // 1) Split the input text by tabs/newlines, trim whitespace, and drop empty lines.
       const allProteins = text
@@ -2029,67 +2061,85 @@
       });
     }
 
-    document.getElementById('tsvFile').addEventListener('change', e => {
-      const input = e.target;
-      const file  = input.files[0];
-      if (!file) return;
-
-      // reject anything but .tsv or .txt
-      if (!/\.tsv$|\.txt$/i.test(file.name)) {
-        alert('Please select a .tsv or .txt file with tab/newline separated values');
-        input.value = '';
-        return;
-      }
-
-      // valid extension → read it
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const text = ev.target.result;
-
-        // now check for at least one tab _or_ one newline
-        if (!(/\t/.test(text) || /\r?\n/.test(text))) {
-          alert('This file doesn’t appear to contain tab or newline separated values. Please use a TSV or TXT with the correct delimiters.');
-          return;
-        }
-
-        // looks OK → parse
-        addProteinsFromText(text);
-      };
-      reader.readAsText(file);
-    });
-
-    document.getElementById('clear-upload-btn').addEventListener('click', () => {
-      // clear the chosen file
-      document.getElementById('tsvFile').value = '';
-
-      // remove all tags from the modal tag-box
-      const $modalTags = $('#modal-protein-tags');
-      $modalTags.tagsinput('removeAll');
-
-      // refresh the counter so it shows “0”
-      updateModalCount();
-    });
-
-    const modalRawInput = $('#modal-protein-tags').tagsinput('input');
-    modalRawInput.on('paste', e => {
+    const modalRawInput = $('#modal-protein-tags').tagsinput('input'); // DOM element
+    $(modalRawInput).on('paste', e => {
       e.preventDefault();
-      const txt = (e.originalEvent.clipboardData || window.clipboardData)
-                    .getData('text/plain');
+      const txt = (e.originalEvent.clipboardData || window.clipboardData).getData('text/plain');
       addProteinsFromText(txt);
     });
 
     function proceedWithProteinList () {
+      // 1) check if the modal input is empty
       const proteins = $('#modal-protein-tags').tagsinput('items');
+
+      // Read the detected‐proteins count from the modal:
+      const detectedCount = parseInt(
+        document.getElementById('modal-count-box').value,
+        10
+      );
+
       if (!proteins.length) {
         alert('Please add at least one protein');
+
+        bootstrap.Modal
+          .getInstance(document.getElementById('proteinListModal'))
+          .hide();
+        document.getElementById('results-body').innerHTML = '';
+        document.getElementById('results-table').style.display = 'none';
+        document.querySelector('#results-table thead').style.display = 'none';
+        const emptyState = document.getElementById('empty-state');
+        emptyState.innerHTML = `
+          <i class="fas fa-search fa-4x"></i>
+          <p>Search for proteins to see results</p>
+        `;
+        emptyState.style.display = 'flex';
+        document.querySelector('.results-table-container').style.display = 'block';
+        const footerNav = document.querySelector('.results-footer');
+        if (footerNav) {
+          footerNav.style.display = 'block';
+          footerNav.classList.add('no-pagination');
+          const pagination = document.getElementById('pagination');
+          if (pagination) {
+            pagination.style.display = 'none';
+            pagination.innerHTML = '';
+          }
+        }
         return;
       }
 
+      if (detectedCount === 0) {
+        bootstrap.Modal
+          .getInstance(document.getElementById('proteinListModal'))
+          .hide();
+
+        document.getElementById('results-body').innerHTML = '';
+        document.getElementById('results-table').style.display = 'none';
+        document.querySelector('#results-table thead').style.display = 'none';
+
+        const emptyState = document.getElementById('empty-state');
+        emptyState.innerHTML = `
+          <i class="fas fa-search fa-4x"></i>
+          <p>Search for proteins to see results</p>
+        `;
+        emptyState.style.display = 'flex';
+        document.querySelector('.results-table-container').style.display = 'block';
+
+        const footerNav = document.querySelector('.results-footer');
+        if (footerNav) {
+          footerNav.style.display = 'block';
+          footerNav.classList.add('no-pagination');
+          const pagination = document.getElementById('pagination');
+          if (pagination) {
+            pagination.style.display = 'none';
+            pagination.innerHTML = '';
+          }
+        }
+        return;
+      }
       bootstrap.Modal
         .getInstance(document.getElementById('proteinListModal'))
         .hide();
-
-      submitQuery(proteins);   // hand the list to the main search
+      submitQuery(proteins);
     }
 
     function startSmoothProgress() {
