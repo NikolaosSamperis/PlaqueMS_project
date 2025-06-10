@@ -34,7 +34,7 @@ schema_view = get_schema_view(
 
 from django.contrib import admin
 from django.urls import path, include
-from login import protein_views, cyviews, plot_views, pathTree, insert_views, networkTree, plaquery_views, auth_views, home_views, calc_pred_views
+from login import protein_views, cyviews, plot_views, pathTree, insert_views, networkTree, plaquery_views, auth_views, home_views, calc_pred_views, syntax_score_views
 
 urlpatterns = [
     path('', home_views.home_view, name='home'),  # Root path for Home.html
@@ -75,7 +75,11 @@ urlpatterns = [
     # Calcification predictor
     path('calc-predict/', calc_pred_views.calc_prediction_view, name='calc_predict'),
     path("calc-predict/upload/", calc_pred_views.calc_prediction_upload_view,  name="calc_upload"),
-    path("calc-predict/filter/", calc_pred_views.calc_prediction_filter_view,  name="calc_filter")
+    path("calc-predict/filter/", calc_pred_views.calc_prediction_filter_view,  name="calc_filter"),
+    # Syntax score predictor
+    path('syntax-predict/', syntax_score_views.syntax_prediction_view, name='syntax_predict'),
+    path("syntax-predict/upload/", syntax_score_views.syntax_prediction_upload_view,  name="syntax_upload"),
+    path("syntax-predict/filter/", syntax_score_views.syntax_prediction_filter_view,  name="syntax_filter")
 ]
 
 

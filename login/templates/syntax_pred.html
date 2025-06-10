@@ -907,26 +907,6 @@
       margin-left: 2.5px !important;
     }
 
-    .model-option {
-      display: block;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-
-    .model-option:hover {
-      background-color: #1e90ff;
-      color: white;
-    }
-
-    .model-option.selected {
-      background-color: #377ba8;
-      color: white;
-    }
-
-    #model-validation {
-      text-align: left;
-    }
-
     /* ▸ Keep default colours for switches / checkboxes, even when they are :valid */
     .was-validated .form-switch .form-check-input:valid,
     .form-switch      .form-check-input.is-valid           {         /* switch OFF  */
@@ -996,7 +976,7 @@
       justify-content: center
     }
 
-    #predictForm #model-note {
+    #predictForm #protein-note {
       text-align: left;
     } 
 
@@ -1179,10 +1159,10 @@
       <li class="nav-item">
         <a class="nav-link" href="#">Graph Protein Networks</a>
       </li>
-      <li class="nav-item {% active 'calc_predict' %}">
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'calc_predict' %}">Calcification Prediction</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item {% active 'syntax_predict' %}">
         <a class="nav-link" href="{% url 'syntax_predict' %}">Syntax Score Prediction</a>
       </li>
     </ul>
@@ -1194,19 +1174,19 @@
       <!-- Left - Prediction Form -->
       <div class="predict-form-wrapper">
         <form id="predictForm"
-              action="{% url 'calc_upload' %}"
+              action="{% url 'syntax_upload' %}"
               method="post" enctype="multipart/form-data"
               class="card p-5 needs-validation"
               novalidate>
           {% csrf_token %}
 
           <h4 class="mb-4 text-primary fs-3 fw-bold">
-            Calcification Prediction
+            Syntax Score Prediction
           </h4>
 
           <div class="mb-3">
             <label class="form-label fw-semibold small" for="sample_file">
-              Upload your protein abundance table (accepted formats: .csv, .tsv, xls, xlsx)
+              Upload your protein abundance table (accepted formats: .csv, .tsv, .xls, .xlsx)
             </label>
             <div class="d-flex gap-2" style="width: 92%; margin: 0 auto;">
               <input
@@ -1231,39 +1211,10 @@
             </div>
           </div>
 
-          <!-- Note that appears once a model is chosen -->
-          <div id="model-note" class="alert alert-info my-2 d-none">
+          <!-- Constant Note -->
+          <div id="protein-note" class="alert alert-info my-2">
             <strong>Required proteins:</strong>
-            <span id="protein-list"></span>
-          </div>
-
-          <!-- Validation message for model selection -->
-          <div id="model-validation" class="alert alert-danger my-2 d-none">
-            Please select a prediction model.
-          </div>
-
-          <!-- Dropdown for model selection -->
-          <div class="filters-container">
-            <div class="filter-element">
-              <div class="multiselect">
-                <div id="model-selectBox"
-                     class="selectBox animated-button"
-                     onclick="toggleCheckboxes('model-checkboxes')">
-                  <select class="filter-select" aria-label="Select prediction model">
-                    <option selected disabled>Select prediction model</option>
-                  </select>
-                  <div class="overSelect"></div>
-                </div>
-                <div id="model-checkboxes" class="checkboxes">
-                  {% for key, m in models.items %}
-                    <label data-key="{{ key }}" class="model-option">
-                      {{ m.label }}
-                    </label>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-            <input type="hidden" id="model_key_hidden" name="model_key" required>
+            HRG, CP, C4B, F13A1, VCAN
           </div>
 
           <div class="form-check form-switch mb-4">
@@ -1285,6 +1236,8 @@
       <!-- Right - Patient Search Form -->
       <div class="search-form-wrapper">
         <form id="patientSearchForm"
+              action="{% url 'syntax_filter' %}"
+              method="post"
               class="card p-5 needs-validation"
               novalidate>
 
@@ -1292,32 +1245,29 @@
             Patient Search in the Database
           </h4>
 
-          <!-- Center-aligned filter dropdown -->
-          <div class="filters-container" style="justify-content: center; margin-bottom: 20px;">
-            <div class="filter-element">
-              <div class="multiselect">
-                <div id="search-model-selectBox"
-                     class="selectBox animated-button"
-                     onclick="toggleCheckboxes('search-model-checkboxes')">
-                  <select class="filter-select" aria-label="Select prediction model">
-                    <option selected disabled>Select prediction model</option>
-                  </select>
-                  <div class="overSelect"></div>
-                </div>
-                <div id="search-model-checkboxes" class="checkboxes">
-                  {% for key, m in models.items %}
-                    <label data-key="{{ key }}" class="model-option">
-                      {{ m.label }}
-                    </label>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-            <input type="hidden" id="search_model_key_hidden" name="search_model_key">
-          </div>
-
           <!-- Filter elements from plaquery.html -->
           <div class="filters-container">
+            <!-- Experiment Filter -->
+            <div class="filter-element">
+                <div class="multiselect">
+                    <div id="search-exp-selectBox"
+                            class="selectBox animated-button"
+                            onclick="toggleCheckboxes('search-exp-checkboxes')">
+                        <select class="filter-select" aria-label="Filter Experiment">
+                            <option selected disabled>Select Experiment</option>
+                        </select>
+                        <div class="overSelect"></div>
+                    </div>
+                    <div id="search-exp-checkboxes" class="checkboxes">
+                        {% for exp in experiments %}
+                            <label>
+                                <input type="checkbox" value="{{ exp }}" />
+                                {{ exp }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
             <!-- Plaque Histology Filter -->
             <div class="filter-element">
               <div class="multiselect">
@@ -1657,7 +1607,7 @@
 
           <!-- Search submit button -->
           <div style="text-align: center;">
-            <button type="submit" class="search-submit-btn">
+            <button type="submit" id="searchBtn" class="search-submit-btn">
               Search
             </button>
           </div>
@@ -1694,9 +1644,7 @@
             <thead>
               <tr>
                 <th>Subject ID</th>
-                <th>Predicted calcification status</th>
-                <th>P(calcified)</th>
-                <th>P(non-calcified)</th>
+                <th>Syntax score</th>
               </tr>
             </thead>
             <tbody id="results-body">
@@ -1800,16 +1748,15 @@
     });
   });
 
-  const MODEL_PROTEINS = {
-    {% for key, m in models.items %}
-      "{{ key }}": {{ m.features|safe }},
-    {% endfor %}
-  };
-
   // master copy for search reset, and current view
   let fullRecords = [];
   let allRecords  = [];
   let currentResultsSource = null; // 'predict' or 'search'
+
+  window.getSelectedExperiments = function () {
+    return $('#search-exp-checkboxes input:checked')
+             .map(function () { return $(this).val(); }).get();
+  };
 
   window.toggleCheckboxes = function (id) {
     const box   = document.getElementById(id);
@@ -1833,68 +1780,18 @@
     }
   });
 
-  // model selection for predict form
-  $(document).on('click', '#model-checkboxes .model-option', function () {
-    const $opt = $(this), key = $opt.data('key'), $list = $('#model-checkboxes .model-option');
-    if ($opt.hasClass('selected')) {
-      $opt.removeClass('selected');
-      $('#model_key_hidden').val('');
-      $('#model-selectBox select').html('<option selected disabled>Select prediction model</option>');
-      $('#model-note').addClass('d-none');
-      return;
-    }
-    $list.removeClass('selected');
-    $opt.addClass('selected');
-    $('#model_key_hidden').val(key);
-    const proteins = MODEL_PROTEINS[key] || [];
-    $('#protein-list').text(proteins.join(', '));
-    $('#model-note').removeClass('d-none');
-    $('#model-validation').addClass('d-none');
-    $('#model-selectBox select').html(`<option>${$opt.text().trim()}</option>`);
-    toggleCheckboxes('model-checkboxes');
-  });
-
-  // model selection for search form
-  $(document).on('click', '#search-model-checkboxes .model-option', function () {
-    const $opt = $(this), key = $opt.data('key'), $list = $('#search-model-checkboxes .model-option');
-    if ($opt.hasClass('selected')) {
-      $opt.removeClass('selected');
-      $('#search_model_key_hidden').val('');
-      $('#search-model-selectBox select').html('<option selected disabled>Select prediction model</option>');
-      return;
-    }
-    $list.removeClass('selected');
-    $opt.addClass('selected');
-    $('#search_model_key_hidden').val(key);
-    $('#search-model-selectBox select').html(`<option>${$opt.text().trim()}</option>`);
-    toggleCheckboxes('search-model-checkboxes');
-  });
-
   // prediction form validation
   (function () {
     'use strict';
     const form       = document.getElementById('predictForm'),
-          fileInput  = document.getElementById('sample_file'),
-          modelInput = document.getElementById('model_key_hidden'),
-          modelAlert = document.getElementById('model-validation');
+          fileInput  = document.getElementById('sample_file');
     form.addEventListener('submit', function (ev) {
-      const fileOK  = !!fileInput.value,
-            modelOK = !!modelInput.value;
-      if (!fileOK) {
-        modelAlert.classList.add('d-none');
-        form.classList.add('was-validated');
-        fileInput.reportValidity();
-        ev.preventDefault();
-        return;
-      }
-      if (!modelOK) {
-        modelAlert.classList.remove('d-none');
-        form.classList.add('was-validated');
-        ev.preventDefault();
-        return;
-      }
-      modelAlert.classList.add('d-none');
-    }, false);
+        if (!fileInput.value) {
+            form.classList.add('was-validated');
+            fileInput.reportValidity();
+            ev.preventDefault();
+        }
+      }, false);
   })();
 
   // loading animation (from plaquery)
@@ -1971,19 +1868,13 @@
           $err  = $('#errorBox');
     $form.on('submit', function (e) {
       e.preventDefault();
-      const fileChosen  = $('#sample_file').val(),
-            modelChosen = $('#model_key_hidden').val();
+      const fileChosen  = $('#sample_file').val();
       if (!fileChosen) return;
-      if (!modelChosen) {
-        $('#model-validation').removeClass('d-none');
-        return;
-      }
       $err.addClass('d-none').empty();
       $btn.prop('disabled', true);
       const prog = showLoadingAnimation();
 
       const fd   = new FormData(this);
-      // hidden input already contains model_key
       $.ajax({
         url         : $form.attr('action'),
         method      : 'POST',
@@ -1995,9 +1886,7 @@
           currentResultsSource = 'predict';
           const transformed = json.results.map(r => ({
             'Subject ID':                   r.subject_id,
-            'Predicted calcification status': r.class_name,
-            'P(calcified)':                 (r.probability_calcified * 100).toFixed(2) + '%',
-            'P(non-calcified)':             (r.probability_noncalc * 100).toFixed(2) + '%'
+            'Syntax score': r.syntax_score.toFixed(2)
           }));
           fullRecords = transformed;
           displayResults(transformed);
@@ -2031,22 +1920,16 @@
     // Clear out any "invalid" styling that might still be on the calc‐pred form
     $('#predictForm').removeClass('was-validated');
     $('#sample_file').removeClass('is-invalid');
-    // Hide the “please select a prediction model” message in calc‐pred
-    $('#model-validation').addClass('d-none');
     const $btn = $('#searchBtn');
-    const modelKey = $('#search_model_key_hidden').val();
-    if (!modelKey) {
-      showError('Please select a prediction model for patient search');
-      return;
-    }
     $('#errorBox').addClass('d-none').empty();
     $btn.prop('disabled', true);
     const prog = showLoadingAnimation();
     const formData = new FormData(this);
 
-    // include the selected model key
-    formData.append('model_key', modelKey);
-
+    // include all selected experiments (zero = no filter)
+    $('#search-exp-checkboxes input:checked').each(function() {
+      formData.append('experiment', $(this).val());
+    });
     // append all existing filter inputs by name
     $('#search-histology-checkboxes input:checked').each(function() {
       formData.append('histology', $(this).val());
@@ -2090,7 +1973,7 @@
     });
 
     $.ajax({
-      url: '{% url "calc_filter" %}',
+      url: '{% url "syntax_filter" %}',
       method: 'POST',
       data: formData,
       processData: false,
@@ -2102,12 +1985,10 @@
           const res = {
             'Subject ID': r.patient_id,
             'Experiment' : r.experiment,
-            'Predicted calcification status': r.class_name,
-            'P(calcified)': (r.probability_calcified*100).toFixed(2)+'%',
-            'P(non-calcified)': (r.probability_noncalc*100).toFixed(2)+'%'
+            'Syntax score': r.syntax_score.toFixed(2)
           };
           Object.keys(r).forEach(key => {
-            if (!['patient_id','experiment','class_name','probability_calcified','probability_noncalc','missing_fraction'].includes(key)) {
+            if (!['patient_id','experiment','syntax_score','missing_fraction'].includes(key)) {
               res[ formatColumnName(key) ] = r[key];
             }
           });
@@ -2116,15 +1997,14 @@
         fullRecords = transformed;
         displayResults(transformed);
         if (Array.isArray(json.warnings) && json.warnings.length) {
-          // If missing_frac > 50%, show “skipped” message; otherwise show “unreliable” message (>25% and <=50%)
-          const txt = json.warnings.map(w => {
-            const pct = Math.round(w.missing_fraction * 100);
-            if (w.missing_fraction > 0.50) {
+          // If missing_frac > 50%, show “skipped” message
+          const txt = json.warnings
+            .filter(w => w.missing_fraction > 0.50)
+            .map(w => {
+              const pct = Math.round(w.missing_fraction * 100);
               return `${w.patient_id} skipped: ${pct}% of required proteins missing.`;
-            } else if (w.missing_fraction > 0.25){
-              return `${w.patient_id}: ${pct}% of required proteins missing; prediction may be unreliable.`;
-            }
-          }).join('<br>');
+            })
+            .join('<br>');
           showError('Subjects flagged for missing data:<br>' + txt);
         }
       },
@@ -2175,11 +2055,7 @@
     if (allCols.includes('Experiment')) { 
       coreCols.push('Experiment');
     }
-    coreCols.push(
-      'Predicted calcification status',
-      'P(calcified)',
-      'P(non-calcified)'
-    );
+    coreCols.push('Syntax score');
       
     const extraCols  = allCols.filter(c=>!coreCols.includes(c));
 
@@ -2261,9 +2137,6 @@
   }
 
   function formatColumnName(key) {
-    if (key === 'Predicted Calcification Status') {
-      return 'Predicted calcification status';
-    }
     if (
       key === 'High stenosis(≥90%)' ||
       key === 'High_Stenosis(≥90%)'
@@ -2387,7 +2260,7 @@
     const ws = XLSX.utils.json_to_sheet(allRecords),
           wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Results');
-    XLSX.writeFile(wb, 'calcification_results.xlsx');
+    XLSX.writeFile(wb, 'syntax_score_results.xlsx');
   }
 
   function exportToCSV() {
@@ -2400,7 +2273,7 @@
     const blob = new Blob([ [header].concat(lines).join('\r\n') ], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob),
           a   = document.createElement('a');
-    a.href = url; a.download='calcification_results.csv';
+    a.href = url; a.download='syntax_score_results.csv';
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
@@ -2414,7 +2287,7 @@
     const blob = new Blob([ [header].concat(lines).join('\r\n') ], { type: 'text/tab-separated-values;charset=utf-8;' });
     const url = URL.createObjectURL(blob),
           a   = document.createElement('a');
-    a.href = url; a.download='calcification_results.tsv';
+    a.href = url; a.download='syntax_score_results.tsv';
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
