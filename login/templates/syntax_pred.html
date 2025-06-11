@@ -1247,27 +1247,6 @@
 
           <!-- Filter elements from plaquery.html -->
           <div class="filters-container">
-            <!-- Experiment Filter -->
-            <div class="filter-element">
-                <div class="multiselect">
-                    <div id="search-exp-selectBox"
-                            class="selectBox animated-button"
-                            onclick="toggleCheckboxes('search-exp-checkboxes')">
-                        <select class="filter-select" aria-label="Filter Experiment">
-                            <option selected disabled>Select Experiment</option>
-                        </select>
-                        <div class="overSelect"></div>
-                    </div>
-                    <div id="search-exp-checkboxes" class="checkboxes">
-                        {% for exp in experiments %}
-                            <label>
-                                <input type="checkbox" value="{{ exp }}" />
-                                {{ exp }}
-                            </label>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
             <!-- Plaque Histology Filter -->
             <div class="filter-element">
               <div class="multiselect">
@@ -1644,7 +1623,7 @@
             <thead>
               <tr>
                 <th>Subject ID</th>
-                <th>Syntax score</th>
+                <th>Predicted syntax score</th>
               </tr>
             </thead>
             <tbody id="results-body">
@@ -1752,11 +1731,6 @@
   let fullRecords = [];
   let allRecords  = [];
   let currentResultsSource = null; // 'predict' or 'search'
-
-  window.getSelectedExperiments = function () {
-    return $('#search-exp-checkboxes input:checked')
-             .map(function () { return $(this).val(); }).get();
-  };
 
   window.toggleCheckboxes = function (id) {
     const box   = document.getElementById(id);
@@ -1886,7 +1860,7 @@
           currentResultsSource = 'predict';
           const transformed = json.results.map(r => ({
             'Subject ID':                   r.subject_id,
-            'Syntax score': r.syntax_score.toFixed(2)
+            'Predicted syntax score': r.syntax_score.toFixed(2)
           }));
           fullRecords = transformed;
           displayResults(transformed);
@@ -1926,10 +1900,6 @@
     const prog = showLoadingAnimation();
     const formData = new FormData(this);
 
-    // include all selected experiments (zero = no filter)
-    $('#search-exp-checkboxes input:checked').each(function() {
-      formData.append('experiment', $(this).val());
-    });
     // append all existing filter inputs by name
     $('#search-histology-checkboxes input:checked').each(function() {
       formData.append('histology', $(this).val());
@@ -1985,7 +1955,7 @@
           const res = {
             'Subject ID': r.patient_id,
             'Experiment' : r.experiment,
-            'Syntax score': r.syntax_score.toFixed(2)
+            'Predicted syntax score': r.syntax_score.toFixed(2)
           };
           Object.keys(r).forEach(key => {
             if (!['patient_id','experiment','syntax_score','missing_fraction'].includes(key)) {
@@ -2055,7 +2025,7 @@
     if (allCols.includes('Experiment')) { 
       coreCols.push('Experiment');
     }
-    coreCols.push('Syntax score');
+    coreCols.push('Predicted syntax score');
       
     const extraCols  = allCols.filter(c=>!coreCols.includes(c));
 
@@ -2260,7 +2230,7 @@
     const ws = XLSX.utils.json_to_sheet(allRecords),
           wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Results');
-    XLSX.writeFile(wb, 'syntax_score_results.xlsx');
+    XLSX.writeFile(wb, 'predicted_syntax_scores.xlsx');
   }
 
   function exportToCSV() {
@@ -2273,7 +2243,7 @@
     const blob = new Blob([ [header].concat(lines).join('\r\n') ], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob),
           a   = document.createElement('a');
-    a.href = url; a.download='syntax_score_results.csv';
+    a.href = url; a.download='predicted_syntax_scores.csv';
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
@@ -2287,7 +2257,7 @@
     const blob = new Blob([ [header].concat(lines).join('\r\n') ], { type: 'text/tab-separated-values;charset=utf-8;' });
     const url = URL.createObjectURL(blob),
           a   = document.createElement('a');
-    a.href = url; a.download='syntax_score_results.tsv';
+    a.href = url; a.download='predicted_syntax_scores.tsv';
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 

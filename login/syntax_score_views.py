@@ -189,6 +189,7 @@ def _read_file(f) -> tuple[pd.DataFrame, str]:
 
 # ── constants ───────────────────────────────────────────────────────────
 PANEL = ["HRG", "CP", "C4B", "F13A1", "VCAN"]
+MATRISOME_EXP  = "Core Matrisome Coronary Plaques (Vienna)"
 
 # ── build feature matrix for the Syntax pipeline ────────────────────────
 def _matrix_for_pipeline(df: pd.DataFrame, layout: str):
@@ -255,11 +256,6 @@ def syntax_prediction_view(request: HttpRequest) -> HttpResponse:
     # pull filter lists from Neo4j
     driver = get_neo4j_db()
     with driver.session(database="plaquems") as session:
-        experiments = [
-            r["experiment"] for r in session.run(
-                "MATCH (s:Sample) RETURN DISTINCT s.experiment AS experiment"
-            ) if r["experiment"] is not None
-        ]
         histologies = [
             r["histology"] for r in session.run(
                 "MATCH (p:Patient) RETURN DISTINCT p.Histology AS histology"
@@ -320,7 +316,6 @@ def syntax_prediction_view(request: HttpRequest) -> HttpResponse:
     ]
 
     return render(request, "syntax_pred.html", {
-        "experiments":       experiments,
         "histologies":       histologies,
         "ultrasounds":       ultrasounds,
         "sexes":             sexes,
@@ -415,14 +410,7 @@ def syntax_prediction_upload_view(request: HttpRequest) -> JsonResponse:
 def syntax_prediction_filter_view(request: HttpRequest) -> JsonResponse:
 
     # Gather raw filter inputs
-    experiments          = request.POST.getlist("experiment")
-    if not experiments:
-        experiments = [
-            "Cellular Proteome Carotid Plaques (Vienna)",
-            "Core Matrisome Carotid Plaques (Vienna)",
-            "Soluble Matrisome Carotid Plaques (Vienna)",
-            "Soluble Matrisome OLINK Carotid Plaques (Vienna)",
-        ]     
+    experiments         = [MATRISOME_EXP]
     sex                 = request.POST.getlist("sex")
     age                 = request.POST.getlist("age_group")
     symptoms            = request.POST.getlist("symptoms")
@@ -655,11 +643,11 @@ def syntax_prediction_filter_view(request: HttpRequest) -> JsonResponse:
     # Batch‐get core abundances for all patients
     core_batch_q = """
     UNWIND $patientIds AS pid
-    MATCH (s:Sample {patientID:pid, area:'core'})
-    WHERE s.experiment IN $exps
+    UNWIND $exps AS experiment
+    MATCH (s:Sample {patientID:pid, area:'core', experiment:experiment})
     MATCH (s)-[r:ABUNDANCE]->(pr:Protein)
     UNWIND [ nm IN pr.name WHERE toUpper(trim(nm)) IN $feats ] AS name
-    RETURN pid, collect(DISTINCT {name:name, abundance:r.abundance}) AS coreAbunds
+    RETURN pid, experiment, collect(DISTINCT {name:name, abundance:r.abundance}) AS coreAbunds
     """
     with driver.session(database="plaquems") as session:
         core_records = list(session.run(
@@ -669,19 +657,20 @@ def syntax_prediction_filter_view(request: HttpRequest) -> JsonResponse:
             feats=feats
         ))
     # Build a map: pid → { feat:abundance, … }
-    core_map = {}
-    for rec in core_records:
-        cm = { entry["name"]: entry["abundance"] for entry in rec["coreAbunds"] }
-        core_map[rec["pid"]] = cm
+    core_map = {
+        (rec["pid"], rec["experiment"]):
+            { entry["name"]: entry["abundance"] for entry in rec["coreAbunds"] }
+        for rec in core_records
+    }
 
     # Batch‐get periphery abundances
     peri_batch_q = """
     UNWIND $patientIds AS pid
-    MATCH (s:Sample {patientID:pid, area:'periphery'})
-    WHERE s.experiment IN $exps
+    UNWIND $exps AS experiment
+    MATCH (s:Sample {patientID:pid, area:'periphery', experiment:experiment})
     MATCH (s)-[r:ABUNDANCE]->(pr:Protein)
     UNWIND [ nm IN pr.name WHERE toUpper(trim(nm)) IN $feats ] AS name
-    RETURN pid, collect(DISTINCT {name:name, abundance:r.abundance}) AS periAbunds
+    RETURN pid, experiment, collect(DISTINCT {name:name, abundance:r.abundance}) AS periAbunds
     """
     with driver.session(database="plaquems") as session:
         peri_records = list(session.run(
@@ -690,59 +679,63 @@ def syntax_prediction_filter_view(request: HttpRequest) -> JsonResponse:
             exps=experiments,
             feats=feats
         ))
-    peri_map = {}
-    for rec in peri_records:
-        pm = { entry["name"]: entry["abundance"] for entry in rec["periAbunds"] }
-        peri_map[rec["pid"]] = pm
+    peri_map = {
+        (rec["pid"], rec["experiment"]):
+            { entry["name"]: entry["abundance"] for entry in rec["periAbunds"] }
+        for rec in peri_records
+    }
 
     # loop locally, build 5×1 matrices, run pipeline
     results, warnings_list = [], []
     with driver.session(database="plaquems") as session:
         for pid in patient_ids:
-            # Metadata
-            meta_rec = session.run(meta_q, pid=pid).single().data()
-            meta_rec["experiment"] = "; ".join(experiments) 
+            for experiment in experiments:
+                # Metadata
+                meta_rec = session.run(meta_q, pid=pid).single().data()
+                meta_rec["experiment"] = experiment
+ 
+                # merge core + periphery
+                abund = dict(core_map.get((pid, experiment), {}))
+                for f, v in peri_map.get((pid, experiment), {}).items():
+                    if f not in abund or abund[f] in (None, 0):
+                        abund[f] = v
 
-            # merge core + periphery
-            abund = dict(core_map.get(pid, {}))
-            for f, v in peri_map.get(pid, {}).items():
-                if f not in abund or abund[f] in (None, 0):
-                    abund[f] = v
+                # missing-data check
+                missing_names = [
+                    f for f in feats
+                    if f not in abund or abund[f] in (None, 0)
+                ]
+                missing_frac = len(missing_names) / len(feats)
 
-            # missing-data check
-            missing_names = [
-                f for f in feats
-                if f not in abund or abund[f] in (None, 0)
-            ]
-            missing_frac = len(missing_names) / len(feats)
+                # skip & warn if > 50 % missing
+                if missing_frac > 0.50:
+                    warnings_list.append({
+                        "patient_id":       pid,
+                        "experiment":       experiment,
+                        "missing_fraction": float(missing_frac),
+                        "skipped":          True,
+                    })
+                    continue
 
-            # skip & warn if > 50 % missing
-            if missing_frac > 0.50:
-                warnings_list.append({
-                    "patient_id":       pid,
+                # build 5 × 1 DataFrame with proteins on the index
+                col_name = f"{pid}_{experiment}"
+                col_df = pd.DataFrame(
+                    {col_name: [
+                        abund.get(f) if abund.get(f) not in (None, 0) else np.nan
+                        for f in feats
+                    ]},
+                    index=feats,
+                    dtype=float,
+                )
+
+                # run the pipeline (transpose happens inside FunctionTransformer)
+                score = float(pipe.predict(col_df)[0])
+
+                results.append({
+                    **meta_rec,
+                    "syntax_score":    score,
                     "missing_fraction": float(missing_frac),
-                    "skipped":          True,
                 })
-                continue
-
-            # build 5 × 1 DataFrame with proteins on the index
-            col_df = pd.DataFrame(
-                {pid: [
-                    abund.get(f) if abund.get(f) not in (None, 0) else np.nan
-                    for f in feats
-                ]},
-                index=feats,
-                dtype=float,
-            )
-
-            # run the pipeline (transpose happens inside FunctionTransformer)
-            score = float(pipe.predict(col_df)[0])
-
-            results.append({
-                **meta_rec,
-                "syntax_score":    score,
-                "missing_fraction": float(missing_frac),
-            })
 
     driver.close()
     return JsonResponse({
