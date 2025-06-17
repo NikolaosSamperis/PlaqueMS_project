@@ -1,6 +1,7 @@
 from __future__ import annotations
 import warnings
 import io, os, math, joblib, re, numpy as np, pandas as pd
+from django.contrib.auth.decorators import login_required
 from functools import lru_cache
 from django.conf import settings
 from django.http import (
@@ -251,6 +252,7 @@ def get_neo4j_db():
     return GraphDatabase.driver(uri, auth=basic_auth(username, password))
 
 # ── 1) GET: render both forms ─────────────────────────────────────────────────────────────────
+@login_required(login_url='login')
 @require_http_methods(["GET"])
 def syntax_prediction_view(request: HttpRequest) -> HttpResponse:
     # pull filter lists from Neo4j
@@ -388,6 +390,7 @@ def syntax_prediction_upload_view(request: HttpRequest) -> JsonResponse:
         # ── 5) run the pipeline ---------------------------------------------
         # (Pipeline: transpose → select PANEL → scale → KNN-impute → regress)
         preds = pipe.predict(prot_mat).astype(float)   # ndarray (n_patients,)
+        preds = np.maximum(preds, 0.0)                # ← floor at zero
 
         # ── 6) pack the JSON response ---------------------------------------
         results = [
@@ -729,7 +732,7 @@ def syntax_prediction_filter_view(request: HttpRequest) -> JsonResponse:
                 )
 
                 # run the pipeline (transpose happens inside FunctionTransformer)
-                score = float(pipe.predict(col_df)[0])
+                score = max(float(pipe.predict(col_df)[0]), 0.0)   # floor at zero
 
                 results.append({
                     **meta_rec,

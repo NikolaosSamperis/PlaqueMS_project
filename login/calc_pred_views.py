@@ -1,4 +1,5 @@
 from __future__ import annotations
+from django.contrib.auth.decorators import login_required
 import warnings
 import io, os, math, joblib, re, numpy as np, pandas as pd
 from scipy.special import expit
@@ -276,6 +277,7 @@ def get_neo4j_db():
     return GraphDatabase.driver(uri, auth=basic_auth(username, password))
 
 # ── 1) GET: render both forms ─────────────────────────────────────────────────────────────────
+@login_required(login_url='login')
 @require_http_methods(["GET"])
 def calc_prediction_view(request: HttpRequest) -> HttpResponse:
     # model dropdown
