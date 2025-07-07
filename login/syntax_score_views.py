@@ -190,7 +190,7 @@ def _read_file(f) -> tuple[pd.DataFrame, str]:
 
 # ── constants ───────────────────────────────────────────────────────────
 PANEL = ["HRG", "CP", "C4B", "F13A1", "VCAN"]
-MATRISOME_EXP  = "Core Matrisome Coronary Plaques (Vienna)"
+MATRISOME_EXP  = "Label-free Core Matrisome Carotid Plaques (Vienna)"
 
 # ── build feature matrix for the Syntax pipeline ────────────────────────
 def _matrix_for_pipeline(df: pd.DataFrame, layout: str):
