@@ -1,17 +1,179 @@
 # PlaqueMS
-## User Guide
-### Preparation: 
-Download Python, Django, Cytoscape, and MySQL and install them. Please download according to the version in this table to avoid conflicts.  
+## *An Integrative Web Platform for Atherosclerosis Omics Analysis.*
+Facilitating Visual and Predictive Insights into Atherosclerotic Plaque Biology
 
-MySQL  8.0.26  
-Cytoscape 3.10.0  
-clusterMaker2 2.3.4  
-Python 3.8  
-Django 3.2.4  
-Django Rest Framework 3.12.0  
-py4cytoscape 1.7.0  
+## Prerequisites
+Download and install:
+- Python 3.11.9
+- Django 5.1.7
+- Django Rest Framework 3.15.2
+- Cytoscape Desktop 3.10.3
+- clusterMaker2 2.3.4
+- Neo4j Desktop 1.6.1
+- Neo4j DBMS 5.24.2
+- MySQL Community Server 8.0.40
+- (optional) A Python IDE; recommended: Visual Studio Code or Pycharm
+- (optional) Git Bash for easier Unix-style command line use on Windows
 
-Install python ide; I recommend using PyCharm and importing the code into PyCharm.  
+## Setup Instructions
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/NikolaosSamperis/PlaqueMS_project.git
+cd PlaqueMS_project
+```
+
+### Project Structure
+
+```
+PlaqueMS_project/
+├── login/                
+├── protein/              
+├── network/              
+├── templates/            # HTML templates
+├── static/               # Static files
+├── manage.py
+├── requirements.txt
+└── ...
+```
+
+### 2. Create and Activate a Virtual Environment
+```bash
+python -3.11 -m venv venv311
+# On Windows:
+venv311\Scripts\activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configure Environment Variables
+Create a `.env` file in the project root with the following content (adjust as needed):
+
+```
+# Django Configurations
+SECRET_KEY=your_secret_key
+
+# MySQL Database Configurations
+DB_NAME=your_db_name
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_HOST=127.0.0.1
+DB_PORT=3306
+
+# Neo4j Database Configurations
+NEO4J_URI=neo4j://localhost:7687
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=your_neo4j_password
+```
+
+> **Note:**  
+> After cloning the repository, open `testdj/settings.py` and update the `BASE_DIR` variable to match the path where you cloned the project on your machine.
+
+
+> **Deployment Note:**  
+> If you deploy this app on a public server, update the `ALLOWED_HOSTS` variable in `testdj/settings.py` to include your server’s domain name or public IP address (e.g., `['yourdomain.com', 'your.server.ip']`).  
+> This is required for Django to serve requests from external users.
+
+### 5. Setting Up the MySQL Database
+1. **Install MySQL**  
+   Make sure MySQL is installed and running on your system.
+
+2. **Create the Database**  
+   Open your MySQL client (e.g., MySQL Workbench, command line, etc.) and create a new database:
+   ```sql
+   CREATE DATABASE plaqueMS CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+   ```
+
+3. **Import the Dumped SQL File**  
+   Use the command line to import the provided SQL dump (`plaquems_database.sql`):
+
+   ```bash
+   mysql -u <your_mysql_user> -p plaqueMS < plaquems_database.sql
+   ```
+   - Replace `<your_mysql_user>` with your MySQL username.
+   - Enter your password when prompted.
+
+4. **Update Django Settings**  
+   Make sure your `settings.py` (or `.env` file) has the correct database credentials:
+   ```python
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'NAME': 'plaqueMS',
+           'USER': '<your_mysql_user>',
+           'PASSWORD': '<your_mysql_password>',
+           'HOST': 'localhost',
+           'PORT': '3306',
+       }
+   }
+   ```
+   
+>**Automatic Database Creation:**
+>When you start the application, it will attempt to create the MySQL database automatically if it does not already exist.
+>Make sure your MySQL user has sufficient privileges to create databases.
+>
+>**Note:** If the database is created automatically (without importing the provided SQL dump), additional migration and data population steps are required to initialize the schema and load data.
+These scripts exist but are **not documented in this guide.**
+
+### 6. Setting Up the Neo4j Database
+1. **Install Neo4j**  
+   Make sure Neo4j Desktop is installed and running on your system.
+
+2. **Create a New Project and Add a DBMS**  
+   - Open Neo4j Desktop.
+   - Create a new project (or use an existing one).
+   - Within the project, click "Add" → "Local DBMS" to create a new DBMS (e.g., Neo4j 5.24.2).
+   - Set a password.
+    
+3. **Locate the Neo4j Folders**  
+   - After the DBMS is created, click on it in the sidebar, then click the `⋯` menu and select **"Open Folder"** → **DBMS** to access its directories.
+   - Inside that folder, find:
+       - The `bin/` directory — used to run the `neo4j-admin` command
+       - The `import/` folder — where you will place your `.dump` file
+
+4. **Place the Dump File**  
+   - Copy your `.dump` file (e.g., `plaquems_neo4j_database.dump`) into the `import` folder you found above.
+     
+> **Note:** The `plaquems_neo4j_database.dump` file can be provided by the authors upon request, as it contains patient-sensitive data and is not publicly distributed.
+
+5. **Restore the Dumped Database**  
+   - Make sure the DBMS is stopped if running in Neo4j Desktop.
+   - Run the following command from Git Bash (update paths as needed):
+     ```bash
+     "/c/Users/YourUsername/.Neo4jDesktop/relate-data/dbmss/dbms-<your-dbms-id>/bin/neo4j-admin.bat" database load --database=plaquems --from-path="/c/Users/YourUsername/.Neo4jDesktop/relate-data/dbmss/dbms-<your-dbms-id>/import" --overwrite-destination=true
+     ```
+   - Replace:
+       - `YourUsername` → with your actual Windows username
+       - `<your-dbms-id>` → with the unique folder name of your Neo4j DBMS instance (e.g., dbms-3fc316d9-...)
+       - `plaquems` → with your desired database name.
+
+6. **Restart the Database**  
+   - In Neo4j Desktop, start the DBMS — the `plaquems` database should now appear and contain your data.
+
+7. **Update Django Settings**  
+   Make sure your `.env` or `settings.py` file contains the correct Neo4j connection details:
+   ```
+   NEO4J_URI=neo4j://localhost:7687
+   NEO4J_USERNAME=neo4j
+   NEO4J_PASSWORD=your_neo4j_password
+   NEO4J_DATABASE=plaquems
+   ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Enter python3 manage.py runserver 127.0.0.1:8000 on the command line to get the application running. You may need to install some other Python libraries; please follow the instructions in PyCharm to install them.  
 
