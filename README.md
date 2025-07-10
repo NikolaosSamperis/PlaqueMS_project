@@ -27,15 +27,100 @@ cd PlaqueMS_project
 
 ```
 PlaqueMS_project/
-├── login/                
-├── protein/              
-├── network/              
-├── templates/            # HTML templates
-├── static/               # Static files
 ├── manage.py
-├── requirements.txt
-└── ...
+├── login/                                                   # Main app called "login"
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── auth_views.py
+│   ├── calc_pred_views.py
+│   ├── cyviews.py
+│   ├── forms.py
+│   ├── home_views.py
+│   ├── insert_views.py
+│   ├── management                                           # Scripts for populating the database (ignore)
+│   │   ├── __init__.py
+│   │   └── commands
+│   │       ├── __init__.py
+│   │       ├── insert_uva.py
+│   │       └── insert_vienna.py
+│   ├── migrations                                           # First migration of the MySQL database (ignore)
+│   │   ├── 0001_initial.py
+│   │   └── __init__.py
+│   ├── models.py
+│   ├── networkTree.py
+│   ├── pathTree.py
+│   ├── plaquery_views.py
+│   ├── plot_views.py
+│   ├── protein_views.py
+│   ├── syntax_score_views.py
+│   ├── templates                                             # Front-end templates
+│   │   ├── Home.html
+│   │   ├── calc_pred.html
+│   │   ├── login
+│   │   │   ├── admin_dashboard.html
+│   │   │   ├── login.html
+│   │   │   └── register.html
+│   │   ├── network.html
+│   │   ├── plaquery.html
+│   │   ├── plot.html
+│   │   ├── plot_result_list.html
+│   │   ├── protein.html
+│   │   └── syntax_pred.html
+│   ├── templatetags
+│   │   ├── __init__.py
+│   │   ├── auth_extras.py
+│   │   └── navigation.py
+│   ├── tests.py
+│   └── validators.py
+├── testdj/                                                   # settings.py + urls.py
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── static/                                                  # static folder containing data for the MySQL database and other important documents
+│   ├── .ipynb_checkpoints
+│   ├── Dictionary_all.csv
+│   ├── HUMAN_9606_idmapping.dat
+│   ├── PlaqueMS
+│   ├── Untitled.ipynb
+│   ├── __init__.py
+│   ├── calcified_vs_noncalcified_periphery_vp.jpg
+│   ├── geometric-heart-scaled.png
+│   ├── heatmap_all.png
+│   ├── heatmap_significant_corrected.png
+│   └── symptomatic_vs_asymptomatic_periphery_vp.jpg
+└── model_artifacts/                                          # Prediction Model files
+    ├── Cellular_Proteome
+    │   ├── 0finalSingleModel.pkl
+    │   ├── FeatureMaxNormdata.csv
+    │   ├── FeatureMinNormdata.csv
+    │   ├── knn_imputer.pkl
+    │   ├── minmax_scaler.pkl
+    │   ├── sds_new_input.txt
+    │   └── selected_features_best_model.csv
+    ├── Core_Matrisome
+    │   ├── 0finalSingleModel.pkl
+    │   ├── FeatureMaxNormdata.csv
+    │   ├── FeatureMinNormdata.csv
+    │   ├── guhcl_new_input.txt
+    │   ├── knn_imputer.pkl
+    │   ├── minmax_scaler.pkl
+    │   └── selected_features_best_model1.csv
+    ├── GUHCL_syntax_score
+    │   └── syntax_pipeline.pkl
+    └── Soluble_Matrisome
+        ├── 0finalSingleModel.pkl
+        ├── FeatureMaxNormdata.csv
+        ├── FeatureMinNormdata.csv
+        ├── knn_imputer.pkl
+        ├── minmax_scaler.pkl
+        ├── nacl_new_input.txt
+        └── selected_features_best_model.csv
 ```
+
+>**Note:** The `static` directory is not included in the cloned repository due to its large size. It can be provided by the authors upon request.
 
 ### 2. Create and Activate a Virtual Environment
 ```bash
