@@ -28,33 +28,33 @@ cd PlaqueMS_project
 ```
 PlaqueMS_project/
 ├── manage.py
-├── login/                                                   # Main app called "login"
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── auth_views.py
-│   ├── calc_pred_views.py
-│   ├── cyviews.py
-│   ├── forms.py
-│   ├── home_views.py
-│   ├── insert_views.py
-│   ├── management                                           # Scripts for populating the database (ignore)
+├── login/    # Main Django app
+│   ├── __init__.py    # Marks directory as python package
+│   ├── admin.py    # Admin interface config. for models (not used)
+│   ├── apps.py    # App config. settings
+│   ├── auth_views.py    # User authentication back-end (login, register, logout)
+│   ├── calc_pred_views.py    # "Calcification prediction" tool back-end
+│   ├── cyviews.py    # "Protein Networks" tool back-end (Cytoscape-based)
+│   ├── forms.py    # Django form classes for user input/validation
+│   ├── home_views.py    # Home page back-end
+│   ├── insert_views.py    # Script for inserting data in the MySQL database (ignore)
+│   ├── management    # Scripts for populating the database (ignore)
 │   │   ├── __init__.py
 │   │   └── commands
 │   │       ├── __init__.py
 │   │       ├── insert_uva.py
-│   │       └── insert_vienna.py
-│   ├── migrations                                           # First migration of the MySQL database (ignore)
+│   │       └── insert_vienna.py    
+│   ├── migrations    # Database migration files for MySQL (ignore)
 │   │   ├── 0001_initial.py
 │   │   └── __init__.py
-│   ├── models.py
-│   ├── networkTree.py
-│   ├── pathTree.py
-│   ├── plaquery_views.py
-│   ├── plot_views.py
-│   ├── protein_views.py
-│   ├── syntax_score_views.py
-│   ├── templates                                             # Front-end templates
+│   ├── models.py    # Django ORM models defining MySQL database schema
+│   ├── networkTree.py    # Builds and saves a filtered experiment/network tree as JSON (legacy, ignore)
+│   ├── pathTree.py    # Builds a hierarchical dataset/experiment tree and saves it as JSON (legacy, ignore)
+│   ├── plaquery_views.py    # "Protein Abundance" tool back-end
+│   ├── plot_views.py    # "Differential Analysis Results" tool back-end
+│   ├── protein_views.py    # "Proteins" tool back-end
+│   ├── syntax_score_views.py    # "Syntax score prediction" tool back-end
+│   ├── templates    # HTML front-end templates
 │   │   ├── Home.html
 │   │   ├── calc_pred.html
 │   │   ├── login
@@ -67,57 +67,57 @@ PlaqueMS_project/
 │   │   ├── plot_result_list.html
 │   │   ├── protein.html
 │   │   └── syntax_pred.html
-│   ├── templatetags
+│   ├── templatetags    # Custom template tags for use in Django templates
 │   │   ├── __init__.py
 │   │   ├── auth_extras.py
 │   │   └── navigation.py
-│   ├── tests.py
-│   └── validators.py
-├── testdj/                                                   # settings.py + urls.py
+│   ├── tests.py    # Unit and integration tests for the app (legacy, ignore)
+│   └── validators.py    # Custom validation logic for forms.py
+├── testdj/    # Django project config. directory
 │   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── static/                                                  # static folder containing data for the MySQL database and other important documents
-│   ├── .ipynb_checkpoints
-│   ├── Dictionary_all.csv
-│   ├── HUMAN_9606_idmapping.dat
-│   ├── PlaqueMS
-│   ├── Untitled.ipynb
+│   ├── asgi.py    # ASGI entry point for asynchronous server deployments (legacy)
+│   ├── settings.py    # Main Django settings file (config.)
+│   ├── urls.py    # URL routing for the project
+│   └── wsgi.py    # WSGI entry point for server deployments (legacy)
+├── static/    # static files and datasets for the app
+│   ├── .ipynb_checkpoints    # Jupyter notebook checkpoint files (ignore)
+│   ├── Dictionary_all.csv    # Protein annotation dictionary for "Protein Abundance" tool
+│   ├── HUMAN_9606_idmapping.dat    # Protein ID mapping (used to populate MySQL database, not needed)
+│   ├── PlaqueMS    # Main datasets
+│   ├── Untitled.ipynb    # ignore
 │   ├── __init__.py
-│   ├── calcified_vs_noncalcified_periphery_vp.jpg
-│   ├── geometric-heart-scaled.png
-│   ├── heatmap_all.png
-│   ├── heatmap_significant_corrected.png
-│   └── symptomatic_vs_asymptomatic_periphery_vp.jpg
-└── model_artifacts/                                          # Prediction Model files
+│   ├── calcified_vs_noncalcified_periphery_vp.jpg    # JPG used in the "Home page"
+│   ├── geometric-heart-scaled.png    # JPG used in the "Home page"
+│   ├── heatmap_all.png    # JPG used in the "Home page"
+│   ├── heatmap_significant_corrected.png    # JPG used in the "Home page"
+│   └── symptomatic_vs_asymptomatic_periphery_vp.jpg    # JPG used in the "Home page"
+└── model_artifacts/    # Pre-trained models and related files for predictions
     ├── Cellular_Proteome
     │   ├── 0finalSingleModel.pkl
-    │   ├── FeatureMaxNormdata.csv
-    │   ├── FeatureMinNormdata.csv
+    │   ├── FeatureMaxNormdata.csv    # ignore
+    │   ├── FeatureMinNormdata.csv    # ignore
     │   ├── knn_imputer.pkl
     │   ├── minmax_scaler.pkl
-    │   ├── sds_new_input.txt
-    │   └── selected_features_best_model.csv
+    │   ├── sds_new_input.txt    # ignore
+    │   └── selected_features_best_model.csv    # ignore
     ├── Core_Matrisome
     │   ├── 0finalSingleModel.pkl
-    │   ├── FeatureMaxNormdata.csv
-    │   ├── FeatureMinNormdata.csv
-    │   ├── guhcl_new_input.txt
+    │   ├── FeatureMaxNormdata.csv    # ignore
+    │   ├── FeatureMinNormdata.csv    # ignore
+    │   ├── guhcl_new_input.txt    # ignore
     │   ├── knn_imputer.pkl
     │   ├── minmax_scaler.pkl
-    │   └── selected_features_best_model1.csv
+    │   └── selected_features_best_model1.csv    # ignore
     ├── GUHCL_syntax_score
     │   └── syntax_pipeline.pkl
     └── Soluble_Matrisome
         ├── 0finalSingleModel.pkl
-        ├── FeatureMaxNormdata.csv
-        ├── FeatureMinNormdata.csv
+        ├── FeatureMaxNormdata.csv    # ignore
+        ├── FeatureMinNormdata.csv    # ignore
         ├── knn_imputer.pkl
         ├── minmax_scaler.pkl
-        ├── nacl_new_input.txt
-        └── selected_features_best_model.csv
+        ├── nacl_new_input.txt    # ignore
+        └── selected_features_best_model.csv    # ignore
 ```
 
 >**Note:** The `static` directory is not included in the cloned repository due to its large size. It can be provided by the authors upon request.
