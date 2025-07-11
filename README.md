@@ -89,14 +89,11 @@ PlaqueMS_project/
 │   ├── urls.py    # URL routing for the project
 │   └── wsgi.py    # WSGI entry point for server deployments (legacy)
 ├── static/    # static files and datasets for the app
-│   ├── .ipynb_checkpoints    # Jupyter notebook checkpoint files (ignore)
 │   ├── Dictionary_all.csv    # Protein annotation dictionary for "Protein Abundance" tool
 │   ├── HUMAN_9606_idmapping.dat    # Protein ID mapping (used to populate MySQL database, not needed)
 │   ├── PlaqueMS    # Main datasets
-│   ├── Untitled.ipynb    # ignore
 │   ├── __init__.py
 │   ├── calcified_vs_noncalcified_periphery_vp.jpg    # JPG used in the "Home page"
-│   ├── geometric-heart-scaled.png    # JPG used in the "Home page"
 │   ├── heatmap_all.png    # JPG used in the "Home page"
 │   ├── heatmap_significant_corrected.png    # JPG used in the "Home page"
 │   └── symptomatic_vs_asymptomatic_periphery_vp.jpg    # JPG used in the "Home page"
