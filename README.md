@@ -24,7 +24,7 @@ Download and install:
 - Django v5.1.7
 - Django Rest Framework v3.15.2
 - Cytoscape Desktop v3.10.3
-- clusterMaker2 v2.3.4
+- clusterMaker2 v2.3.4 (Cytoscape plugin)
 - Neo4j Desktop v1.6.1
 - Neo4j DBMS v5.24.2
 - MySQL Community Server v8.0.40
