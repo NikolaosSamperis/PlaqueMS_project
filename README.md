@@ -222,7 +222,9 @@ NEO4J_PASSWORD=your_neo4j_password
 3. **Locate the Neo4j Folders**  
    - After the DBMS is created, click on it in the sidebar, then click the `⋯` menu and select `Open Folder → DBMS` to access its directories.
    - Inside that folder, find:
+     
        - The `bin/` directory — used to run the `neo4j-admin` command
+         
        - The `import/` folder — where you will place your `.dump` file
 
 4. **Place the Dump File**  
@@ -242,9 +244,10 @@ NEO4J_PASSWORD=your_neo4j_password
        - `plaquems` → with your desired database name.
 
 6. **Restart the Database**  
-   - In Neo4j Desktop, start the DBMS — the `plaquems` database should now appear and contain your data.
+   - In Neo4j Desktop, start the DBMS — the `plaquems` database should now appear and be ready for use.
 
-7. **Update Django Settings**  
+7. **Update Django Settings**
+    
    Make sure your `.env` or `settings.py` file contains the correct Neo4j connection details:
    ```
    NEO4J_URI=neo4j://localhost:7687
