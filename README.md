@@ -6,6 +6,11 @@
 ## *An Integrative Web Platform for Atherosclerosis Omics Analysis.*
 Facilitating Visual and Predictive Insights into Atherosclerotic Plaque Biology
 
+## 🧑‍💻 Development Environment
+Developed and tested locally using:
+  - Django (v5.1.7)
+  - Windows 10 OS
+
 ## 🛠️ Prerequisites
 Download and install:
 - Python 3.11.9
