@@ -1,8 +1,12 @@
 # PlaqueMS
+
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
+[![Django 5.1](https://img.shields.io/badge/django-5.1-brightgreen.svg)](https://docs.djangoproject.com/en/5.1/)
+
 ## *An Integrative Web Platform for Atherosclerosis Omics Analysis.*
 Facilitating Visual and Predictive Insights into Atherosclerotic Plaque Biology
 
-## Prerequisites
+## 🛠️ Prerequisites
 Download and install:
 - Python 3.11.9
 - Django 5.1.7
@@ -15,7 +19,7 @@ Download and install:
 - (optional) A Python IDE; recommended: Visual Studio Code or Pycharm
 - (optional) Git Bash for easier Unix-style command line use on Windows
 
-## Setup Instructions
+## ⚙️ Setup Instructions
 
 ### 1. Clone the Repository
 ```bash
@@ -23,11 +27,11 @@ git clone https://github.com/NikolaosSamperis/PlaqueMS_project.git
 cd PlaqueMS_project
 ```
 
-### Project Structure
-
+<details> <summary><strong>📁 Project Structure</strong> (click to expand)</summary>
+    
 ```
 PlaqueMS_project/
-├── manage.py
+├── manage.py    # Django's command-line utility for administrative tasks
 ├── login/    # Main Django app
 │   ├── __init__.py    # Marks directory as python package
 │   ├── admin.py    # Admin interface config. for models (not used)
@@ -119,6 +123,7 @@ PlaqueMS_project/
         ├── nacl_new_input.txt    # ignore
         └── selected_features_best_model.csv    # ignore
 ```
+</details>
 
 >**Note:** The `static` directory is not included in the cloned repository due to its large size. It can be provided by the authors upon request.
 
@@ -154,15 +159,14 @@ NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=your_neo4j_password
 ```
 
-> **Note:**  
-> After cloning the repository, open `testdj/settings.py` and update the `BASE_DIR` variable to match the path where you cloned the project on your machine.
+> **After cloning:**  
+> Open `testdj/settings.py` and update the `BASE_DIR` variable to match the path where you cloned the project on your machine.
 
 
 > **Deployment Note:**  
-> If you deploy this app on a public server, update the `ALLOWED_HOSTS` variable in `testdj/settings.py` to include your server’s domain name or public IP address (e.g., `['yourdomain.com', 'your.server.ip']`).  
-> This is required for Django to serve requests from external users.
+> For public deployments, update the `ALLOWED_HOSTS` in `testdj/settings.py` to your domain or public IP address.
 
-### 5. Setting Up the MySQL Database
+### 5. 🗄️ Setting Up the MySQL Database
 1. **Install MySQL**  
    Make sure MySQL is installed and running on your system.
 
@@ -196,25 +200,22 @@ NEO4J_PASSWORD=your_neo4j_password
    }
    ```
    
->**Automatic Database Creation:**
->When you start the application, it will attempt to create the MySQL database automatically if it does not already exist.
->Make sure your MySQL user has sufficient privileges to create databases.
->
->**Note:** If the database is created automatically (without importing the provided SQL dump), additional migration and data population steps are required to initialize the schema and load data.
-These scripts exist but are **not documented in this guide.**
+> **Automatic Database Creation:**
+> When you start the application, it will attempt to create the MySQL database if it does not exist.
+> If created this way, you must run additional migration and data population steps not covered in this guide.
 
-### 6. Setting Up the Neo4j Database
+### 6. 🗄️ Setting Up the Neo4j Database
 1. **Install Neo4j**  
    Make sure Neo4j Desktop is installed and running on your system.
 
 2. **Create a New Project and Add a DBMS**  
    - Open Neo4j Desktop.
    - Create a new project (or use an existing one).
-   - Within the project, click "Add" → "Local DBMS" to create a new DBMS (e.g., Neo4j 5.24.2).
+   - Within the project, click `Add → Local DBMS` to create a new DBMS (e.g., Neo4j 5.24.2).
    - Set a password.
     
 3. **Locate the Neo4j Folders**  
-   - After the DBMS is created, click on it in the sidebar, then click the `⋯` menu and select **"Open Folder"** → **DBMS** to access its directories.
+   - After the DBMS is created, click on it in the sidebar, then click the `⋯` menu and select `Open Folder → DBMS` to access its directories.
    - Inside that folder, find:
        - The `bin/` directory — used to run the `neo4j-admin` command
        - The `import/` folder — where you will place your `.dump` file
@@ -222,7 +223,7 @@ These scripts exist but are **not documented in this guide.**
 4. **Place the Dump File**  
    - Copy your `.dump` file (e.g., `plaquems_neo4j_database.dump`) into the `import` folder you found above.
      
-> **Note:** The `plaquems_neo4j_database.dump` file can be provided by the authors upon request, as it contains patient-sensitive data and is not publicly distributed.
+> **Note:** The Neo4j dump file contains sensitive data and is available by request only.
 
 5. **Restore the Dumped Database**  
    - Make sure the DBMS is stopped if running in Neo4j Desktop.
@@ -247,20 +248,23 @@ These scripts exist but are **not documented in this guide.**
    NEO4J_DATABASE=plaquems
    ```
 
-### 8. Create a Superuser (Admin)
+### 8. 👤 Create a Superuser (Admin)
 ```bash
 python manage.py createsuperuser
 ```
 
-### 9. Run the Development Server locally
+### 9. 🖥️ Run the Development Server
 ```bash
 python manage.py runserver
 ```
 
-## Troubleshooting
+## 💡 Troubleshooting
 - **MySQL errors:** Check your `.env` and MySQL server status.
+  
 - **Neo4j errors:** Ensure Neo4j is running and credentials are correct.
-- **Cytoscape Desktop requirements:** Ensure that Cytoscape Desktop is running in the background with the `clusterMaker2` plugin installed. Additionally, in Cytoscape, go to `Apps → clusterMaker Cluster Network → MCL Cluster` and enable the `Create new clustered network` option. This is required to view Markov clustering results in the "Protein Networks" module.
+  
+- **Cytoscape Desktop requirements:** Ensure that Cytoscape Desktop is running in the background with the `clusterMaker2` plugin installed. In Cytoscape, go to `Apps → clusterMaker Cluster Network → MCL Cluster` and enable the `Create new clustered network` option. This is required to view Markov clustering results in the "Protein Networks" module.
+  
 - **Windows file path issues:** On Windows 10 or later, enable long path support to prevent file paths from becoming inaccessible, even if they are correctly stored in the MySQL database. Run the following command in PowerShell as Administrator:
 ```powershell
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
@@ -268,11 +272,11 @@ New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name
 Then restart your system for the changes to take effect.
 
 
-## License
+## 📄 License
+*License information will be added soon.*
 
 
-
-## Contact
+## 📬 Contact
 For questions, contact [Nikolaos Samperis](mailto:nick.saberis@yahoo.com).
 
 
