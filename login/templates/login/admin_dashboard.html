@@ -12,11 +12,40 @@
     {% load static %}
     {% load tz %}
     <style>
+        /* Reset and base styles for sticky footer */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             padding-top: 60px; /* Adjust content to account for fixed toolbar */
         }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .custom-footer {
+            width: 100%;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e0e0e0;
+            padding: 1.5rem 0;
+            margin-top: auto;
+        }
+        .custom-footer p {
+            margin: 0;
+        }
+
         .status-badge {
             display: inline-block;
             padding: 0.25rem 0.5rem;
@@ -216,102 +245,110 @@
         </ul>
     </div>
 
-    <div class="container">
-        <div class="user-management-container">
-            <h2>User Management</h2>
-        </div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Registration Date/Time</th>
-                    <th>Last Login</th>
-                    <th>Status</th>
-                    <th>Admin Approval</th>
-                    <th>Approved At</th>
-                    <th>Approved By</th>
-                    <th>Staff Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.first_name }} {{ user.last_name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.registration_time|localtime|date:"Y-m-d H:i" }}</td>
-                    <td>
-                        {% if user.last_login %}
-                            {{ user.last_login|localtime|date:"Y-m-d H:i" }}
-                        {% else %}
-                            Never logged in
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if user.is_active %}
-                            <span class="status-badge status-approved">Active</span>
-                        {% else %}
-                            <span class="status-badge status-inactive">Inactive</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if user.is_staff %}
-                            -
-                        {% elif user.is_approved %}
-                            <span class="status-badge status-approved">Approved</span>
-                        {% else %}
-                            <span class="status-badge status-pending">Pending</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if user.approved_at %}
-                            {{ user.approved_at|localtime|date:"Y-m-d H:i" }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if user.approved_by %}
-                            {{ user.approved_by.first_name }} {{ user.approved_by.last_name }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if user.is_staff %}
-                            <span class="status-badge status-approved">Admin</span>
-                        {% else %}
-                            <span class="status-badge">User</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if user.is_staff %}
-                            -
-                        {% else %}
-                            {% if not user.is_approved %}
-                                <a href="{% url 'approve_user' user.id %}" class="btn btn-success btn-sm btn-uniform">Approve</a>
-                            {% endif %}                        
-                            {% if user.is_active %}
-                                <a href="{% url 'deactivate_user' user.id %}" class="btn btn-warning btn-sm btn-uniform">Deactivate</a>
+    <!-- Main content wrapper -->
+    <div class="main-content">
+        <div class="container">
+            <div class="user-management-container">
+                <h2>User Management</h2>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Registration Date/Time</th>
+                        <th>Last Login</th>
+                        <th>Status</th>
+                        <th>Admin Approval</th>
+                        <th>Approved At</th>
+                        <th>Approved By</th>
+                        <th>Staff Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.registration_time|localtime|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            {% if user.last_login %}
+                                {{ user.last_login|localtime|date:"Y-m-d H:i" }}
                             {% else %}
-                                <a href="{% url 'activate_user' user.id %}" class="btn btn-info btn-sm btn-uniform">Activate</a>
+                                Never logged in
                             {% endif %}
-                            {% if not user.is_superuser %}
-                                <button type="button" class="btn btn-danger btn-sm btn-uniform" data-bs-toggle="modal" data-bs-target="#deleteModal" 
-                                    data-user-id="{{ user.id }}"
-                                    data-user-name="{{ user.first_name }} {{ user.last_name }}"
-                                    data-user-email="{{ user.email }}">
-                                    Delete
-                                </button>
+                        </td>
+                        <td>
+                            {% if user.is_active %}
+                                <span class="status-badge status-approved">Active</span>
+                            {% else %}
+                                <span class="status-badge status-inactive">Inactive</span>
                             {% endif %}
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        </td>
+                        <td>
+                            {% if user.is_staff %}
+                                -
+                            {% elif user.is_approved %}
+                                <span class="status-badge status-approved">Approved</span>
+                            {% else %}
+                                <span class="status-badge status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.approved_at %}
+                                {{ user.approved_at|localtime|date:"Y-m-d H:i" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.approved_by %}
+                                {{ user.approved_by.first_name }} {{ user.approved_by.last_name }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_staff %}
+                                <span class="status-badge status-approved">Admin</span>
+                            {% else %}
+                                <span class="status-badge">User</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_staff %}
+                                -
+                            {% else %}
+                                {% if not user.is_approved %}
+                                    <a href="{% url 'approve_user' user.id %}" class="btn btn-success btn-sm btn-uniform">Approve</a>
+                                {% endif %}                        
+                                {% if user.is_active %}
+                                    <a href="{% url 'deactivate_user' user.id %}" class="btn btn-warning btn-sm btn-uniform">Deactivate</a>
+                                {% else %}
+                                    <a href="{% url 'activate_user' user.id %}" class="btn btn-info btn-sm btn-uniform">Activate</a>
+                                {% endif %}
+                                {% if not user.is_superuser %}
+                                    <button type="button" class="btn btn-danger btn-sm btn-uniform" data-bs-toggle="modal" data-bs-target="#deleteModal" 
+                                        data-user-id="{{ user.id }}"
+                                        data-user-name="{{ user.first_name }} {{ user.last_name }}"
+                                        data-user-email="{{ user.email }}">
+                                        Delete
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="custom-footer">
+        <p>&copy; 2025 PlaqueMS. All rights reserved.</p>
+    </footer>
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

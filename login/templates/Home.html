@@ -22,15 +22,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <style>
-    /* Remove the main window's scrollbars */
-    html, body {
-      overflow-x: hidden;
-      height: 100%;
-    }
+
     body {
       font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
       margin: 0;
-      padding: 0;
+      overflow-x: hidden;
+      padding-top: 60px;
       position: relative;
       background: linear-gradient(to bottom,
              #f8f8f8 0%,
@@ -38,20 +35,6 @@
              #f4f4f4 50%,
              #f2f2f2 75%,
              #f0f0f0 100%);
-    }
-
-    /* Background heart image */
-    .background-heart {
-      position: fixed;
-      top: 56%;
-      left: 18%;
-      transform: translate(-50%, -50%) rotate(-10deg);
-      width: 100%;
-      height: 90%;
-      opacity: 0.35;
-      object-fit: contain;
-      z-index: -1;
-      pointer-events: none;
     }
 
     /* PlaQuery Toolbar Styles - Start */
@@ -128,6 +111,20 @@
       background-color: #f8f9fa !important;
       border-color: #e9ecef #e9ecef #dee2e6 !important;
       cursor: pointer;
+    }
+
+    .custom-footer {
+      position: relative;
+      width: 100%;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #e0e0e0;
+      padding: 1.5rem 0;
+    }
+    .custom-footer p {
+      margin: 0;
     }
 
     /* Home page specific styles */
@@ -246,8 +243,6 @@
   </style>
 </head>
 <body>
-  <!-- Background Heart Image -->
-  <img src="{% static 'geometric-heart-scaled.png' %}" alt="Geometric Heart" class="background-heart">
 
   <!-- Toolbar -->
   <div class="main-toolbar">
@@ -328,8 +323,8 @@
     </div>
   </div>
 
-  <!-- Footer copied from plaquery.html -->
-  <footer class="bg-light text-center py-3 mt-5">
+  <!-- Footer -->
+  <footer class="custom-footer">
     <p>&copy; 2025 PlaqueMS. All rights reserved.</p>
   </footer>
 
