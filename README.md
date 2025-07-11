@@ -282,6 +282,6 @@ Then restart your system for the changes to take effect.
 
 
 ## 📬 Contact
-For questions, contact [Nikolaos Samperis](mailto:nick.saberis@yahoo.com).
+For any enquiry, contact [Nikolaos Samperis](mailto:nick.saberis@yahoo.com).
 
 
