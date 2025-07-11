@@ -13,14 +13,14 @@ Developed and tested locally using:
 
 ## 🛠️ Prerequisites
 Download and install:
-- Python 3.11.9
-- Django 5.1.7
-- Django Rest Framework 3.15.2
-- Cytoscape Desktop 3.10.3
-- clusterMaker2 2.3.4
-- Neo4j Desktop 1.6.1
-- Neo4j DBMS 5.24.2
-- MySQL Community Server 8.0.40
+- Python v3.11.9
+- Django v5.1.7
+- Django Rest Framework v3.15.2
+- Cytoscape Desktop v3.10.3
+- clusterMaker2 v2.3.4
+- Neo4j Desktop v1.6.1
+- Neo4j DBMS v5.24.2
+- MySQL Community Server v8.0.40
 - (optional) A Python IDE; recommended: Visual Studio Code or Pycharm
 - (optional) Git Bash for easier Unix-style command line use on Windows
 
