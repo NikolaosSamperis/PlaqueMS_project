@@ -277,6 +277,8 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
+By default, this will launch the application at `http://127.0.0.1:8000/`.
+You can now open this address in your browser to access the PlaqueMS platform locally.
 
 ## 💡 Troubleshooting
 - **MySQL errors:** Check your `.env` and MySQL server status.
