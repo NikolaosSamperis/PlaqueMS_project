@@ -258,15 +258,26 @@ NEO4J_PASSWORD=your_neo4j_password
 6. **Restart the Database**  
    - In Neo4j Desktop, start the DBMS — the `plaquems` database should now appear and be ready for use.
 
-7. **Update Django Settings**
+7. **Configure Neo4j Connection**
     
-   Make sure your `.env` or `settings.py` file contains the correct Neo4j connection details:
+   Make sure your `.env` file contains the correct Neo4j connection details:
    ```
    NEO4J_URI=neo4j://localhost:7687
    NEO4J_USERNAME=neo4j
    NEO4J_PASSWORD=your_neo4j_password
    NEO4J_DATABASE=plaquems
    ```
+These credentials are **read directly from environment variables** by the backend modules that interact with Neo4j—specifically:
+
+  - `plaquery_views.py`
+
+  - `calc_pred_views.py`
+
+  - `syntax_score_views.py`
+
+There is no need to update `settings.py` for Neo4j, as these files access the environment variables directly.
+
+>**Note:** MySQL credentials, in contrast, are configured in both the `.env` file and referenced within `settings.py.`
 
 ### 8. 👤 Create a Superuser (Admin)
 ```bash
