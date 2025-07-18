@@ -188,6 +188,8 @@ NEO4J_URI=neo4j://localhost:7687
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=your_neo4j_password
 ```
+>**Note:** The `SECRET_KEY` for this Django project can be provided after request to the author.
+
 
 > **After cloning:**  
 > Open `testdj/settings.py` and update the `BASE_DIR` variable to match the path where you cloned the project on your machine.
