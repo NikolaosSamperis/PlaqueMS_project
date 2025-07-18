@@ -159,7 +159,7 @@ PlaqueMS_project/
 
 ### 2. Create and Activate a Virtual Environment
 ```bash
-python -3.11 -m venv venv311
+python -m venv venv311
 # On Windows:
 venv311\Scripts\activate
 ```
