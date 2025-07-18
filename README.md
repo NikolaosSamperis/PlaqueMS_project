@@ -111,6 +111,14 @@ PlaqueMS_project/
 │   ├── heatmap_all.png    # JPG used in the "Home page"
 │   ├── heatmap_significant_corrected.png    # JPG used in the "Home page"
 │   └── symptomatic_vs_asymptomatic_periphery_vp.jpg    # JPG used in the "Home page"
+│
+│
+├──syntax_ml_utils.py  # Utility functions and scikit-learn-compatible classes for SYNTAX score prediction
+│
+├──json_tree.json  # Hierarchical JSON tree listing all available experimental comparisons (for "Differential Analysis Results" panel)
+│
+├──network_tree.json  #  Hierarchical JSON tree listing all available network files for each cohort/proteome extract/plaque region (for "Proten Networks" panel)
+│
 └── model_artifacts/    # Pre-trained models and related files for predictions
     ├── Cellular_Proteome
     │   ├── 0finalSingleModel.pkl
