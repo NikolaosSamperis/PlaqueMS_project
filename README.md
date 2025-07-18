@@ -2,6 +2,7 @@
 
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![Django 5.1](https://img.shields.io/badge/django-5.1-brightgreen.svg)](https://docs.djangoproject.com/en/5.1/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 ## *An Integrative Web Platform for Atherosclerosis Omics Analysis.*
 Facilitating Visual and Predictive Insights into Atherosclerotic Plaque Biology
@@ -320,7 +321,14 @@ Then restart your system for the changes to take effect.
 
 
 ## 📄 License
-*License information will be added soon.*
+
+This project is distributed under the **Apache License 2.0** –  
+a permissive licence that allows you to use, modify, and distribute the code (even commercially) as long as you:
+
+1. **Include** a copy of the licence in any redistribution, and  
+2. **State** significant changes you make in source files.
+
+See the [LICENSE](LICENSE) file for the full licence text.
 
 
 ## 📬 Contact
