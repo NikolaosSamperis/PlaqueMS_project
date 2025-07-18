@@ -486,7 +486,6 @@ def insert_network(folder, filename, experiment_id):
 @transaction.atomic
 def insert_diff(request):
     diff_stats = Statistics.objects.filter(doc_type='03')
-    print(f"Found {len(diff_stats)} Statistics objects with doc_type='03'")
 
     total = 0
     for stat in diff_stats:
@@ -498,18 +497,25 @@ def insert_diff(request):
             found_network = False
 
             while current_exp_id:
-                print(f"Checking for network at experiment_id: {current_exp_id}")
                 net_link = NetworkAndExperiment.objects.filter(experiment_id=current_exp_id).first()
 
                 if net_link:
                     print(f"Found network_id: {net_link.network_id} for experiment_id: {current_exp_id}")
-                    DiffResult.objects.create(
-                        doc_id=str(uuid.uuid4()),
-                        filename=stat.filename,
-                        filepath=stat.filepath,
+
+                    # 🔑  ➜ use *stat.doc_id* (already exists in Statistics)
+                    #     and skip if that network/doc pair is already present
+                    if not DiffResult.objects.filter(
+                        doc_id=stat.doc_id,
                         network_id=net_link.network_id
-                    )
-                    total += 1
+                    ).exists():
+                        DiffResult.objects.create(
+                            doc_id=stat.doc_id,           # FK → Statistics
+                            filename=stat.filename,
+                            filepath=stat.filepath,
+                            network_id=net_link.network_id
+                        )
+                        total += 1
+
                     found_network = True
                     break
 
@@ -517,7 +523,6 @@ def insert_diff(request):
                 if not experiment or not experiment.parent_id:
                     break
 
-                print(f"Moving up to parent_id: {experiment.parent_id}")
                 current_exp_id = experiment.parent_id
 
             if not found_network:
