@@ -577,7 +577,7 @@
                     <li>Press <code>Show network</code>. The <em>"Select Nodes"</em>  dialog will appear automatically:
                       <ul>
                         <li><em>All</em> &nbsp;–&nbsp; include every protein by <em>UniProtKB IDs</em> (slowest).</li>
-                        <li><em>List</em> &nbsp;–&nbsp; multi‑select <em>UniProtKB IDs</em>&nbsp; from a searchable list.</li>
+                        <li><em>List</em> &nbsp;–&nbsp; multi-select <em>UniProtKB IDs</em>&nbsp; from a searchable list.</li>
                         <li><em>Upload</em> &nbsp;–&nbsp; import TXT / CSV / TSV / XLSX files containing one <em>UniProtKB IDs</em>&nbsp; per row.</li>
                       </ul>
                     </li>
@@ -592,13 +592,13 @@
                 <br>
                 <li><strong>Colour by differential expression</strong>
                   <ul>
-                    <li>Choose a pre‑computed comparison from the <em>"Diff. Exp. Results"</em>&nbsp; dropdown and hit <code>Do coloring</code>.</li>
-                    <li>Node fill is mapped to log<sub>2</sub> fold‑change (logFC):
+                    <li>Choose a pre-computed comparison from the <em>"Diff. Exp. Results"</em>&nbsp; dropdown and hit <code>Do coloring</code>.</li>
+                    <li>Node fill is mapped to log<sub>2</sub> fold-change (<span style="font-family:monospace;">log<sub>2</sub>FC</span>):
                       <ul>
-                        <li><span style="color:#D6604D; font-weight:bold;">Deep red</span> = strong up‑regulation.</li>
-                        <li><span style="color:#2166AC; font-weight:bold;">Deep blue</span> = strong down‑regulation.</li>
-                        <li>Paler shades → modest change;&nbsp; light grey → logFC NA.</li>
-                        <li>Edge tips encode interaction type:&nbsp; <strong>(→)</strong> &nbsp;Activation, <strong>(⊥)</strong> &nbsp;Inhibition.</li>
+                        <li><span style="color:#D6604D; font-weight:bold;">Deep red</span> = strong Up-regulation (<span style="font-family:monospace;">log<sub>2</sub>FC &gt; 0</span>).</li>
+                        <li><span style="color:#2166AC; font-weight:bold;">Deep blue</span> = strong Down-regulation (<span style="font-family:monospace;">log<sub>2</sub>FC &lt; 0</span>).</li>
+                        <li>Paler shades → light grey = modest or no change (<span style="font-family:monospace;">log<sub>2</sub>FC ≈ 0</span>).</li>
+                        <li>Edge tips encode interaction type and directionality:<br><b>(→)</b>&nbsp; Activation<span style="font-family:monospace;">, directionality = <b>1</b></span>,<br><b>(⊥)</b>&nbsp; Inhibition<span style="font-family:monospace;">, directionality = <b>0</b>.</span></li>
                       </ul>
                     </li>
                   </ul>
@@ -606,8 +606,8 @@
                 <br>
                 <li><strong>Navigate & interact</strong>
                   <ul>
-                    <li><kbd>Scroll</kbd> to zoom,&nbsp; <kbd>Drag</kbd> to pan;&nbsp; or use the <kbd>🔍 Zoom</kbd> buttons.</li>
-                    <li><kbd>Shift + Drag</kbd> draws a marquee to multi‑select nodes / edges.</li>
+                    <li><kbd>Scroll</kbd> to zoom,&nbsp; <kbd>Drag</kbd> to pan;&nbsp; or use the <kbd>🔍 Zoom</kbd> buttons.</li>
+                    <li><kbd>Shift + Drag</kbd> draws a marquee to multi-select nodes / edges.</li>
                     <li>Use <kbd>Hide Selected</kbd>&nbsp;&nbsp;/&nbsp;&nbsp;<kbd>Unhide Selected</kbd> widgets to declutter;&nbsp;<br>hidden elements are excluded from exports.</li>
                   </ul>
                 </li>
@@ -615,7 +615,7 @@
                 <li><strong>Export your results</strong>
                   <ul>
                     <li><code>Download image</code> → PNG snapshot at current zoom.</li>
-                    <li><code>Nodes & Edges</code> Tables → displayed statistics&nbsp; &amp; &nbsp;network metrics for selected nodes / edges;&nbsp;<br>export as CSV,&nbsp; XLSX,&nbsp; PDF,&nbsp; or TXT.</li>
+                    <li><code>Nodes & Edges</code> Tables → displayed statistics&nbsp; &amp; &nbsp;network metrics for selected nodes / edges;&nbsp;<br>export as CSV,&nbsp; XLSX,&nbsp; PDF,&nbsp; or TXT.</li>
                   </ul>
                 </li>
               </ol>
