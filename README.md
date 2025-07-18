@@ -30,8 +30,6 @@ Developed and tested locally using:
 ## 🛠️ Prerequisites
 Download and install:
 - Python v3.11.9
-- Django v5.1.7
-- Django Rest Framework v3.15.2
 - Cytoscape Desktop v3.10.3
 - clusterMaker2 v2.3.4 (Cytoscape plugin)
 - Neo4j Desktop v1.6.1
@@ -161,7 +159,7 @@ PlaqueMS_project/
 
 ### 2. Create and Activate a Virtual Environment
 ```bash
-python -3.11 -m venv venv311
+python -m venv venv311
 # On Windows:
 venv311\Scripts\activate
 ```
@@ -190,6 +188,8 @@ NEO4J_URI=neo4j://localhost:7687
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=your_neo4j_password
 ```
+>**Note:** The `SECRET_KEY` for this Django project can be provided after request to the author.
+
 
 > **After cloning:**  
 > Open `testdj/settings.py` and update the `BASE_DIR` variable to match the path where you cloned the project on your machine.
