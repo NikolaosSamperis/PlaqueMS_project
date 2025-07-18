@@ -1,0 +1,794 @@
+{
+  "id": "root",
+  "text": "root",
+  "nodes": [
+    {
+      "id": "2ec00c70-cc6a-4a79-83bd-e9d17a17ffa0",
+      "text": "Carotid Plaques Vienna Cohort",
+      "nodes": [
+        {
+          "id": "25090d96-537a-4185-a72e-43d82505ace7",
+          "text": "Cellular Proteome TMT",
+          "nodes": [
+            {
+              "id": "94302d4c-5618-4e6e-bb37-b9416a37781e",
+              "text": "core",
+              "nodes": [
+                {
+                  "id": "098a9d5d-cbb3-4cbb-a33f-4e9f88509747",
+                  "text": "symptomatic vs asymptomatic",
+                  "nodes": []
+                },
+                {
+                  "id": "0a609d91-7b50-432a-91ec-49e4791c08c3",
+                  "text": "male vs female",
+                  "nodes": []
+                },
+                {
+                  "id": "4012c91b-7626-4226-a97a-1e95974c06db",
+                  "text": "fibroatheroma vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "56fc6b91-61be-4c6c-92da-f555a725612a",
+                  "text": "non-calcified vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "7846c9ba-7d4c-453e-afc1-b80a5e5a140e",
+                  "text": "echolucent vs echogenic",
+                  "nodes": []
+                },
+                {
+                  "id": "9b67ab2d-777b-452c-9c8f-c008d9cfa843",
+                  "text": "yes or no for all medications",
+                  "nodes": [
+                    {
+                      "id": "0d75c587-8557-47f6-aec6-f7bfe555eeac",
+                      "text": "no aspirin vs aspirin",
+                      "nodes": []
+                    },
+                    {
+                      "id": "30b681b5-c46e-41cc-8556-9f6502bef078",
+                      "text": "no ACE vs ACE",
+                      "nodes": []
+                    },
+                    {
+                      "id": "35adddd4-db01-4872-af92-85a6b9e80b0a",
+                      "text": "no clopidogrel vs clopidogrel",
+                      "nodes": []
+                    },
+                    {
+                      "id": "564e682c-4aa6-4df0-8328-fdcc583ca333",
+                      "text": "statins vs no statins",
+                      "nodes": []
+                    },
+                    {
+                      "id": "9e3f18a0-fcea-48e1-86eb-85ea74325cba",
+                      "text": "no ARB vs ARB",
+                      "nodes": []
+                    },
+                    {
+                      "id": "a105adb0-e285-423d-865c-a69352461981",
+                      "text": "ticagrelor vs no ticagrelor",
+                      "nodes": []
+                    },
+                    {
+                      "id": "c898c429-7f75-4224-8d60-8a9d1702fb01",
+                      "text": "no Bblock vs Bblock",
+                      "nodes": []
+                    },
+                    {
+                      "id": "d42cb110-fcfd-480b-9e92-56dff8f4ace4",
+                      "text": "no antiplatelet vs antiplatelet",
+                      "nodes": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "d6a3cee7-e693-4c5c-b6d8-889b3c46b113",
+              "text": "periphery",
+              "nodes": [
+                {
+                  "id": "140f3b9a-dc19-43b4-9115-2dc9cd6335b4",
+                  "text": "fibroatheroma vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "1a2d49f8-9ba7-4d5f-be01-6059df769eff",
+                  "text": "symptomatic vs asymptomatic",
+                  "nodes": []
+                },
+                {
+                  "id": "23c1f5c5-54f7-45a8-ab91-a017bf8fff8b",
+                  "text": "male vs female",
+                  "nodes": []
+                },
+                {
+                  "id": "af7649e8-63a9-4911-bb98-763766307e88",
+                  "text": "non-calcified vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "baa1d38b-4aeb-493d-b98d-66f8be84c130",
+                  "text": "yes or no for all medications",
+                  "nodes": [
+                    {
+                      "id": "0e1c4637-b6b0-4a46-ada5-21de4249dc33",
+                      "text": "no ARB vs ARB",
+                      "nodes": []
+                    },
+                    {
+                      "id": "2d330467-87bc-4b25-ba41-65fc558c941a",
+                      "text": "no ACE vs ACE",
+                      "nodes": []
+                    },
+                    {
+                      "id": "9b52edf0-fd0e-4195-a458-92c04ebbbd43",
+                      "text": "statins vs no statins",
+                      "nodes": []
+                    },
+                    {
+                      "id": "9d6a6232-5c93-42c7-aec2-2e35ab79afe0",
+                      "text": "no antiplatelet vs antiplatelet",
+                      "nodes": []
+                    },
+                    {
+                      "id": "ab2cbf5d-3a1e-489e-b24a-c5e8ed431bb0",
+                      "text": "ticagrelor vs no ticagrelor",
+                      "nodes": []
+                    },
+                    {
+                      "id": "fd73913c-50c4-4851-92ef-4f8aaf531b3d",
+                      "text": "no clopidogrel vs clopidogrel",
+                      "nodes": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "fed07449-9f10-4a61-8d18-7dd2f614cc5f",
+              "text": "periphery vs core",
+              "nodes": []
+            }
+          ]
+        },
+        {
+          "id": "beab7dbf-7cee-4a46-917f-7cb0bce3b094",
+          "text": "Soluble Matrisome TMT",
+          "nodes": [
+            {
+              "id": "75de0187-483c-4a55-aeeb-5aa465b3b7c9",
+              "text": "periphery vs core",
+              "nodes": []
+            },
+            {
+              "id": "a0416bca-96ba-48c8-a86c-fffc6c5b3dd7",
+              "text": "core",
+              "nodes": [
+                {
+                  "id": "3ad35b08-a378-47ae-976c-ea8945f31f85",
+                  "text": "yes or no for all medications",
+                  "nodes": [
+                    {
+                      "id": "45945613-9576-425b-ac56-59887492a830",
+                      "text": "no ARB vs ARB",
+                      "nodes": []
+                    },
+                    {
+                      "id": "477dba74-3c2f-4e9e-b1ef-887c20d3f2fa",
+                      "text": "no Bblock vs Bblock",
+                      "nodes": []
+                    },
+                    {
+                      "id": "526c67de-8e07-41e4-9891-d88a26ef9ae6",
+                      "text": "no clopidogrel vs clopidogrel",
+                      "nodes": []
+                    },
+                    {
+                      "id": "55976853-e9f2-46bb-92ae-b5ac49927e11",
+                      "text": "no aspirin vs aspirin",
+                      "nodes": []
+                    },
+                    {
+                      "id": "70207a42-1070-4dc0-b81a-8b79f0a29cf5",
+                      "text": "no ACE vs ACE",
+                      "nodes": []
+                    },
+                    {
+                      "id": "84612987-4c2c-418f-a496-14d899ba0281",
+                      "text": "ticagrelor vs no ticagrelor",
+                      "nodes": []
+                    },
+                    {
+                      "id": "9f2ccd65-650f-456f-b970-1383aaa7948f",
+                      "text": "no antiplatelet vs antiplatelet",
+                      "nodes": []
+                    }
+                  ]
+                },
+                {
+                  "id": "6738d85f-97e4-4955-9bd3-8593d2b924fb",
+                  "text": "symptomatic vs asymptomatic",
+                  "nodes": []
+                },
+                {
+                  "id": "97efb232-b076-468c-9663-bba8ddd90a99",
+                  "text": "echolucent vs echogenic",
+                  "nodes": []
+                },
+                {
+                  "id": "d7f45088-c788-48f6-b41b-2f79fa0c0fa3",
+                  "text": "non-calcified vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "f72dd552-6e90-4349-a6b3-50672b8ac533",
+                  "text": "fibroatheroma vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "fc7420eb-1ef6-410e-b3bb-e747ddc40d5b",
+                  "text": "male vs female",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "bc3f068c-75b1-4fb6-9b58-29bcc9fb146d",
+              "text": "periphery",
+              "nodes": [
+                {
+                  "id": "0cea3c5f-ef5e-44c2-86c7-c8c1693a2b76",
+                  "text": "symptomatic vs asymptomatic",
+                  "nodes": []
+                },
+                {
+                  "id": "180c49c6-9038-49f4-85e7-bfdbb9caedde",
+                  "text": "echolucent vs echogenic",
+                  "nodes": []
+                },
+                {
+                  "id": "39a64253-319e-4dc8-b709-fb455a5a449e",
+                  "text": "yes or no for all medications",
+                  "nodes": [
+                    {
+                      "id": "17bc804c-5a9e-433a-b580-d72be97c065c",
+                      "text": "no aspirin vs aspirin",
+                      "nodes": []
+                    },
+                    {
+                      "id": "3bd6fef6-f3c9-43c1-83a9-9e5ccb30e32c",
+                      "text": "statins vs no statins",
+                      "nodes": []
+                    },
+                    {
+                      "id": "504c2483-ab4e-46d0-82f5-ebe28dd90bea",
+                      "text": "no clopidogrel vs clopidogrel",
+                      "nodes": []
+                    },
+                    {
+                      "id": "b286dda0-0da9-4009-b0ca-9d68acb792f2",
+                      "text": "no antiplatelet vs antiplatelet",
+                      "nodes": []
+                    },
+                    {
+                      "id": "bdf59353-cb11-46fc-b436-aa612bcd3c2b",
+                      "text": "no ACE vs ACE",
+                      "nodes": []
+                    },
+                    {
+                      "id": "c7115537-4739-419d-b035-b5707fe73173",
+                      "text": "ticagrelor vs no ticagrelor",
+                      "nodes": []
+                    },
+                    {
+                      "id": "e8a4deba-0e2f-4425-8316-f88ed1d7f286",
+                      "text": "no ARB vs ARB",
+                      "nodes": []
+                    },
+                    {
+                      "id": "eca4999b-9ef1-425c-979e-95b5197c68d0",
+                      "text": "no Bblock vs Bblock",
+                      "nodes": []
+                    }
+                  ]
+                },
+                {
+                  "id": "89039f06-cbf4-480d-bfff-9e1804566da2",
+                  "text": "male vs female",
+                  "nodes": []
+                },
+                {
+                  "id": "a9508e07-354a-4be3-9ced-96b62cfa566d",
+                  "text": "fibroatheroma vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "f81304f7-f7e1-4661-bf7d-35a0e78fdeb1",
+                  "text": "non-calcified vs calcified",
+                  "nodes": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "db599f08-91e9-4620-8ea9-7fb61f14c25f",
+          "text": "Core Matrisome TMT",
+          "nodes": [
+            {
+              "id": "73bc4bdb-950f-49c7-a9a1-c42c1dcb2505",
+              "text": "periphery vs core",
+              "nodes": []
+            },
+            {
+              "id": "e15eebbb-6586-4a09-b65e-67d1cba6cf70",
+              "text": "core",
+              "nodes": [
+                {
+                  "id": "06316a5a-617d-46bf-80fd-02c19e730712",
+                  "text": "symptomatic vs asymptomatic",
+                  "nodes": []
+                },
+                {
+                  "id": "20b3d261-303d-4d80-aa34-375185eeae7a",
+                  "text": "yes or no for all medications",
+                  "nodes": [
+                    {
+                      "id": "049bcb17-e07b-4e79-a766-a470b4fdab11",
+                      "text": "no Bblock vs Bblock",
+                      "nodes": []
+                    },
+                    {
+                      "id": "48690bf7-63d2-4dc4-a459-60bcc2d4db72",
+                      "text": "ticagrelor vs no ticagrelor",
+                      "nodes": []
+                    },
+                    {
+                      "id": "48af87b6-c57b-40fd-ad86-8e79785d0e28",
+                      "text": "no clopidogrel vs clopidogrel",
+                      "nodes": []
+                    },
+                    {
+                      "id": "6aa065a5-2d0a-49bc-abbd-6d28473bb5a5",
+                      "text": "no antiplatelet vs antiplatelet",
+                      "nodes": []
+                    },
+                    {
+                      "id": "b74ff635-2370-468a-91d2-ebc432ac76f1",
+                      "text": "no aspirin vs aspirin",
+                      "nodes": []
+                    },
+                    {
+                      "id": "e8475270-2a97-4fcd-8ec6-8fed60b4ca25",
+                      "text": "no ARB vs ARB",
+                      "nodes": []
+                    },
+                    {
+                      "id": "f43d31cf-9976-44e6-af6f-1ccf4a1e132f",
+                      "text": "statins vs no statins",
+                      "nodes": []
+                    },
+                    {
+                      "id": "fd283130-f5e5-4368-9d75-4558f6496a99",
+                      "text": "no ACE vs ACE",
+                      "nodes": []
+                    }
+                  ]
+                },
+                {
+                  "id": "61ab8636-c71e-4ddc-bc88-a1b381f07dee",
+                  "text": "fibroatheroma vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "b297ca75-16e3-4ac1-8178-3452f7478f48",
+                  "text": "non-calcified vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "b74647c1-d51f-4672-a1ad-8d84b4e8ae9d",
+                  "text": "echolucent vs echogenic",
+                  "nodes": []
+                },
+                {
+                  "id": "d48053cb-fb01-47e2-b228-2e7fca9cae28",
+                  "text": "male vs female",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "ed61200b-c772-4d23-8749-7d0794b1a8ec",
+              "text": "periphery",
+              "nodes": [
+                {
+                  "id": "49826b9e-7ab1-47c0-a634-630d5b397263",
+                  "text": "echolucent vs echogenic",
+                  "nodes": []
+                },
+                {
+                  "id": "53378e9a-6828-4045-a2a4-7aea3507e8a6",
+                  "text": "symptomatic vs asymptomatic",
+                  "nodes": []
+                },
+                {
+                  "id": "6829e663-4113-46d5-aa36-c5823516c531",
+                  "text": "non-calcified vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "7178388d-645d-4d70-8785-e23927e7d8cf",
+                  "text": "fibroatheroma vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "8a2efdd8-d176-4caa-a4f4-8ea99a1a33e3",
+                  "text": "male vs female",
+                  "nodes": []
+                },
+                {
+                  "id": "c0c9500e-f39d-48da-8c83-98271929266d",
+                  "text": "yes or no for all medications",
+                  "nodes": [
+                    {
+                      "id": "26ce6182-5176-4159-8f0a-822534850db1",
+                      "text": "no ARB vs ARB",
+                      "nodes": []
+                    },
+                    {
+                      "id": "70b3641c-2a5b-4524-9a04-6f3e831630c2",
+                      "text": "no ACE vs ACE",
+                      "nodes": []
+                    },
+                    {
+                      "id": "8e6de416-4545-4d72-870b-154e80bc1da8",
+                      "text": "no clopidogrel vs clopidogrel",
+                      "nodes": []
+                    },
+                    {
+                      "id": "9a49c494-aace-4a7d-8030-2115a317d5ee",
+                      "text": "no antiplatelet vs antiplatelet",
+                      "nodes": []
+                    },
+                    {
+                      "id": "a4da3e3b-17bf-429b-a6ec-22c8f6f9d5fd",
+                      "text": "no aspirin vs aspirin",
+                      "nodes": []
+                    },
+                    {
+                      "id": "b682b092-7d6b-4ff1-833b-e7f0c242b69b",
+                      "text": "ticagrelor vs no ticagrelor",
+                      "nodes": []
+                    },
+                    {
+                      "id": "ffce8775-3363-4da2-a8a8-3835970d67bd",
+                      "text": "no Bblock vs Bblock",
+                      "nodes": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "f1829eff-1842-4dfd-b114-d5413b467639",
+          "text": "Soluble Matrisome OLINK",
+          "nodes": [
+            {
+              "id": "10fd6df7-4daa-469d-9be4-7ba9d1605dc8",
+              "text": "core",
+              "nodes": [
+                {
+                  "id": "14a374f6-1f7d-424f-a490-42a9d4aa914c",
+                  "text": "echolucent vs echogenic",
+                  "nodes": []
+                },
+                {
+                  "id": "97cf8cf8-3192-4c8d-a24e-e67d2aa9aec4",
+                  "text": "male vs female",
+                  "nodes": []
+                },
+                {
+                  "id": "a22b40f0-f269-49ad-a41f-8270612b46a8",
+                  "text": "symptomatic vs asymptomatic",
+                  "nodes": []
+                },
+                {
+                  "id": "b906e17e-c4b6-4fa0-ae2d-9b3cffd9176a",
+                  "text": "non-calcified vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "c2357f62-8682-4bc3-ac4f-64dd01000b72",
+                  "text": "yes or no for all medications",
+                  "nodes": [
+                    {
+                      "id": "4d20060b-b574-4690-8972-76727d4b62d4",
+                      "text": "no aspirin vs aspirin",
+                      "nodes": []
+                    },
+                    {
+                      "id": "8b56977e-7c98-400c-bc09-d87841ba78b7",
+                      "text": "no ARB vs ARB",
+                      "nodes": []
+                    },
+                    {
+                      "id": "9a410530-e5e7-4610-9ee6-f5351e971de1",
+                      "text": "no ACE vs ACE",
+                      "nodes": []
+                    },
+                    {
+                      "id": "a5e9dae3-9af7-478d-b369-3dbc1e6b7a87",
+                      "text": "no antiplatelet vs antiplatelet",
+                      "nodes": []
+                    },
+                    {
+                      "id": "aaf1212c-ce76-4449-8c32-2694f981c434",
+                      "text": "no Bblock vs Bblock",
+                      "nodes": []
+                    },
+                    {
+                      "id": "ba333e69-dbb5-42a9-86de-ad3b39f3a72b",
+                      "text": "ticagrelor vs no ticagrelor",
+                      "nodes": []
+                    },
+                    {
+                      "id": "d8606457-8143-4c86-ada8-88e0ccd8ceca",
+                      "text": "no clopidogrel vs clopidogrel",
+                      "nodes": []
+                    }
+                  ]
+                },
+                {
+                  "id": "fdfcca77-fc1f-4307-ab86-6b862c3a6ebe",
+                  "text": "fibroatheroma vs calcified",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "46862b2e-44eb-45b9-987e-7e50701cf06e",
+              "text": "periphery vs core",
+              "nodes": []
+            },
+            {
+              "id": "a8fac31f-80fa-461a-bf8d-ed2353d44540",
+              "text": "periphery",
+              "nodes": [
+                {
+                  "id": "389fc618-dc1c-45f9-a53d-5d8161482dda",
+                  "text": "symptomatic vs asymptomatic",
+                  "nodes": []
+                },
+                {
+                  "id": "6734974b-bf46-49e9-9ab6-846081966ab6",
+                  "text": "echolucent vs echogenic",
+                  "nodes": []
+                },
+                {
+                  "id": "73c1a48d-5219-4ffc-a9dd-e527c16d1f04",
+                  "text": "male vs female",
+                  "nodes": []
+                },
+                {
+                  "id": "c150d41e-85d6-4d92-94bf-761db392431e",
+                  "text": "non-calcified vs calcified",
+                  "nodes": []
+                },
+                {
+                  "id": "fa543e12-77ab-47db-b484-8a1e48fa0fe1",
+                  "text": "yes or no for all medications",
+                  "nodes": [
+                    {
+                      "id": "1554f4c2-3360-4f4c-b79d-14a2b0bbd738",
+                      "text": "no Bblock vs Bblock",
+                      "nodes": []
+                    },
+                    {
+                      "id": "4fc37b4a-7f5e-4f62-adbe-593d0c0fca51",
+                      "text": "statins vs no statins",
+                      "nodes": []
+                    },
+                    {
+                      "id": "7c8642e8-734f-49d6-9c17-efb92c08836c",
+                      "text": "no ARB vs ARB",
+                      "nodes": []
+                    },
+                    {
+                      "id": "aed24800-0ba1-4310-b909-040646b83f69",
+                      "text": "no ACE vs ACE",
+                      "nodes": []
+                    },
+                    {
+                      "id": "b06cf1e4-3d3a-4b32-938b-1d0b2dd85c59",
+                      "text": "no aspirin vs aspirin",
+                      "nodes": []
+                    },
+                    {
+                      "id": "b9b29bdf-69fa-4593-a869-960d33227be9",
+                      "text": "no antiplatelet vs antiplatelet",
+                      "nodes": []
+                    },
+                    {
+                      "id": "ce810880-af69-41a0-b188-c1e812a676ca",
+                      "text": "no clopidogrel vs clopidogrel",
+                      "nodes": []
+                    },
+                    {
+                      "id": "e13ebd82-0e0b-4c33-9f3b-47d04c48faf0",
+                      "text": "ticagrelor vs no ticagrelor",
+                      "nodes": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "7a72d139-98e4-4b98-b317-91558f85b17d",
+      "text": "Carotid Plaques Athero-Express",
+      "nodes": [
+        {
+          "id": "9a1da815-47f4-4417-9477-87629aff90f2",
+          "text": "Core Matrisome TMT",
+          "nodes": [
+            {
+              "id": "28357d55-de04-4772-baa1-b2cc1b4075a9",
+              "text": "no anticoagulants vs anticoagulants",
+              "nodes": []
+            },
+            {
+              "id": "414b818b-0f57-4e0e-9a27-660efffb847a",
+              "text": "no antiplatelet vs antiplatelet",
+              "nodes": []
+            },
+            {
+              "id": "7258ed90-fe9b-418e-9430-092f7fedeb49",
+              "text": "male vs female",
+              "nodes": []
+            },
+            {
+              "id": "9b6046b4-f1c2-4e77-a4ff-aad8c4a097aa",
+              "text": "no alcohol vs alcohol",
+              "nodes": []
+            },
+            {
+              "id": "9bf37bc6-ea7d-49b5-b511-d2c170027e48",
+              "text": "hypertension vs no hypertension",
+              "nodes": []
+            },
+            {
+              "id": "a1f7a56a-8fa1-416e-9b8b-5f487c7d6114",
+              "text": "symptomatic vs asymptomatic",
+              "nodes": []
+            },
+            {
+              "id": "d3e20795-0919-426c-8814-9ba59b1c96a3",
+              "text": "statins vs no statins",
+              "nodes": []
+            },
+            {
+              "id": "dd604a3f-a9ff-4328-a959-38a0a26ab509",
+              "text": "EP no major events vs EP major events",
+              "nodes": []
+            },
+            {
+              "id": "de002731-f0eb-42e7-9feb-e2b5f2c7d7bf",
+              "text": "no diabetes vs diabetes",
+              "nodes": []
+            },
+            {
+              "id": "ea1b3a39-38f1-439e-af63-c2cc296e9ebe",
+              "text": "symptomatic vs asymptomatic update3G",
+              "nodes": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aeb358ef-9943-4faf-a2c0-d84386d7827f",
+      "text": "Coronary Arteries University of Virginia Cohort",
+      "nodes": [
+        {
+          "id": "4cea391a-4875-475f-8dec-087ab1325b32",
+          "text": "Core Matrisome Label-free",
+          "nodes": [
+            {
+              "id": "1a27e22e-7fc7-4d8e-af46-df025f5f4fbc",
+              "text": "normal vs explant in segments",
+              "nodes": [
+                {
+                  "id": "3ee12f1a-0b16-42d6-afd8-ad323a320b6c",
+                  "text": "normal vs explant LAD",
+                  "nodes": []
+                },
+                {
+                  "id": "4a8ee4be-17fe-4253-a7b0-073f21b84771",
+                  "text": "normal vs explant Cx",
+                  "nodes": []
+                },
+                {
+                  "id": "6d055902-7f85-4e65-8f49-54eafd08c7b6",
+                  "text": "normal vs explant for all",
+                  "nodes": []
+                },
+                {
+                  "id": "90665130-2515-4497-aa34-74d7c70ac2ba",
+                  "text": "normal vs explant RCA",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "6dcf476e-2cd8-4305-8b69-92f066d6847d",
+              "text": "non-diseased vs atherosclerotic in segments",
+              "nodes": [
+                {
+                  "id": "f13164f7-8f04-4a5e-a9d3-6ced48de4072",
+                  "text": "non-diseased vs atherosclerotic in RCA",
+                  "nodes": []
+                },
+                {
+                  "id": "f725484e-a4b1-4420-a3b1-8ded262f6b34",
+                  "text": "non-diseased vs atherosclerotic in LAD",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "92080519-411d-4880-b760-fb341f8afaa7",
+              "text": "segment RCA vs Cx",
+              "nodes": []
+            },
+            {
+              "id": "9e3230f8-89de-4293-abb1-034fccf2fb3d",
+              "text": "segment RCA vs LAD",
+              "nodes": []
+            },
+            {
+              "id": "a934a148-b062-4294-9d5e-0fb9147d081d",
+              "text": "segment LAD vs Cx",
+              "nodes": []
+            },
+            {
+              "id": "d4bba374-843a-415c-80f2-dc3179946751",
+              "text": "male vs female in segments",
+              "nodes": [
+                {
+                  "id": "28d3be19-1c67-4d4b-a2bb-31f05045a290",
+                  "text": "male vs female in all",
+                  "nodes": []
+                },
+                {
+                  "id": "932dd00a-51b8-4bd0-8600-e46581e4d3cc",
+                  "text": "male vs female in Cx",
+                  "nodes": []
+                },
+                {
+                  "id": "bec61b92-e372-472b-a200-b0ecb28c0c30",
+                  "text": "male vs female RCA",
+                  "nodes": []
+                },
+                {
+                  "id": "ce729f14-e932-4576-ac94-d4a65e8e4d1a",
+                  "text": "male vs female LAD",
+                  "nodes": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

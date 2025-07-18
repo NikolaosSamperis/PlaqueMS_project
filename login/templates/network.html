@@ -370,24 +370,52 @@
       transform: translateY(-30%) translateX(20px);
       position: relative !important;
     }
+    #nodeSelectionModal .modal-body {
+      padding: 15px 30px 15px 30px !important;
+    }
+    #nodeSelectionModal .modal-title {
+      margin-left: 15px;
+    }
+    #nodeSelectionModal .close {
+      font-size: 32px;
+      line-height: 1;
+    }
+    #nodeSelectionModal .radio input[type="radio"]:hover,
+    #nodeSelectionModal .radio label:hover {cursor: pointer;}
 
     /* Help Modal styling remains the same */
     #myModalHelp .modal-dialog {
-      width: 700px !important;
-      max-width: 700px !important;
+      width: 870px !important;
+      max-width: 870px !important;
       margin: 0 auto !important;
       position: relative !important;
       top: 50% !important;
-      transform: translateY(-50%);
+      transform: translateY(-50%) !important;
     }
     #myModalHelp .modal-content {
       display: flex;
       flex-direction: column;
-      min-height: 200px;
-      max-height: 900px !important;
     }
     #myModalHelp .modal-body {
-      padding: 20px 40px !important;
+      padding: 20px 40px 20px 30px !important;
+      flex: 1 1 auto;
+      overflow-y: auto;
+      max-height: 80vh !important;
+    }
+    #myModalHelp .modal-title {
+      margin-left: 20px;
+      margin-top: 4px;
+    }
+
+    .modal .close {
+      font-size: 32px;
+      line-height: 1;
+    }
+    #select-diff:hover {
+      cursor: pointer;
+    }
+    #exportModal select.form-control:hover {
+      cursor: pointer;
     }
 
     /* Loading animation styles */
@@ -533,40 +561,64 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <h4 class="modal-title" id="myModalLabelHelp">How to use Cytoscape for Network Analysis:</h4>
+              <h4 class="modal-title" id="myModalLabelHelp">Protein Network Visualisations <em>(powered by Cytoscape)</em> – Detailed Guide</h4>
             </div>
-            <div class="modal-body">
-              <p><strong>1. Load a Network File:</strong></p>
-              <ul>
-                <li>Select a protein extraction method (NaCl, SDS, Olink, GuHCl).</li>
-                <li>Choose a plaque region (Periphery, Core).</li>
-                <li>Select a network file (network.txt).</li>
-              </ul>
-              <p><strong>2. Display the Network:</strong></p>
-              <ul>
-                <li>Click <em>"show network"</em> to choose which nodes (genes) to include.</li>
-                <li>After loading, click <em>"MCL clustering"</em> to view the clustered network using the MCL algorithm.</li>
-                <li>Use zoom in/out and hide/unhide buttons to adjust the view.</li>
-                <li>Hold Shift + Drag to select multiple nodes/edges.</li>
-                <li>Only selected elements can be hidden/unhidden.</li>
-              </ul>
-              <p><strong>3. Optional: Apply Differential Expression Coloring </strong></p>
-              <ul>
-                <li>After displaying the network, select a differential expression file from the dropdown.</li>
-                <li>Click <em>"do coloring"</em> to apply logFC-based color mapping to nodes.</li>
-                <li>This visually highlights upregulated (red) and downregulated (blue) genes.</li>
-                <li>Edge symbols indicate interactions:</li>
-                <ul>
-                  <li>Arrowhead(→): Activation or directed interaction.</li>
-                  <li>T-shaped head(⊥): Inhibition or suppression.</li>
-                </ul>
-              </ul>
-              <p><strong>4. Exporting Data:</strong></p>
-              <ul>
-                <li>Click <em>"download image"</em> to save the network as a PNG.</li>
-                <li>Click <em>"Nodes &amp; Edges"</em> to open a table of your selected nodes/edges.</li>
-                <li>Export data in CSV, XLXS, PDF, or TXT format.</li>
-              </ul>
+            <div class="modal-body" style="font-size:14px; line-height:2.3;">
+              <ol>
+                <li><strong>Pick a dataset</strong>
+                  <ul>
+                    <li>Select <em>Cohort</em> → <em>Proteome extract:</em> <br>Cellular Proteome&nbsp;TMT,&nbsp; Soluble / Core Matrisome&nbsp;TMT,&nbsp; or Soluble&nbsp;Matrisome&nbsp;OLINK<br>→ <em>Plaque region</em> (core / periphery).</li>
+                    <li>Choose the corresponding network file,&nbsp; e.g.,&nbsp; <em>cellular proteome core filtered directed network</em>.</li>
+                  </ul>
+                </li>
+                <br>
+                <li><strong>Load and display the network</strong>
+                  <ul>
+                    <li>Press <code>Show network</code>. The <em>"Select Nodes"</em>  dialog will appear automatically:
+                      <ul>
+                        <li><em>All</em> &nbsp;–&nbsp; include every protein by <em>UniProtKB IDs</em> (slowest).</li>
+                        <li><em>List</em> &nbsp;–&nbsp; multi‑select <em>UniProtKB IDs</em>&nbsp; from a searchable list.</li>
+                        <li><em>Upload</em> &nbsp;–&nbsp; import TXT / CSV / TSV / XLSX files containing one <em>UniProtKB IDs</em>&nbsp; per row.</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <br>
+                <li><strong>Optional: community detection</strong>
+                  <ul>
+                    <li>Click <code>MCL clustering</code> to run Markov Cluster analysis.</li>
+                  </ul>
+                </li>
+                <br>
+                <li><strong>Colour by differential expression</strong>
+                  <ul>
+                    <li>Choose a pre‑computed comparison from the <em>"Diff. Exp. Results"</em>&nbsp; dropdown and hit <code>Do coloring</code>.</li>
+                    <li>Node fill is mapped to log<sub>2</sub> fold‑change (logFC):
+                      <ul>
+                        <li><span style="color:#D6604D; font-weight:bold;">Deep red</span> = strong up‑regulation.</li>
+                        <li><span style="color:#2166AC; font-weight:bold;">Deep blue</span> = strong down‑regulation.</li>
+                        <li>Paler shades → modest change;&nbsp; light grey → logFC NA.</li>
+                        <li>Edge tips encode interaction type:&nbsp; <strong>(→)</strong> &nbsp;Activation, <strong>(⊥)</strong> &nbsp;Inhibition.</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <br>
+                <li><strong>Navigate & interact</strong>
+                  <ul>
+                    <li><kbd>Scroll</kbd> to zoom,&nbsp; <kbd>Drag</kbd> to pan;&nbsp; or use the <kbd>🔍 Zoom</kbd> buttons.</li>
+                    <li><kbd>Shift + Drag</kbd> draws a marquee to multi‑select nodes / edges.</li>
+                    <li>Use <kbd>Hide Selected</kbd>&nbsp;&nbsp;/&nbsp;&nbsp;<kbd>Unhide Selected</kbd> widgets to declutter;&nbsp;<br>hidden elements are excluded from exports.</li>
+                  </ul>
+                </li>
+                <br>
+                <li><strong>Export your results</strong>
+                  <ul>
+                    <li><code>Download image</code> → PNG snapshot at current zoom.</li>
+                    <li><code>Nodes & Edges</code> Tables → displayed statistics&nbsp; &amp; &nbsp;network metrics for selected nodes / edges;&nbsp;<br>export as CSV,&nbsp; XLSX,&nbsp; PDF,&nbsp; or TXT.</li>
+                  </ul>
+                </li>
+              </ol>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -579,6 +631,7 @@
         <div class="modal-dialog modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
               <h4 class="modal-title" id="nodeSelectionLabel">Select Nodes for Network</h4>
             </div>
             <div class="modal-body">
@@ -586,17 +639,17 @@
                 <div class="radio">
                   <label>
                     <input type="radio" name="nodeOption" value="all" checked>
-                    Use All available genes
+                    Use All available proteins (UniProtKB IDs)
                   </label>
                 </div>
                 <p id="warningAllGenes" class="help-block" style="display:none; margin-top:10px;">
-                  Note: using all available genes may take a long time to generate a network,
+                  Note: using all available proteins may take a long time to generate a network,
                   depending on dataset size and number of interactions.
                 </p>
                 <div class="radio">
                   <label>
                     <input type="radio" name="nodeOption" value="list">
-                    Select gene names from list
+                    Select proteins (UniProtKB IDs) from list
                   </label>
                 </div>
                 <div id="geneListContainer" style="display:none; margin-top:10px;">
@@ -611,7 +664,7 @@
                 <div id="uploadContainer" style="display:none; margin-top:10px;">
                   <input type="file" id="geneFileInput" accept=".txt,.csv,.tsv,.xlsx">
                   <p class="help-block">
-                    Accepted file formats: .txt, .csv, .tsv, .xlsx. For .xlsx, the first worksheet is used and the first column is assumed to contain gene names.
+                    Accepted file formats: .txt, .csv, .tsv, .xlsx. For .xlsx, the first worksheet is used and the first column is assumed to contain prteins (UniProtKB IDs without the <em>_HUMAN</em> ending).
                   </p>
                 </div>
               </form>
@@ -689,7 +742,7 @@
           e.preventDefault();
         } else {
           e.preventDefault();
-          setTimeout(() => { window.location.href = href; }, 150);
+          setTimeout(() => { window.location.href = href; }, 400);
         }
 
         $nav.find('.nav-item.active').not('.keep-active').removeClass('active');

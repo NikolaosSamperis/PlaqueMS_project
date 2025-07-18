@@ -1,0 +1,146 @@
+{
+  "id": "root",
+  "text": "root",
+  "tag": "root",
+  "nodes": [
+    {
+      "id": "2ec00c70-cc6a-4a79-83bd-e9d17a17ffa0",
+      "text": "Carotid Plaques Vienna Cohort",
+      "tag": "dataset",
+      "nodes": [
+        {
+          "id": "25090d96-537a-4185-a72e-43d82505ace7",
+          "text": "Cellular Proteome TMT",
+          "tag": "experiment",
+          "nodes": [
+            {
+              "id": "94302d4c-5618-4e6e-bb37-b9416a37781e",
+              "text": "core",
+              "tag": "experiment",
+              "nodes": [
+                {
+                  "id": "f5170c6e-2922-46a6-80d1-d67207ad9026",
+                  "text": "cellular proteome core filtered directed network",
+                  "tag": "network_file",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "d6a3cee7-e693-4c5c-b6d8-889b3c46b113",
+              "text": "periphery",
+              "tag": "experiment",
+              "nodes": [
+                {
+                  "id": "6be964f0-47c0-4eb6-8208-9453ab22fd8d",
+                  "text": "cellular proteome periphery filtered directed network",
+                  "tag": "network_file",
+                  "nodes": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "beab7dbf-7cee-4a46-917f-7cb0bce3b094",
+          "text": "Soluble Matrisome TMT",
+          "tag": "experiment",
+          "nodes": [
+            {
+              "id": "a0416bca-96ba-48c8-a86c-fffc6c5b3dd7",
+              "text": "core",
+              "tag": "experiment",
+              "nodes": [
+                {
+                  "id": "512d389d-970e-4faf-a76b-eca24dcb0466",
+                  "text": "soluble matrisome core filtered directed network",
+                  "tag": "network_file",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "bc3f068c-75b1-4fb6-9b58-29bcc9fb146d",
+              "text": "periphery",
+              "tag": "experiment",
+              "nodes": [
+                {
+                  "id": "2677f535-50e5-4cdc-ba50-af35d80251a5",
+                  "text": "soluble matrisome periphery filtered directed network",
+                  "tag": "network_file",
+                  "nodes": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "db599f08-91e9-4620-8ea9-7fb61f14c25f",
+          "text": "Core Matrisome TMT",
+          "tag": "experiment",
+          "nodes": [
+            {
+              "id": "e15eebbb-6586-4a09-b65e-67d1cba6cf70",
+              "text": "core",
+              "tag": "experiment",
+              "nodes": [
+                {
+                  "id": "4c628099-0d74-486c-83ed-df42fca515ec",
+                  "text": "core matrisome core filtered directed network",
+                  "tag": "network_file",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "ed61200b-c772-4d23-8749-7d0794b1a8ec",
+              "text": "periphery",
+              "tag": "experiment",
+              "nodes": [
+                {
+                  "id": "668e3aa7-9618-4e21-9ccf-f406304b0392",
+                  "text": "core matrisome periphery filtered directed network",
+                  "tag": "network_file",
+                  "nodes": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "f1829eff-1842-4dfd-b114-d5413b467639",
+          "text": "Soluble Matrisome OLINK",
+          "tag": "experiment",
+          "nodes": [
+            {
+              "id": "10fd6df7-4daa-469d-9be4-7ba9d1605dc8",
+              "text": "core",
+              "tag": "experiment",
+              "nodes": [
+                {
+                  "id": "924b1c84-178d-4c89-bbc8-6630152e8b73",
+                  "text": "soluble matrisome olink core filtered directed network",
+                  "tag": "network_file",
+                  "nodes": []
+                }
+              ]
+            },
+            {
+              "id": "a8fac31f-80fa-461a-bf8d-ed2353d44540",
+              "text": "periphery",
+              "tag": "experiment",
+              "nodes": [
+                {
+                  "id": "3f1e164f-4255-4487-93fa-52e63c0af3dd",
+                  "text": "soluble matrisome olink periphery filtered directed network",
+                  "tag": "network_file",
+                  "nodes": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
