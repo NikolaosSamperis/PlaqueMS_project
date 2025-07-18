@@ -143,6 +143,20 @@ PlaqueMS_project/
 </details>
 
 >**Note:** The `static` directory is not included in the cloned repository due to its large size. It can be provided by the authors upon request.
+>
+><br>**⚠️  Required JSON trees**
+><br><br>The nested tree panels used in  
+>* **Differential Expression Analysis** (`plot.html`) and  
+>* **Protein Networks** (`network.html`)
+>  
+>read their hierarchy from two static files:
+>
+>| Module | JSON file | Default path |
+>|--------|-----------|--------------|
+>| Differential Expression | `json_tree.json` | `PlaqueMS_project/json_tree.json` |
+>| Protein Networks        | `network_tree.json` | `PlaqueMS_project/network_tree.json` |
+>
+> Make sure these files are present and kept in sync with the underlying MySQL data before starting the server; otherwise the left‑hand selection panels will appear empty.
 
 ### 2. Create and Activate a Virtual Environment
 ```bash
@@ -194,10 +208,10 @@ NEO4J_PASSWORD=your_neo4j_password
    ```
 
 3. **Import the Dumped SQL File**  
-   Use the command line to import the provided SQL dump (`plaquems_database.sql`):
+   Use the command line to import the provided SQL dump (`dump-plaquems-202507181539.sql`):
 
    ```bash
-   mysql -u <your_mysql_user> -p plaqueMS < plaquems_database.sql
+   mysql -u <your_mysql_user> -p plaqueMS < dump-plaquems-202507181539.sql
    ```
    - Replace `<your_mysql_user>` with your MySQL username.
    - Enter your password when prompted.
