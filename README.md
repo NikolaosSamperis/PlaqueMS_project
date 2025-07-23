@@ -219,13 +219,15 @@ NEO4J_PASSWORD=your_neo4j_password
 3. **Import the Dumped SQL File**  
    Use the command line to import the provided SQL dump (`dump-plaquems-202507181539.sql`):
 
+>**Note:** The SQL dump File can be provided upon request.
+
    ```bash
    mysql -u <your_mysql_user> -p plaqueMS < dump-plaquems-202507181539.sql
    ```
    - Replace `<your_mysql_user>` with your MySQL username.
    - Enter your password when prompted.
 
-4. **Update Django Settings**  
+5. **Update Django Settings**  
    Make sure your `settings.py` (or `.env` file) has the correct database credentials:
    ```python
    DATABASES = {
