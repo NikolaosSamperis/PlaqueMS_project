@@ -37,7 +37,7 @@ ALLOWED_HOSTS = ['10.131.60.18', 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'login.apps.LoginConfig',  # Make sure login app is first
+    'Plaque_MS_app.apps.LoginConfig',  # Make sure 'Plaque_MS_app' app is first
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,19 +133,19 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'login.validators.UppercaseValidator',
+        'NAME': 'Plaque_MS_app.validators.UppercaseValidator',
     },
     {
-        'NAME': 'login.validators.LowercaseValidator',
+        'NAME': 'Plaque_MS_app.validators.LowercaseValidator',
     },
     {
-        'NAME': 'login.validators.NumericValidator',
+        'NAME': 'Plaque_MS_app.validators.NumericValidator',
     },
     {
-        'NAME': 'login.validators.SpecialCharacterValidator',
+        'NAME': 'Plaque_MS_app.validators.SpecialCharacterValidator',
     },
     {
-        'NAME': 'login.validators.NoSpacesValidator',
+        'NAME': 'Plaque_MS_app.validators.NoSpacesValidator',
     },
 ]
 

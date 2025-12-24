@@ -1,0 +1,2855 @@
+{% load navigation %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PlaQuery</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+  <!-- jQuery UI CSS for autocomplete -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <!-- Font Awesome CSS for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Bootstrap Tags Input CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap">
+  <style>
+    html {
+      font-family: sans-serif;
+      background: #eee;
+      padding: 0;
+      margin: 0;
+    }
+    body {
+      max-width: 100%;
+      margin: 0;
+      background: white;
+      padding: 0;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      color: #377ba8;
+      margin: 1rem 0;
+    }
+    a {
+      color: #377ba8;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid lightgray;
+    }
+
+    .custom-footer {
+      position: relative;
+      width: 100%;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #e0e0e0;
+      padding: 1.5rem 0;
+    }
+    .custom-footer p {
+      margin: 0;
+    }
+
+
+    /* Toolbar styles */
+    .main-toolbar {
+      background-color: #fff;
+      color: #333;
+      flex-wrap: wrap;
+      padding: 0 20px;
+      height: auto;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-bottom: 1px solid #ccc;
+    }
+    .app-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #377ba8;
+      font-size: 27px;
+      font-weight: bold;
+      margin-right: 40px;
+      transform: translateY(2px);
+    }
+    .app-logo:hover .app-title {
+      color: #4a90d9 !important;
+      text-decoration: none;
+    }
+    .app-title {
+      font-size: 27px;
+      font-weight: bold;
+      font-family: 'Montserrat', sans-serif;
+      color: #377ba8 !important;
+      padding-bottom: 8px;
+    }
+    .nav-tabs {
+      border-bottom: none !important;
+      margin-bottom: 0;
+    }
+
+    .nav-tabs > li > a {
+      font-family: 'Montserrat', sans-serif !important;
+      font-size: 16px !important;
+      color: #0d6efd !important;
+      padding: 10px 15px;
+      background-color: #fff !important;
+    }
+
+    .nav-tabs > li > a:focus {
+      font-family: 'Montserrat', sans-serif !important;
+      color: #0a58ca !important;
+      padding: 10px 15px;
+      background-color: #fff !important;
+    }
+
+    .nav-tabs > li > a:hover {
+      font-family: 'Montserrat', sans-serif !important;
+      color: #0a58ca !important;
+      padding: 10px 15px;
+      background-color: #f8f9fa !important;
+    }
+
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:hover,
+    .nav-tabs > li.active > a:focus {
+      color: #0a58ca !important;
+      background-color: #f8f9fa !important;
+      border-color: #e9ecef #e9ecef #dee2e6 !important;
+      cursor: pointer;
+    }
+
+    .logout-tab {
+      margin-left: auto;
+      padding: 10px 15px;
+      color: #0d6efd;
+      background-color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      text-decoration: none;
+      font-size: 16px;
+      border: 1px solid transparent;
+      border-radius: 4px 4px 0 0;
+      transition: all 0.3s ease;
+    }
+
+    .logout-tab:hover {
+      color: #0a58ca;
+      background-color: #f8f9fa;
+      border-color: #dee2e6;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    /* Search section styles - updated background to light grey */
+    .search-section {
+      background: #f0f0f0;
+      padding: 40px 0 50px;
+      text-align: center;
+      color: #333;
+    }
+    .search-title {
+      font-size: 25px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #377ba8;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .examples-text {
+      display: inline-flex;
+      position: relative;
+      flex-wrap: wrap;
+      margin-left: 0;
+      margin-top: 0.8rem;
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      color: #666;
+      gap: 0.3rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .examples-text::before {
+      content: "Examples:";
+      margin-right: 0.3rem;
+    }
+    .examples-text .example-term {
+      color:   #666;
+      cursor:  pointer;
+      transition: color 0.2s ease;
+    }
+    .examples-text .example-term:hover {
+      color:   #4a90d9;
+    }
+    .search-container {
+      display: flex;
+      max-width: 900px;
+      width: 100%;
+      min-height: 40px;
+      max-height: 60px;
+      margin: 0 auto;
+    }
+    .search-input-wrapper {
+      flex-grow: 1;
+      max-width: 100%;
+      overflow-y: hidden;
+      overflow-x: hidden;
+      white-space: nowrap;
+      border-radius: 0 !important;
+    }
+    .search-field-wrapper {
+      border-radius: 8px;
+      position: relative;
+      width: 100%;
+      box-shadow:
+        inset 100px 0 0 #f8f9fa,
+        0 3px 10px rgba(0,0,0,0.4)
+        !important;
+      background-color: #f8f9fa;
+      display: flex;
+      padding-left: 100px;
+    }
+    .search-field-container {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      min-height: 40px;
+      max-height: 60px;
+      border-radius: 0 8px 8px 0;
+      background-color: #f8f9fa;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Tags input styling */
+    .bootstrap-tagsinput {
+      width: 100%;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 6px 6px;
+      background-color: white;
+      max-height: 100%;
+      overflow-y: hidden;
+      overflow-x: auto;
+      display: flex;
+      position: relative;
+      align-items: center;
+      cursor: text;
+      white-space: nowrap;
+      flex-wrap: nowrap;
+      scrollbar-width: thin;
+      scroll-behavior: smooth;
+    }
+    .bootstrap-tagsinput > .twitter-typeahead {
+      flex: 1 0 auto;
+      min-width: 24ch;
+      max-width: 100% !important;
+      width: auto !important;
+      overflow: hidden;
+    }
+    .bootstrap-tagsinput .tt-hint {
+      width: 100% !important;
+      white-space: pre !important;
+      box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      color:#9ca3af;
+    }
+    .bootstrap-tagsinput .tt-input {
+      min-width: 24ch !important;
+      width: 100% !important;
+      position: relative;
+      z-index: 2;
+      background: transparent;
+      box-sizing: border-box;
+    }
+    .tt-menu,
+    .bootstrap-tagsinput .tt-menu {
+      display: none !important;
+    }
+    .bootstrap-tagsinput .tag {
+      background-color: #377ba8;
+      color: white;
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin-right: 5px;
+      margin-bottom: 0;
+      display: inline-block;
+      line-height: 1.5;
+    }
+    .bootstrap-tagsinput .tag [data-role="remove"] {
+      margin-left: 6px;
+      cursor: pointer;
+    }
+    .bootstrap-tagsinput .tag [data-role="remove"]:after {
+      content: "×";
+      padding: 0 2px;
+      position: relative;
+      top: -1px;
+    }
+    .bootstrap-tagsinput .tag [data-role="remove"]:hover {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-options {
+      display: flex;
+      background-color: transparent;
+      padding: 0 15px;
+      align-items: center;
+      height: 100%;
+      gap: 1rem;
+      border-radius: 0 8px 8px 0;
+      box-sizing: border-box;
+    }
+    .list-btn {
+      background: none;
+      border: none;
+      color: #555;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0 10px;
+    }
+    .list-btn:hover {
+      color: #377ba8;
+    }
+    .search-btn {
+      background-color: #377ba8;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .search-btn:hover {
+      background-color: #4a90d9;
+    }
+    /* Filters styles */
+    .filters-container {
+      max-width: 800px;
+      margin: 30px auto;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 0 20px;
+    }
+    .filter-element {
+      position: relative;
+      overflow: visible;
+      height: 45px;
+      border-radius: 6px;
+      width: 225px;
+      background-color: white;
+      border: 1px solid #377ba8;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .filter-element:hover {
+      border-color: #377ba8;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    .filter-select {
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      border: none;
+      padding: 0 15px;
+      background-color: transparent;
+      position: relative;
+      font-weight: normal;
+      z-index: 2;
+      cursor: pointer;
+      appearance: none;
+      background-repeat: no-repeat;
+      background-position: calc(100% - 15px) center;
+    }
+    .filter-select option[disabled],
+    .filter-select option[hidden] {
+      display: none !important;
+    }
+    .filter-select:focus {
+      outline: none;
+    }
+
+    /* Multiselect custom styles */
+    .multiselect {
+      width: 100%;
+      position: relative;
+      height: 100%;
+    }
+    .selectBox {
+      position: relative;
+      cursor: pointer;
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      width: 100%;
+    }
+    .selectBox::after {
+      content: "\f078";
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+      font-size: 14px;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: transform 0.3s ease;
+    }
+    .selectBox.expanded::after {
+      transform: translateY(-50%) rotate(180deg);
+    }
+    .selectBox select {
+      width: 100%;
+      font-weight: normal;
+      font-size: 16px;
+      height: 100%;
+    }
+    .overSelect {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+    .checkboxes {
+      display: none;
+      z-index: 3;
+      border: 1px solid #dadada;
+      background: white;
+      position: absolute;
+      min-width: 240px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .checkboxes label {
+      display: block;
+      padding: 5px 10px;
+    }
+    .checkboxes label:hover {
+      background-color: #1e90ff;
+      color: white;
+    }
+    .checkboxes label,
+    .checkboxes input[type="checkbox"] {
+      cursor: pointer;
+    }
+    /* More options button */
+    .more-options-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    .more-options-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      height: 45px;
+      background-color: #f1f1f1;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .more-options-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 150, 136, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    .more-options-btn:hover::before {
+      left: 100%;
+    }
+    .more-options-btn:hover {
+      border-color: #377ba8;
+      background-color: #e9e9e9;
+    }
+    .more-options-btn i {
+      margin-left: 8px;
+      transition: transform 0.3s ease;
+    }
+    .more-options-btn.expanded i {
+      transform: rotate(180deg);
+    }
+    .animated-button {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .animated-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 150, 136, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    .animated-button:hover::before {
+      left: 100%;
+    }
+    .animated-button:hover {
+      border-color: #377ba8;
+    }
+    /* Additional filters container */
+    .additional-filters {
+      display: none;
+      width: 100%;
+      max-width: 1200px;
+      margin: 15px auto 0;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+    .additional-filters.show {
+      display: flex;
+    }
+    .apply-filters-container {
+      text-align: center;
+      margin: 20px auto;
+    }
+    .apply-filters-btn {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 15px;
+      height: 40px;
+      background-color: #f1f1f1;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .apply-filters-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 150, 136, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    .apply-filters-btn:hover::before {
+      left: 100%;
+    }
+    .apply-filters-btn:hover {
+      background-color: #e9e9e9;
+      border-color: #377ba8;
+    }
+    button {
+      transition: transform 0.2s ease;
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    .more-options-btn,
+    .apply-filters-btn,
+    .action-btn,
+    .input-group-text {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    #table-search {
+      position: relative;
+      z-index: 1;
+      box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    /* Results table styles */
+    .results-container {
+      max-width: 1400px;
+      margin: 45px auto 30px;
+      padding: 0 35px;
+      padding-bottom: 3rem;
+    }
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .results-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .results-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .results-actions .input-group-text {
+      position: relative;
+      box-shadow: 4px 4px 6px rgba(0,0,0,0.2);
+    }
+    .action-btn {
+      padding: 6px 12px;
+      background-color: #f1f1f1;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .action-btn:hover {
+      background-color: #e9e9e9;
+      border-color:  #377ba8;
+    }
+    .more-options-btn:hover,
+    .apply-filters-btn:hover,
+    .action-btn:hover {
+      transform: translateY(-1px);
+      transition: all 0.15s ease;
+    }
+    #table-search:focus {
+      border-color: #377ba8;
+      box-shadow: 0 0 0 0.2rem rgba(55,123,168,0.25);
+    }
+    .input-group-text .fa-search {
+      color: #5a6268;
+    }
+    .input-group {
+      overflow: visible;
+    }
+    .results-table-container {
+      max-height: 550px;
+      overflow: auto;
+      position: relative;
+    }
+    .results-table {
+      width: 100%;
+      table-layout: auto;
+      border-collapse: collapse;
+      background-color: #f5f5f5;
+    }
+    .results-table th {
+      background-color: #f8f9fa;
+      padding: 15px 15px !important;
+      font-weight: 600;
+      color: #333;
+      width: fit-content;
+      min-width: 100px;
+      max-width: 500px;
+      white-space: nowrap !important;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .results-table tbody tr:nth-child(even) {
+      background-color: #ffffff;
+    }
+    .results-table tbody tr:nth-child(odd) {
+      background-color: #f5f5f5;
+    }
+    .results-table td {
+      padding: 8px 17px;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+      vertical-align: middle;
+      white-space: nowrap !important;
+    }
+    .cell-content {
+      min-width: 100px;
+      max-width: 500px;
+      width: fit-content;
+      white-space: nowrap !important;
+      text-align: center;
+      display: inline-block;
+    }
+    .results-table tr:hover {
+      background-color: #e9e9e9 !important;
+    }
+    .results-table thead th {
+      position: sticky;
+      top: 0;
+      background-color: #f8f9fa;
+      z-index: 2;
+    }
+    .results-table thead th::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 2.5px;
+      background-color: #ddd;
+      pointer-events: none;
+    }
+    .results-table thead th::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2.5px;
+      background-color: #ddd;
+      pointer-events: none;
+    }
+    /* New Results Footer */
+    .results-footer {
+      background-color: #f8f9fa;
+      padding: 6px 0;
+      text-align: center;
+      border-bottom: 2.5px solid #ddd;
+    }
+    .results-footer .pagination {
+      display: inline-flex;
+      margin: 0;
+    }
+    .results-footer.no-pagination {
+      padding: 20px 0;
+    }
+    .pagination .page-item .page-link {
+      color: #377ba8;
+    }
+    .pagination .page-item.active .page-link {
+      background-color: #377ba8;
+      border-color: #377ba8;
+      color: white;
+    }
+    .progress-container {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      height: 20px;
+      z-index: 100;
+      background-color: transparent;
+      border: 2px solid #bbb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    @keyframes stripeAnimation {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: -20px 0;
+      }
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: repeating-linear-gradient(
+        55deg,
+        #377ba8 0,
+        #377ba8 10px,
+        #2f6394 10px,
+        #2f6394 20px
+      );
+      background-size: 20px 20px;
+      animation: stripeAnimation 0.5s linear infinite;
+      transition: width 0.4s ease;
+    }
+    .blur {
+      filter: blur(6px);
+      transition: filter 0.4s ease;
+      pointer-events:none;
+    }
+    .no-scroll {
+      overflow: hidden;
+    }
+    .pagination.disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: #777;
+      min-height: 515px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #f8f9fa;
+      border-top: 2px solid #ddd;
+    }
+    .empty-state i {
+      font-size: 60px;
+      margin-bottom: 15px;
+      color: #bbb;
+    }
+    button {
+      transition: transform 0.2s ease;
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .tooltip.calc-tooltip {
+      opacity: 1 !important;
+      pointer-events: none !important;
+    }
+    
+    .tooltip.calc-tooltip .tooltip-inner {
+      background-color: #f6dc9a !important;
+      color:            #272727 !important;
+      z-index:          10002 !important;
+      font-size: 14px !important;
+      border-radius: 6px !important;
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 300 !important;
+      display:inline-block;
+      max-width:265px;
+      width:fit-content;
+      padding:8px 12px !important;
+      pointer-events: none !important;
+    }
+
+    .tooltip.calc-hyphen .tooltip-inner{
+      hyphens:auto !important;
+      text-align: justify !important;
+      text-justify: inter-word !important;
+    }
+
+    @supports not (width:fit-content){
+      .tooltip.calc-tooltip .tooltip-inner{
+        width:auto;
+        max-width:265px;
+      }
+    }
+
+    .tooltip.calc-tooltip .tooltip-arrow::before {
+      content: "" !important;
+      position: absolute !important;
+      border-style: solid !important;
+    }
+
+    .tooltip.calc-tooltip.bs-tooltip-top .tooltip-arrow::before {
+      border-width: 0.6rem 0.6rem 0    0.6rem !important;
+      border-color: #f6dc9a transparent transparent transparent !important;
+      margin-top: 2.5px !important;
+    }
+
+    .tooltip.calc-tooltip.bs-tooltip-right .tooltip-arrow::before {
+      border-width: 0.6rem 0.6rem 0.6rem 0    !important;
+      border-color: transparent #f6dc9a transparent transparent !important;
+      margin-right: 2.5px !important;
+    }
+
+    .tooltip.calc-tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+      border-width: 0    0.6rem 0.6rem 0.6rem !important;
+      border-color: transparent transparent #f6dc9a transparent !important;
+      margin-bottom: 2.5px !important;
+    }
+
+    .tooltip.calc-tooltip.bs-tooltip-left .tooltip-arrow::before {
+      border-width: 0.6rem 0    0.6rem 0.6rem !important;
+      border-color: transparent transparent transparent #f6dc9a !important;
+      margin-left: 2.5px !important;
+    }
+
+    #modal-tag-box .bootstrap-tagsinput{
+      display:flex;
+      flex-wrap:wrap;
+      align-content  : flex-start;
+      align-items:flex-start;
+      gap:4px;
+      min-height:150px;
+      resize:vertical;
+      max-height:300px;
+      overflow: auto;
+      white-space:normal;
+    }
+    #modal-count-box{
+      width: 55px;
+      height: 37px;
+      font-size: 0.8rem;
+      text-align:center;
+      padding: 0;
+    }
+    .modal-content{
+      padding: 0 2rem;
+      border-radius: 0.5rem;
+    }
+    .modal-header{
+      align-items: center;
+    }
+    .modal-header .btn-close{
+      position: absolute;
+      right: 3rem;
+      transform: translateY(6px) !important;
+    }
+    #modal-tag-box .bootstrap-tagsinput .tag,
+    #modal-tag-box .bootstrap-tagsinput .tt-input,
+    #modal-tag-box .bootstrap-tagsinput .tt-hint{
+      height      : 26px;
+      line-height : 26px;
+      padding     : 0 4px;
+      display     : inline-flex;
+      align-items : center;
+    }
+    #proteinListModal .btn-primary{
+      background-color:#377ba8;
+      border:none;
+      color:#fff;
+    }
+    #proteinListModal .btn-primary:hover{
+      background-color:#4a90d9;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Top Toolbar from plot.html -->
+  <div class="main-toolbar" style="border-bottom: none;">
+    <a class="app-logo">
+      <span class="app-title">PlaqueMS</span>
+    </a>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'proteins' %}">Proteins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'plot' %}">Differential Expression Analysis</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cy' %}">Protein Networks</a>
+      </li>
+      {% if user.is_authenticated %}
+        <li class="nav-item active keep-active">
+          <a class="nav-link" href="{% url 'protein-abundance' %}">PlaQuery</a>
+        </li>
+      {% endif %}
+      {% if user.is_authenticated and user.is_staff %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+        </li>
+      {% endif %}
+    </ul>
+    <!--Right side of the toolbar-->
+    <ul class="nav nav-tabs navbar-right" style="margin-left: auto;">
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Log In</a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <!-- Bottom Toolbar (original from plaquery.html) - with login/logout removed -->
+  <div class="main-toolbar">
+    <ul class="nav nav-tabs bottom-placeholder-tabs" style="display: flex; justify-content: center; width: 100%;">
+      <li class="nav-item {% active 'protein-abundance' %}">
+        <a class="nav-link" href="{% url 'protein-abundance' %}">Protein Abundance</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Graph Protein Networks</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'calc_predict' %}">Calcification Prediction</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'syntax_predict' %}">Syntax Score Prediction</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Search Section - Updated background to light grey -->
+  <div class="search-section">
+    <h1 class="search-title">Search by Protein</h1>
+    <form id="search-form" novalidate>
+      <div class="search-container">
+        <div class="search-field-wrapper">
+          <div class="search-field-container">
+            <!-- Search Field with Tags -->
+            <div class="search-input-wrapper">
+              <input type="text" id="protein-tags" class="form-control" placeholder="">
+            </div>
+            <!-- Search Options (right side) -->
+            <div class="search-options">
+              <button type="button" class="list-btn" onclick="openListModal()">List</button>
+              <button type="button" class="search-btn" onclick="submitQuery()">Search</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="examples-text">
+      <span class="example-term" data-term="Coagulation factor X">Coagulation factor X</span>,
+      <span class="example-term" data-term="F10">F10</span>,
+      <span class="example-term" data-term="P00742">P00742</span>,
+      <span class="example-term" data-term="FA10_HUMAN">FA10_HUMAN</span>
+    </div>
+  </div>
+  <!-- Filters Section -->
+  <div class="filters-container">
+    <!-- Experiment Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('experiment-checkboxes')">
+          <select class="filter-select" aria-label="Filter Experiment">
+            <option selected>Filter Experiment</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="experiment-checkboxes" class="checkboxes">
+          {% for exp in experiments %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ exp }}">
+              {{ exp }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Plaque Histology Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('histology-checkboxes')">
+          <select class="filter-select" aria-label="Filter Plaque Histology">
+            <option selected>Filter Plaque Histology</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="histology-checkboxes" class="checkboxes">
+          {% for h in histologies %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ h }}">
+              {{ h }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Plaque Ultrasound Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('ultrasound-checkboxes')">
+          <select class="filter-select" aria-label="Filter Plaque Ultrasound">
+            <option selected>Filter Plaque Ultrasound</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="ultrasound-checkboxes" class="checkboxes">
+          {% for u in ultrasounds %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ u }}">
+              {{ u }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- More Options Button (centered) -->
+  <div class="more-options-container">
+    <button type="button" class="more-options-btn" onclick="toggleAdditionalFilters()">
+      More Filter Options <i class="fas fa-chevron-down"></i>
+    </button>
+  </div>
+  <!-- Additional Filters (hidden by default) -->
+  <div class="additional-filters" id="additional-filters">
+    <!-- Tissue Area Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('tissue-checkboxes')">
+          <select class="filter-select" aria-label="Filter by Tissue area">
+            <option selected>Filter by Tissue area</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="tissue-checkboxes" class="checkboxes">
+          {% for area in tissue_areas %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ area }}">
+              {{ area }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Sex Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('sex-checkboxes')">
+          <select class="filter-select" aria-label="Filter by Sex">
+            <option selected>Filter by Sex</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="sex-checkboxes" class="checkboxes">
+          {% for s in sexes %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ s }}">
+              {{ s }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Age Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('age-checkboxes')">
+          <select class="filter-select" aria-label="Filter by Age">
+            <option selected>Filter by Age</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="age-checkboxes" class="checkboxes">
+          {% for age_group in age_groups %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ age_group }}">
+             {% if age_group == "under40" %}Under 40{% elif age_group == "40to60" %}40-60{% elif age_group == "over60" %}Over 60{% endif %}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Symptoms Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('symptoms-checkboxes')">
+          <select class="filter-select" aria-label="Filter by Symptoms">
+            <option selected>Filter by Symptoms</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="symptoms-checkboxes" class="checkboxes">
+          {% for sym in symptoms %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ sym }}">
+             {{ sym }}
+           </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Clinical Condition Filter -->
+    <div class="filter-element">
+     <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('clinical-checkboxes')">
+          <select class="filter-select" aria-label="Select Clinical condition">
+            <option selected>Select Clinical condition</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+       <div id="clinical-checkboxes" class="checkboxes">
+          <label for="clin_1">
+            <input type="checkbox" id="clin_1" value="Acute infection"> Acute infection
+          </label>
+          <label for="clin_2">
+            <input type="checkbox" id="clin_2" value="Acute myocardial infarction"> Acute myocardial infarction
+          </label>
+          <label for="clin_3">
+            <input type="checkbox" id="clin_3" value="Adipositas(BMI>30)"> Adipositas(BMI>30)
+          </label>
+          <label for="clin_4">
+            <input type="checkbox" id="clin_4" value="Auto-immune disease"> Auto-immune disease
+          </label>
+          <label for="clin_5">
+            <input type="checkbox" id="clin_5" value="Cancer"> Cancer
+          </label>
+          <label for="clin_6">
+            <input type="checkbox" id="clin_6" value="Chronic infection"> Chronic infection
+          </label>
+          <label for="clin_7">
+            <input type="checkbox" id="clin_7" value="Chronic obstructive pulmonary disease"> Chronic obstructive pulmonary disease
+          </label>
+          <label for="clin_8">
+            <input type="checkbox" id="clin_8" value="Coronary artery disease"> Coron ary artery disease
+          </label>
+          <label for="clin_9">
+            <input type="checkbox" id="clin_9" value="Diabetes mellitus type 2"> Diabetes mellitus type 2
+          </label>
+          <label for="clin_10">
+            <input type="checkbox" id="clin_10" value="High Stenosis(≥90%)"> High stenosis(≥90%)
+          </label>
+          <label for="clin_11">
+            <input type="checkbox" id="clin_11" value="Hyperlipidemia"> Hyperlipidemia
+          </label>
+          <label for="clin_12">
+            <input type="checkbox" id="clin_12" value="Hypertension"> Hypertension
+          </label>
+          <label for="clin_13">
+            <input type="checkbox" id="clin_13" value="Peripheral artery disease"> Peripheral artery disease
+          </label>
+          <label for="clin_14">
+            <input type="checkbox" id="clin_14" value="Stroke history"> Stroke history
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- Clinical Outcomes Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('clinical-outcomes-checkboxes')">
+          <select class="filter-select" aria-label="Filter by Clinical outcomes">
+            <option selected>Select Clinical outcome</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="clinical-outcomes-checkboxes" class="checkboxes">
+          <label>
+            <input type="checkbox" value="Stroke">
+            Stroke
+          </label>
+          <label>
+            <input type="checkbox" value="Transient ischemic attack">
+            Transient ischemic attack
+          </label>
+          <label>
+            <input type="checkbox" value="Cardiovascular mortality">
+            Cardiovascular mortality
+          </label>
+          <label>
+            <input type="checkbox" value="Primary endpoint">
+            Primary endpoint
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- Calcification Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('calcification-checkboxes')">
+          <select class="filter-select" aria-label="Filter by Calcification">
+            <option selected>Calcification (clinical)</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="calcification-checkboxes" class="checkboxes">
+          {% for calc in calcifications %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ calc }}">
+              {{ calc }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Medication Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('medication-checkboxes')">
+          <select class="filter-select" aria-label="Select Medication">
+            <option selected>Select Medication</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="medication-checkboxes" class="checkboxes">
+          <label for="med_1">
+            <input type="checkbox" id="med_1" value="ACE inhibitors"> ACE inhibitors
+          </label>
+          <label for="med_2">
+            <input type="checkbox" id="med_2" value="ARB therapy"> ARB therapy
+          </label>
+          <label for="med_3">
+            <input type="checkbox" id="med_3" value="Antiplatelet"> Antiplatelet
+          </label>
+          <label for="med_4">
+            <input type="checkbox" id="med_4" value="Aspirin"> Aspirin
+          </label>
+          <label for="med_5">
+            <input type="checkbox" id="med_5" value="Beta blockers"> Beta blockers
+          </label>
+          <label for="med_6">
+            <input type="checkbox" id="med_6" value="Statins"> Statins
+          </label>
+          <label for="med_7">
+            <input type="checkbox" id="med_7" value="Clopidogrel"> Clopidogrel
+          </label>
+          <label for="med_8">
+            <input type="checkbox" id="med_8" value="Diuretics"> Diuretics
+          </label>
+        </div>
+      </div>
+    </div>
+      <!-- Lifestyle Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('lifestyle-checkboxes')">
+          <select class="filter-select" aria-label="Filter by Lifestyle">
+            <option selected>Filter by Lifestyle</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="lifestyle-checkboxes" class="checkboxes">
+          <!-- Smoker Status -->
+          <label style="font-weight:bold;">Smoker Status</label>
+          {% for status in smoker_status %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ status }}" name="smoker_status">
+              {{ status }}
+            </label>
+          {% endfor %}
+          <!-- Pack-years Ranges -->
+          <label style="font-weight:bold; margin-top:10px;">Pack-years</label>
+          {% for py in pack_years_ranges %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ py.value }}" name="pack_years_range">
+              {{ py.label }}
+            </label>
+          {% endfor %}
+          <!-- BMI Ranges -->
+          <label style="font-weight:bold; margin-top:10px;">BMI</label>
+          {% for bmi in bmi_ranges %}
+            <label onclick="event.stopPropagation();">
+              <input type="checkbox" value="{{ bmi.value }}" name="bmi_range">
+              {{ bmi.label }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- Cardiovascular Biomarkers Filter -->
+    <div class="filter-element">
+      <div class="multiselect">
+        <div class="selectBox animated-button" onclick="toggleCheckboxes('cvbiomarkers-checkboxes')">
+          <select class="filter-select" aria-label="Select cardiovascular biomarkers">
+            <option selected>Select CV biomarkers</option>
+          </select>
+          <div class="overSelect"></div>
+        </div>
+        <div id="cvbiomarkers-checkboxes" class="checkboxes">
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="Cholesterol(total)" name="cvbiomarker">
+            Cholesterol(total)
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="HDL" name="cvbiomarker">
+            HDL
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="LDL" name="cvbiomarker">
+            LDL
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="Triglycerides" name="cvbiomarker">
+            Triglycerides
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="High-sensitivity CRP" name="cvbiomarker">
+            High-sensitivity CRP
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="Ultrasensitive CRP" name="cvbiomarker">
+            Ultrasensitive CRP
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="Pre-surgery BP(diastolic)" name="cvbiomarker">
+            Pre-surgery BP(diastolic)
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="Pre-surgery BP(systolic)" name="cvbiomarker">
+            Pre-surgery BP(systolic)
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="Contralateral stenosis(≥60%)" name="cvbiomarker">
+            Contralateral stenosis(≥60%)
+          </label>
+          <label onclick="event.stopPropagation();">
+            <input type="checkbox" value="Stenosis grade(%)" name="cvbiomarker">
+            Stenosis grade(%)
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Centered Apply Filters button -->
+  <div class="apply-filters-container">
+    <button type="button" class="apply-filters-btn" onclick="applyFilters()">Apply Filters</button>
+  </div>
+  <!-- Results Area -->
+  <div class="results-container">
+    <div class="results-header">
+      <div class="results-title">Results</div>
+      <div class="results-actions">
+        <button class="action-btn" onclick="copyResults()">Copy</button>
+        <button class="action-btn" onclick="exportToExcel()">Excel</button>
+        <button class="action-btn" onclick="exportToCSV()">CSV</button>
+        <button class="action-btn" onclick="exportToTSV()">TSV</button>
+        <div class="input-group" style="width: 200px;">
+          <span class="input-group-text">
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </span>
+          <input type="text" class="form-control" id="table-search" onkeyup="searchTable()">
+        </div>
+      </div>
+    </div>
+    <div class="results-wrapper" style="position: relative;">
+      <div class="progress-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div id="results-table-container" class="results-table-container">
+        <table id="results-table" class="results-table">
+          <thead>
+            <tr>
+              <th>Protein</th>
+              <th>Patient ID</th>
+              <th>Tissue Area</th>
+              <th>Experiment</th>
+              <th>Abundance</th>
+              <th data-bs-toggle="tooltip"
+                  data-bs-custom-class="calc-tooltip"
+                  title="Average protein abundance in experiment and tissue area across patients">
+                  Avg. Abundance
+              </th>
+              <th data-bs-toggle="tooltip"
+                  data-bs-custom-class="calc-tooltip"
+                  title="Minimum protein abundance in experiment and tissue area across patients">
+                  Min Abundance
+              </th>
+              <th data-bs-toggle="tooltip"
+                  data-bs-custom-class="calc-tooltip"
+                  title="Maximum protein abundance in experiment and tissue area across patients">
+                  Max Abundance
+              </th>
+              <th>Std. Deviation</th>
+            </tr>
+          </thead>
+          <tbody id="results-body">
+            <!-- Results will be populated here -->
+          </tbody>
+        </table>
+        <div id="empty-state" class="empty-state">
+          <i class="fas fa-search fa-4x"></i>
+          <p>Search for proteins to see results</p>
+        </div>
+      </div>
+    </div>
+    <nav aria-label="Results pagination" class="results-footer">
+      <ul class="pagination" id="pagination">
+        <!-- Pagination will be generated dynamically -->
+      </ul>
+    </nav>
+  </div>
+  <!-- Protein list modal -->
+  <div class="modal fade" id="proteinListModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-lg  modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Proteins in Bulk</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Upload area -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold">
+              Import TSV file.
+              <span class="text-muted" style="font-size: 0.875rem;">
+                 (Max detected proteins allowed: <code>50</code>)
+              </span>
+            </label>
+            <div class="d-flex gap-2">
+              <input class="form-control" type="file" id="tsvFile"
+                  accept=".tsv,.txt,text/tab-separated-values">
+              <button type="button" class="btn btn-outline-danger" id="clear-upload-btn">Clear</button>
+            </div>
+          </div>
+
+          <!-- Tag box -->
+          <div class="mb-3">
+            <!-- wrapper gives us scrollbars -->
+            <div id="modal-tag-box" class="border rounded p-1">
+              <input id="modal-protein-tags" type="text" placeholder="…or paste a list">
+            </div>
+          </div>
+
+          <!-- Read-only counter --------------------------------------------- -->
+          <div class="d-flex align-items-start mb-0">
+            <label
+             id="detected-proteins-label"
+             class="form-label fw-semibold me-2 mt-1"
+             data-bs-toggle="tooltip"
+             data-bs-custom-class="calc-tooltip calc-hyphen"
+             title="Only proteins present in the dictionary will be counted here. Not every protein is detected, but most dictionary entries do exist in the database.">
+             Detected proteins
+            </label>
+            <input id="modal-count-box" class="form-control" readonly>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary"
+                  data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary"
+                onclick="proceedWithProteinList()">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="custom-footer">
+    <p>&copy; 2025 PlaqueMS. All rights reserved.</p>
+  </footer>
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script>
+    // Move .active to the tab just clicked; remove any other active tab. (top toolbar)
+    $(function () {
+      $('.main-toolbar .nav-tabs:not(.bottom-placeholder-tabs)')
+        .on('pointerdown', '.nav-link', function (e) {
+          const href = this.getAttribute('href'),
+                $li  = $(this).parent('.nav-item'),
+                $nav = $li.closest('.nav-tabs');
+
+          if (href === '#') {
+            e.preventDefault();
+          } else {
+            e.preventDefault();
+            setTimeout(() => { window.location.href = href; }, 400);
+          }
+
+          $nav.find('.nav-item.active').removeClass('active');
+          $li.addClass('active');
+          if (!$li.hasClass('keep-active')) {
+            $('.bottom-placeholder-tabs .nav-item.active').removeClass('active');
+          }
+        });
+    });
+    
+    // Move .active to the tab just clicked; skip tabs with .keep-active (PlaQuery) (bottom toolbar)
+    $(function () {
+      $('.bottom-placeholder-tabs').on('click', '.nav-link', function (e) {
+        const href = $(this).attr('href'),
+              $li  = $(this).parent('.nav-item'),
+              $nav = $li.closest('.nav-tabs');
+
+        if (href === '#') {
+          e.preventDefault();
+        } else {
+          e.preventDefault();
+          setTimeout(() => { window.location.href = href; }, 150);
+        }
+
+        $nav.find('.nav-item.active').not('.keep-active').removeClass('active');
+        $li.addClass('active');
+      });
+    });
+
+    //Tooltip
+    document.addEventListener('DOMContentLoaded', function () {
+      new bootstrap.Tooltip(document.body, {
+        selector: '[data-bs-toggle="tooltip"]',
+        trigger: 'hover',
+        container: 'body',
+        offset: [0, -10],
+        placement: function(tip, trigger) {
+          if (!tip.parentNode) {
+            tip.style.position = 'absolute';
+            tip.style.left     = '-9999px';
+            tip.style.top      = '-9999px';
+            document.body.appendChild(tip);
+          }
+          const bubbleHeight = tip.offsetHeight;
+          const spaceAbove   = trigger.getBoundingClientRect().top;
+        // prefer TOP, but flip to BOTTOM when the clearance above is < 1.5 × bubble height.                                   */
+          return (spaceAbove >= 1.2 * bubbleHeight) ? 'top' : 'bottom';
+        },
+        fallbackPlacements: ['top', 'bottom']
+      });
+      // Now override just the “Detected proteins” label:
+      const lbl = document.getElementById('detected-proteins-label');
+      if (lbl) {
+        // If there is already a Tooltip instance on this element, dispose it:
+        lbl._tooltip && lbl._tooltip.dispose();
+
+        // Create a fresh Tooltip on only this one element, with offset [0, 8]:
+        new bootstrap.Tooltip(lbl, {
+          trigger: 'hover',
+          container: 'body',
+          offset: [0, 4],
+          placement: function (tip, trigger) {
+            const bubbleHeight = tip.offsetHeight;
+            const spaceAbove   = trigger.getBoundingClientRect().top;
+            return (spaceAbove >= 1.2 * bubbleHeight) ? 'top' : 'bottom';
+          },
+          fallbackPlacements: ['top', 'bottom']
+        });
+      }
+    });
+
+    $(document).ready(function() {
+      const table          = document.getElementById('results-table');
+      const thead     = document.querySelector('#results-table thead');
+      const emptyState     = document.getElementById('empty-state');
+      const tableContainer = document.getElementById('results-table-container');
+      const footerNav      = document.querySelector('.results-footer');       // ← new
+
+      // Show empty state initially but keep table container visible
+      table.style.display           = 'none';
+      thead.style.display           = 'none';
+      emptyState.style.display      = 'flex';
+      tableContainer.style.display  = 'block';
+
+      // Show the footer (thick, no pagination) on initial load
+      if (footerNav) {
+        footerNav.style.display      = 'block';
+        footerNav.classList.add('no-pagination');
+      }        
+
+      // Initialize tags input with typeahead
+      initializeTagsInput();
+    });
+
+    // Normaliser
+    function attachProteinNormaliser($tags, proteinVariants) {
+      let normalising = false;
+
+      $tags.on('beforeItemAdd', function (evt) {
+        if (normalising) return;                 // guard against our own edits
+
+        // trim inner & outer whitespace and collapse runs of blanks
+        const cleaned   = evt.item.replace(/\s+/g, ' ').trim();
+        const variants  = proteinVariants[ cleaned.toLowerCase() ];
+
+        // ── 1)  single canonical spelling available → switch to that
+        if (variants?.length === 1 && variants[0] !== evt.item) {
+          evt.cancel = true;
+          normalising = true;
+          $(this).tagsinput('add', variants[0]);
+          normalising = false;
+          return;
+        }
+
+        // ── 2)  no unique variant but whitespace / case changed → use cleaned
+        if (cleaned !== evt.item) {
+          evt.cancel = true;
+          normalising = true;
+          $(this).tagsinput('add', cleaned);
+          normalising = false;
+          return;
+        }
+
+        // ── 3)  prevent duplicates that differ only in case / blanks
+        const already = $(this).tagsinput('items')
+                        .map(t => t.replace(/\s+/g,' ').trim().toLowerCase());
+        if (already.includes(cleaned.toLowerCase())) {
+          evt.cancel = true;                     // silently ignore duplicate
+        }
+      });
+    }
+
+    function initializeTagsInput() {
+      Papa.parse('/static/Dictionary_all.csv', {
+        download: true,
+        skipEmptyLines: true,
+        header: true,
+        complete: function (results) {
+          let proteins = results.data
+            .flatMap(row => Object.values(row))
+            .map(v => v && v.trim())
+            .filter(v => v);
+          proteins = Array.from(new Set(proteins));
+          window.validProteins = new Set(proteins.map(p => p.toLowerCase()));
+
+          const proteinVariants = proteins.reduce((map, p) => {
+            const key = p.toLowerCase();
+            (map[key] ||= []).push(p);
+            return map;
+          }, {});
+          window.proteinVariants = proteinVariants;
+
+          const proteinTypeahead = new Bloodhound({
+            datumTokenizer: d => d.toLowerCase().split(/\s+/),
+            queryTokenizer: q => q.toLowerCase().split(/\s+/),
+            local: proteins
+          });
+
+          const $tags = $('#protein-tags');
+          $tags.tagsinput({
+            typeaheadjs: {
+              name: 'proteins',
+              limit: 1,
+              source: (q, sync) => {
+                // only start searching after 3 characters
+                if (q.length < 3) {
+                  return sync([]); // no hints before 3 chars
+              }
+                proteinTypeahead.search(q, results => {
+                  const lc = q.toLowerCase();
+                  results.sort((a, b) =>
+                    a.toLowerCase().startsWith(lc) ? -1 :
+                    b.toLowerCase().startsWith(lc) ?  1 : 0
+                  );
+                  sync(results);
+                });
+              }
+            },
+            freeInput: true,
+            trimValue: true,
+            addOnBlur: false,
+            confirmKeys: [9, 13],
+            delimiterRegex: /[\r\n\t]+/
+          });
+
+          // cancel any new “tag add” once there are already 50 tags
+          $tags.on('beforeItemAdd', function(event) {
+            const currentCount = $tags.tagsinput('items').length;
+            if (currentCount >= 50) {
+              event.cancel = true;
+              // show a warning:
+              alert('You can only add up to 50 proteins at a time.');
+            }
+          });
+
+          // search bar
+          attachProteinNormaliser($tags, proteinVariants);
+
+          // modal input
+          const $modalTags = $('#modal-protein-tags');
+          attachProteinNormaliser($modalTags, proteinVariants);
+
+          /* ---------- initialise tag-input inside the modal ------------------ */
+          $modalTags.tagsinput({
+            freeInput    : true,
+            trimValue    : true,
+            confirmKeys  : [9, 13],
+            delimiterRegex: /[\t\r\n]+/
+          });
+
+          // Enforce “no literal 5” and “max 50 detected” in one handler
+          $modalTags.on('beforeItemAdd', function(event) {
+            const candidate = ('' + event.item).trim().toLowerCase();
+            if (candidate === '5') {
+              event.cancel = true;
+              return;
+            }
+
+            // 2) count how many “valid” (dictionary‐matched, excluding “5”) tags are already present
+            const allItems = $modalTags.tagsinput('items');
+            const uniqueValid = [...new Set(
+              allItems.map(t => t.trim().toLowerCase())
+            )].filter(name =>
+              name !== '5' && window.validProteins.has(name)
+            );
+            // 3) if there are already 50 detected proteins, block new additions
+            if (uniqueValid.length >= 50) {
+                event.cancel = true;
+                alert('You can only add up to 50 detected proteins at a time.');
+            }
+          });
+
+          /* placeholder logic */
+          const $modalInput = $modalTags
+              .tagsinput('input')
+              .attr('placeholder', '…or paste a list');
+
+          function togglePlaceholder() {
+            const hasItems = $modalTags.tagsinput('items').length > 0;
+            $modalInput.attr('placeholder', hasItems ? '' : '…or paste a list');
+          }
+
+          $modalTags.on('itemAdded itemRemoved', togglePlaceholder);
+          togglePlaceholder();
+
+          $('#clear-upload-btn').on('click', () => {
+            $modalTags.tagsinput('removeAll');
+            togglePlaceholder();
+          });
+
+          /* live counter */
+          function updateModalCount () {
+            const items = $modalTags.tagsinput('items');
+
+            // 1) normalise to lower-case, 2) de-duplicate, 3) keep only dictionary hits
+            const uniqueValid = [...new Set(
+              items.map(t => t.trim().toLowerCase())
+            )].filter(name =>
+              // ignore a literal "5" even if it's in the Set
+              name !== '5' && window.validProteins.has(name)
+            );
+
+            $('#modal-count-box').val(uniqueValid.length);
+          }
+
+          $modalTags.on('itemAdded itemRemoved', updateModalCount);
+          updateModalCount();
+
+          document.getElementById('clear-upload-btn')
+            .addEventListener('click', () => {
+            document.getElementById('tsvFile').value = '';
+            $modalTags.tagsinput('removeAll');
+            updateModalCount();
+          });
+
+          document.getElementById('tsvFile').addEventListener('change', e => {
+            const input = e.target;
+            const file  = input.files[0];
+            if (!file) return;
+
+            // reject anything but .tsv or .txt
+            if (!/\.tsv$|\.txt$/i.test(file.name)) {
+              alert('Please select a .tsv or .txt file with tab/newline separated values');
+              input.value = '';
+              return;
+            }
+
+            // valid extension → read it
+            const reader = new FileReader();
+            reader.onload = ev => {
+              const text = ev.target.result;
+
+              // now check for at least one tab _or_ one newline
+              if (!(/\t/.test(text) || /\r?\n/.test(text))) {
+                alert('This file doesn’t appear to contain tab or newline separated values. Please use a TSV or TXT with the correct delimiters.');
+                return;
+              }
+
+              // looks OK → parse
+              addProteinsFromText(text);
+            };
+            reader.readAsText(file);
+          });
+
+          /* --------------- caching useful elements ------------ */
+          const rawInput        = $tags.tagsinput('input')[0];
+          const ti              = $tags.data('tagsinput');
+          const tagsContainer   = ti.$container.get(0);
+          const typeaheadWrapper = tagsContainer.querySelector('.twitter-typeahead');
+
+          /* ---------- NEW helper: real-pixel width of a string ---------- */
+          function textPx (str) {
+            const c   = textPx.canvas || (textPx.canvas = document.createElement('canvas'));
+            const ctx = c.getContext('2d');
+            ctx.font  = getComputedStyle(rawInput).font;
+            return ctx.measureText(str || ' ').width;
+          }
+
+          /* -------- grow / shrink exactly to visible text --------------- */
+          const BASE_PX = 180;          // ≈ 24-ch start width
+          function snapWrapperWidth () {
+            const hint = rawInput.parentNode.querySelector('.tt-hint');
+            const ACCURACY_PAD = 5;
+            const needPx = Math.max(
+              BASE_PX,
+              textPx(rawInput.value),
+              hint ? textPx(hint.value) : 0
+            ) + 8 + ACCURACY_PAD;                      // little breathing-room
+            typeaheadWrapper.style.minWidth  =
+            typeaheadWrapper.style.flexBasis = needPx + 'px';
+          }
+
+          /* --------------- keep caret / hint visible ---------- */
+          const ro = new ResizeObserver(() => scrollIfNeeded());
+          ro.observe(typeaheadWrapper);
+
+          function scrollIfNeeded() {
+            const { left: ctL, right: ctR } = tagsContainer.getBoundingClientRect();
+            const hint = rawInput.parentNode.querySelector('.tt-hint');
+
+            /* rightmost visible text edge, not element box */
+            const hintRight  = hint ? hint.getBoundingClientRect().left + hint.scrollWidth : 0;
+            const caretRight = rawInput.getBoundingClientRect().right;
+            const rightMost  = Math.max(hintRight, caretRight);
+
+            let dx = 0;
+            if (rightMost > ctR) dx = rightMost - ctR + 4;
+
+            /* keep caret from disappearing on the left */
+            const caretLeftAfter = rawInput.getBoundingClientRect().left - dx;
+            if (caretLeftAfter < ctL) dx -= (ctL - caretLeftAfter) + 4;
+
+            if (dx) tagsContainer.scrollBy({ left: dx, behavior: 'smooth' });
+          }
+
+          /* --------------- event wiring ----------------------- */
+
+          /* grow / shrink on every typing or hint update */
+          rawInput.addEventListener('input', snapWrapperWidth);
+          $tags.tagsinput('input')
+            .on('typeahead:render typeahead:autocomplete typeahead:cursorchanged',
+                snapWrapperWidth);
+
+          /* arrow-key caret moves */
+          rawInput.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+              setTimeout(() => {
+                snapWrapperWidth();
+                scrollIfNeeded();
+              }, 0);
+            }
+          });
+
+          /* tag committed ------------------------------------- */
+          $tags.on('itemAdded', () => {
+            /* reset to base width then let first keystroke grow it again */
+            typeaheadWrapper.style.minWidth  =
+            typeaheadWrapper.style.flexBasis = BASE_PX + 'px';
+            snapWrapperWidth();
+            scrollIfNeeded();
+          });
+
+          /* typeahead-select via click / enter ---------------- */
+          $tags.tagsinput('input').on('typeahead:select', (e, suggestion) => {
+            if (e.originalEvent && e.originalEvent.key === 'ArrowRight') return;
+            const val = (suggestion || rawInput.value).trim();
+            if (!val) return;
+            $tags.tagsinput('add', val);
+            rawInput.value = '';
+            rawInput.focus();
+          });
+
+          /* tab-to-accept-hint -------------------------------- */
+          rawInput.addEventListener('keydown', e => {
+            if (e.key === 'Tab') {
+              const hint = rawInput.parentNode.querySelector('.tt-hint');
+              let txt    = rawInput.value.trim();
+              if (hint && hint.value.trim() && hint.value.trim() !== txt) {
+                txt = hint.value.trim();
+              }
+              if (txt) {
+                e.preventDefault();
+                $tags.tagsinput('add', txt);
+                rawInput.value = '';
+                rawInput.focus();
+              }
+            }
+          });
+
+          /* paste handler ------------------------------------- */
+          rawInput.addEventListener('paste', e => {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData)
+                          .getData('text/plain').trim();
+            if (!text) return;
+            $tags.tagsinput('add', text);
+            setTimeout(() => {
+              rawInput.selectionStart = rawInput.selectionEnd = 0;
+            }, 0);
+          }, true);
+
+          /* initial sizing */
+          snapWrapperWidth();
+
+          // make examples clickable to add tags
+          document.querySelectorAll('.example-term').forEach(el => {
+            el.addEventListener('click', () => {
+              $('#protein-tags').tagsinput('add', el.dataset.term);
+            });
+          });
+        },
+        error: err => console.error('Failed to load protein CSV:', err)
+      });
+    }
+
+    function toggleCheckboxes(id) {
+      const current = document.getElementById(id);
+      const myBox = current.parentNode.querySelector('.selectBox');
+      const isOpen = current.style.display === 'block';
+
+      document.querySelectorAll('.multiselect').forEach(ms => {
+        const dd = ms.querySelector('.checkboxes');
+        const sb = ms.querySelector('.selectBox');
+        if (dd) {
+          dd.style.display = 'none';
+          sb.classList.remove('expanded');
+        }
+      });
+
+      if (!isOpen) {
+        current.style.display = 'block';
+        myBox.classList.add('expanded');
+      }
+    }
+
+    function toggleAdditionalFilters() {
+      const additionalFilters = document.getElementById('additional-filters');
+      const moreOptionsBtn = document.querySelector('.more-options-btn');
+      additionalFilters.classList.toggle('show');
+      moreOptionsBtn.classList.toggle('expanded');
+    }
+
+    function openListModal () {
+      new bootstrap.Modal(document.getElementById('proteinListModal')).show();
+    }
+
+    function addProteinsFromText(text) {
+      // 1) Split the input text by tabs/newlines, trim whitespace, and drop empty lines.
+      const allProteins = text
+        .split(/[\t\r\n]+/)
+        .map(t => t.trim())
+        .filter(Boolean);
+
+      // 1a) Build a map from lowercaseName → the first original‐cased string seen for that key.
+      const firstSeen = {};
+      allProteins.forEach(name => {
+        const lc = name.toLowerCase();
+        if (!(lc in firstSeen)) {
+          firstSeen[lc] = name;
+        }
+      });
+
+      // 2) Figure out which tokens are “valid” (in window.validProteins and not literally "5")
+      const filtered = allProteins.filter(name => {
+        const lc = name.toLowerCase();
+        return (
+          lc !== '5' &&
+          lc !== 'protein' && 
+          window.validProteins.has(lc)
+        );
+      });
+
+      // 3) Deduplicate at the lowercase level by creating a Set of all lowercase valid hits.
+      const validLcSet = new Set(filtered.map(n => n.toLowerCase()));
+
+      // 4) Map each valid lowercase key back to its canonical form:
+      //    - If firstSeen[lc] exactly matches one variant in window.proteinVariants[lc], use it.
+      //    - Else if there's exactly one canonical variant, use that.
+      //    - Else fall back to the lowercase key.
+      const uniqueValid = Array.from(validLcSet).map(lcName => {
+        const variants = window.proteinVariants[lcName] || [];
+        const original = firstSeen[lcName];
+
+        if (variants.includes(original)) {
+          return original;
+        } else if (variants.length === 1) {
+          return variants[0];
+        } else {
+          return lcName;
+        }
+      });
+
+      // 5) Enforce a 50‐item limit on uniqueValid (the “detected” proteins).
+      const toAddValid = uniqueValid.length > 50
+        ? uniqueValid.slice(0, 50)
+        : uniqueValid;
+
+      if (uniqueValid.length > 50) {
+        alert('Loaded only the first 50 detected proteins from your file.');
+      }
+
+      // 6) Clear any existing tags and add only the capped valid proteins.
+      $('#modal-protein-tags').tagsinput('removeAll');
+      toAddValid.forEach(t => {
+        $('#modal-protein-tags').tagsinput('add', t);
+      });
+    }
+
+    const modalRawInput = $('#modal-protein-tags').tagsinput('input'); // DOM element
+    $(modalRawInput).on('paste', e => {
+      e.preventDefault();
+      const txt = (e.originalEvent.clipboardData || window.clipboardData).getData('text/plain');
+      addProteinsFromText(txt);
+    });
+
+    function proceedWithProteinList () {
+      // 1) check if the modal input is empty
+      const proteins = $('#modal-protein-tags').tagsinput('items');
+
+      // Read the detected‐proteins count from the modal:
+      const detectedCount = parseInt(
+        document.getElementById('modal-count-box').value,
+        10
+      );
+
+      if (!proteins.length) {
+        alert('Please add at least one protein');
+
+        bootstrap.Modal
+          .getInstance(document.getElementById('proteinListModal'))
+          .hide();
+        document.getElementById('results-body').innerHTML = '';
+        document.getElementById('results-table').style.display = 'none';
+        document.querySelector('#results-table thead').style.display = 'none';
+        const emptyState = document.getElementById('empty-state');
+        emptyState.innerHTML = `
+          <i class="fas fa-search fa-4x"></i>
+          <p>Search for proteins to see results</p>
+        `;
+        emptyState.style.display = 'flex';
+        document.querySelector('.results-table-container').style.display = 'block';
+        const footerNav = document.querySelector('.results-footer');
+        if (footerNav) {
+          footerNav.style.display = 'block';
+          footerNav.classList.add('no-pagination');
+          const pagination = document.getElementById('pagination');
+          if (pagination) {
+            pagination.style.display = 'none';
+            pagination.innerHTML = '';
+          }
+        }
+        return;
+      }
+
+      if (detectedCount === 0) {
+        bootstrap.Modal
+          .getInstance(document.getElementById('proteinListModal'))
+          .hide();
+
+        document.getElementById('results-body').innerHTML = '';
+        document.getElementById('results-table').style.display = 'none';
+        document.querySelector('#results-table thead').style.display = 'none';
+
+        const emptyState = document.getElementById('empty-state');
+        emptyState.innerHTML = `
+          <i class="fas fa-search fa-4x"></i>
+          <p>Search for proteins to see results</p>
+        `;
+        emptyState.style.display = 'flex';
+        document.querySelector('.results-table-container').style.display = 'block';
+
+        const footerNav = document.querySelector('.results-footer');
+        if (footerNav) {
+          footerNav.style.display = 'block';
+          footerNav.classList.add('no-pagination');
+          const pagination = document.getElementById('pagination');
+          if (pagination) {
+            pagination.style.display = 'none';
+            pagination.innerHTML = '';
+          }
+        }
+        return;
+      }
+      bootstrap.Modal
+        .getInstance(document.getElementById('proteinListModal'))
+        .hide();
+      submitQuery(proteins);
+    }
+
+    function startSmoothProgress() {
+      const progressBar = document.getElementById("progress-bar");
+      let currentProgress = 0;
+      return setInterval(() => {
+        if (currentProgress < 90) {
+          currentProgress++;
+          progressBar.style.width = currentProgress + "%";
+        }
+      }, 25);
+    }
+
+    // Global variable to store all records from a query
+    let fullRecords = [];
+    let allRecords = [];
+
+    // Global to remember the list used for the most-recent search
+    let activeProteinList = [];
+
+    function applyFilters () {
+      // reuse the last list if it exists, otherwise fall back to the search bar
+      if (activeProteinList.length) {
+        submitQuery(activeProteinList);
+      } else {
+        submitQuery();
+      }
+    }
+
+    function submitQuery(externalList) {
+      let proteinTags;
+
+      if (Array.isArray(externalList) && externalList.length) {
+        // called from the modal → trust the provided list
+        proteinTags = externalList.slice();
+      } else {
+        // (search bar / Apply Filters)
+        const $input = $('.bootstrap-tagsinput input');
+        const unfinished = $input.val().trim();
+        if (unfinished) {
+          $('#protein-tags').tagsinput('add', unfinished);
+          $input.val('');
+        }
+        proteinTags = $('#protein-tags').tagsinput('items');
+      }
+      // ── 1) EARLY VALIDATION ─────────────────────────────────────────────
+      if (!proteinTags || proteinTags.length === 0) {
+        alert('Please add at least one protein');
+        // clear out any previous data
+        allRecords = [];
+        fullRecords = [];
+
+        document.getElementById('results-body').innerHTML = '';
+        // reset to empty state
+        document.getElementById('results-table').style.display = 'none';
+        document.querySelector('#results-table thead').style.display = 'none';
+        // restore default empty-state HTML
+        const emptyState = document.getElementById('empty-state');
+        emptyState.innerHTML = `
+          <i class="fas fa-search fa-4x"></i>
+          <p>Search for proteins to see results</p>
+        `;
+        emptyState.style.display = 'flex';
+        document.querySelector('.results-table-container').style.display  = 'block';
+        // keep footer visible (thick) even when no proteins were entered
+        const footerNav = document.querySelector('.results-footer');
+        if (footerNav) {
+          footerNav.style.display = 'block';
+          footerNav.classList.add('no-pagination');
+          const pagination = document.getElementById('pagination');
+          if (pagination) {
+            pagination.style.display = 'none';
+            pagination.innerHTML = '';
+          }
+        }
+        return;
+      }
+
+      activeProteinList = proteinTags.slice();
+
+      // ── 2) SHOW LOADER + BLUR ───────────────────────────────────────────
+      var table            = document.getElementById("results-table");
+      var tableContainer   = document.querySelector('.results-table-container');
+      var pagination       = document.getElementById('pagination');
+      var footerNav        = document.querySelector('.results-footer');
+      var emptyStateItems  = document.querySelectorAll('#empty-state > *');
+      var progressContainer= document.getElementById("progress-container");
+      var progressBar      = document.getElementById("progress-bar");
+
+      if (table.style.display !== "none") {
+        table.classList.add("blur");
+        if (footerNav) footerNav.classList.add("blur");             
+      }
+      tableContainer.classList.add("no-scroll");
+      if (table.style.display !== "none" && footerNav) {
+        footerNav.classList.add("blur");
+      }
+      if (pagination) pagination.classList.add('disabled');
+      emptyStateItems.forEach(el => el.style.visibility = 'hidden');
+      progressContainer.style.display = "block";
+      progressBar.style.width = "0%";
+      var progressInterval = startSmoothProgress();
+
+      // ── 3) BUILD QUERY PARAMS ───────────────────────────────────────────
+      let queryParams = new URLSearchParams();
+      proteinTags.forEach(tag => {
+        queryParams.append('protein_name', tag);
+      });
+
+      // Experiment filter
+      const experimentCheckboxes = document.querySelectorAll('#experiment-checkboxes input[type="checkbox"]');
+      experimentCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('experiment', checkbox.value);
+        }
+      });
+
+      // Histology filter
+      const histologyCheckboxes = document.querySelectorAll('#histology-checkboxes input[type="checkbox"]');
+      histologyCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('histology', checkbox.value);
+        }
+      });
+
+      // Ultrasound filter
+      const ultrasoundCheckboxes = document.querySelectorAll('#ultrasound-checkboxes input[type="checkbox"]');
+      ultrasoundCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('ultrasound', checkbox.value);
+        }
+      });
+
+      // Tissue Area filter
+      const tissueCheckboxes = document.querySelectorAll('#tissue-checkboxes input[type="checkbox"]');
+      tissueCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('tissue_area', checkbox.value);
+        }
+      });
+
+      // Sex filter
+      const sexCheckboxes = document.querySelectorAll('#sex-checkboxes input[type="checkbox"]');
+      sexCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('sex', checkbox.value);
+        }
+      });
+
+      // Age filter
+      const ageCheckboxes = document.querySelectorAll('#age-checkboxes input[type="checkbox"]');
+      ageCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('age', checkbox.value);
+        }
+      });
+
+      // Symptoms filter
+      const symptomsCheckboxes = document.querySelectorAll('#symptoms-checkboxes input[type="checkbox"]');
+      symptomsCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('symptoms', checkbox.value);
+        }
+      });
+
+      // Clinical condition filter
+      const clinicalCheckboxes = document.querySelectorAll('#clinical-checkboxes input[type="checkbox"]');
+      clinicalCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('clinical_condition', checkbox.value);
+        }
+      });
+
+      // Clinical outcomes filter
+      const clinicalOutcomesCheckboxes = document.querySelectorAll('#clinical-outcomes-checkboxes input[type="checkbox"]');
+      clinicalOutcomesCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('clinical_outcomes', checkbox.value);
+        }
+      });
+
+      // Calcification filter
+      const calcCheckboxes = document.querySelectorAll('#calcification-checkboxes input[type="checkbox"]');
+      calcCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('calcification', checkbox.value);
+        }
+      });
+
+      // Medication filter
+      const medicationCheckboxes = document.querySelectorAll('#medication-checkboxes input[type="checkbox"]');
+      medicationCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('medications', checkbox.value);
+        }
+      });
+
+      // Lifestyle filter: Smoker Status, BMI Ranges, and Pack-years Ranges
+      const lifestyleCheckboxes = document.querySelectorAll('#lifestyle-checkboxes input[type="checkbox"]');
+      lifestyleCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          // Use the name attribute to differentiate the filters.
+          if (checkbox.name === 'smoker_status') {
+            queryParams.append('smoker_status', checkbox.value);
+          } else if (checkbox.name === 'bmi_range') {
+            queryParams.append('bmi_range', checkbox.value);
+          } else if (checkbox.name === 'pack_years_range') {
+            queryParams.append('pack_years_range', checkbox.value);
+          }
+        }
+      });
+
+      // Cardiovascular Biomarkers filter
+      const cvBiomarkerCheckboxes = document.querySelectorAll('#cvbiomarkers-checkboxes input[type="checkbox"]');
+      cvBiomarkerCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          queryParams.append('cvbiomarker', checkbox.value);
+        }
+      });
+
+      // ── 4) FETCH + CLEANUP ─────────────────────────────────────────────
+      fetch(`/abundance-data/?${queryParams.toString()}`)
+        .then(response => response.json())
+        .then(data => {
+          clearInterval(progressInterval);
+          progressBar.style.width = "100%";
+          setTimeout(function() {
+            progressContainer.style.display = "none";
+            table.classList.remove("blur");
+            if (footerNav) footerNav.classList.remove("blur");
+            emptyStateItems.forEach(el => el.style.visibility = 'visible');
+            fullRecords = data.records;
+            displayResults(fullRecords);
+            tableContainer.classList.remove('no-scroll');
+            if (pagination) pagination.classList.remove('disabled');
+            tableContainer.scrollLeft = 0;
+          }, 200);
+        })
+        .catch(error => {
+          console.error('Error fetching results:', error);
+          alert('An error occurred while fetching results. Please try again.');
+          clearInterval(progressInterval);
+          progressContainer.style.display = "none";
+          table.classList.remove("blur");
+          if (footerNav) footerNav.classList.remove("blur");
+          tableContainer.classList.remove('no-scroll');
+          if (pagination) pagination.classList.remove('disabled');
+        });
+    }
+
+    // default first columns
+    const DEFAULT_COLUMN_ORDER = [
+      'Protein',
+      'PatientID',
+      'SampleArea',
+      'Experiment',
+      'Abundance',
+      'AvgAbundance',
+      'MinAbundance',
+      'MaxAbundance',
+      'StdDeviation'
+    ];
+
+    function displayResults(records) {
+      allRecords = records;
+      const table     = document.getElementById('results-table');
+      const thead     = table.querySelector('thead');
+      const emptyState= document.getElementById('empty-state');
+      const footerNav  = document.querySelector('.results-footer');
+
+      // Clear previous header and rows
+      thead.innerHTML = '';
+
+      if (records && records.length > 0) {
+        if (footerNav) footerNav.style.display = 'block';
+
+        // build a single array of all columns in the right order:
+        const keys = Object.keys(records[0]);
+        const availableDefaults = DEFAULT_COLUMN_ORDER.filter(k => keys.includes(k));
+        const extras            = keys.filter(k => !DEFAULT_COLUMN_ORDER.includes(k));
+        const columnsToShow     = availableDefaults.concat(extras);
+
+        // Build header row: first add default columns (if present), then any extra keys.
+        const headerRow = document.createElement('tr');
+        columnsToShow.forEach(key => {
+          const th = document.createElement('th');
+          th.textContent = formatHeader(key);
+          // give selected headers a tooltip
+          switch (key) {
+            case 'AvgAbundance':
+              th.dataset.bsToggle = 'tooltip';
+              th.title = 'Average protein abundance in experiment and tissue area across patients';
+              th.dataset.bsCustomClass = 'calc-tooltip';
+              break;
+            case 'MinAbundance':
+              th.dataset.bsToggle = 'tooltip';
+              th.title = 'Minimum protein abundance in experiment and tissue area across patients';
+              th.dataset.bsCustomClass = 'calc-tooltip';
+              break;
+            case 'MaxAbundance':
+              th.dataset.bsToggle = 'tooltip';
+              th.title = 'Maximum protein abundance in experiment and tissue area across patients';
+              th.dataset.bsCustomClass = 'calc-tooltip';
+              break;
+            case 'Calcification (clinical)':
+              th.dataset.bsToggle = 'tooltip';
+              th.title = 'Calcification status was determined through duplex ultrasound and CT angiography imaging, verified histologically by an experienced surgeon and pathologist. Validation included quantitative CT-based scoring (modified Agatston score), achieving high correlation (p<0.001).';
+              th.dataset.bsCustomClass = 'calc-tooltip calc-hyphen';
+              break;
+            case 'COPD':
+              th.dataset.bsToggle = 'tooltip';
+              th.title = 'Chronic Obstructive Pulmonary Disease';
+              th.dataset.bsCustomClass = 'calc-tooltip';
+              break;
+            case 'ARB therapy':
+              th.dataset.bsToggle = 'tooltip';
+              th.title = 'Angiotensin Receptor Blockers';
+              th.dataset.bsCustomClass = 'calc-tooltip';
+              break;
+          }
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+
+        // Display first page of records.
+        displayResultsPage(1);
+        document.querySelector('#results-table thead').style.display = '';
+        table.style.display = 'table';
+        document.getElementById('empty-state').style.display = 'none';
+
+        // Generate pagination with 10 records per page.
+        const recordsPerPage = 10;
+        generatePagination(records.length, 1, recordsPerPage);
+      } else {
+        table.style.display = 'none';
+        document.querySelector('#results-table thead').style.display = 'none';
+        emptyState.innerHTML = `
+          <i class="fas fa-search-minus fa-4x"></i>
+          <p>No results for the current search / filter combination.</p>
+        `;
+        emptyState.style.display = 'flex';
+        if (footerNav) {
+          footerNav.style.display = 'block';
+          footerNav.classList.add('no-pagination');
+        }
+
+        const pagination = document.getElementById('pagination');
+        if (pagination) pagination.innerHTML = '';
+      }
+    }
+
+    function displayResultsPage(page) {
+      const tbody = document.getElementById('results-body');
+      tbody.innerHTML = ''; // Clear previous rows
+
+      const recordsPerPage = 10;
+      const start = (page - 1) * recordsPerPage;
+      const end = start + recordsPerPage;
+      const recordsToShow = allRecords.slice(start, end);
+
+      const keys = Object.keys(allRecords[0]);
+      const availableDefaults = DEFAULT_COLUMN_ORDER.filter(k => keys.includes(k));
+      const extras            = keys.filter(k => !DEFAULT_COLUMN_ORDER.includes(k));
+      const columnsToShow     = availableDefaults.concat(extras);
+
+      // Build each row for the current page.
+      recordsToShow.forEach(record => {
+        const row = document.createElement('tr');
+        columnsToShow.forEach(key => {
+          const td = document.createElement('td');
+          const div = document.createElement('div');
+          div.classList.add('cell-content');
+          div.textContent = formatValue(key, record[key]);
+          td.appendChild(div);
+          row.appendChild(td);
+        });
+        tbody.appendChild(row);
+      });
+    }
+
+    function formatHeader(key) {
+      // Map backend keys to user-friendly titles.
+      const mapping = {
+        ProteinName: 'Protein',
+        PatientID: 'Patient ID',
+        SampleArea: 'Tissue Area',
+        Experiment: 'Experiment',
+        Abundance: 'Abundance',
+        AvgAbundance: 'Avg. Abundance',
+        MinAbundance: 'Min Abundance',
+        MaxAbundance: 'Max Abundance',
+        StdDeviation: 'Std. Deviation',
+        "High_Stenosis(≥90%)": 'High stenosis(≥90%)',
+        "Cholesterol(total)": 'Total cholesterol(mg/dL)',
+        "HDL": 'HDL(mg/dL)',
+        "LDL": 'LDL(mg/dL)',
+        "Triglycerides": 'Triglycerides(mg/dL)',
+        "High-sensitivity CRP": 'High-sensitivity CRP(mg/dL)',
+        "Ultrasensitive CRP": 'Ultrasensitive CRP(mg/dL)'
+      };
+      return mapping[key] || key.replace(/_/g, ' ');
+    }
+
+    function formatValue(key, value) {
+      if (value === null || value === undefined) {
+        return 'N/A';
+      }
+      if (typeof value === 'number') {
+        if (key === 'Age' || key == 'Pack-years') {
+          // For Age, display as an integer.
+          return Math.round(value).toString();
+        } else {
+          // For other numeric values, display with two decimals.
+          return value.toFixed(2);
+        }
+      }
+      return value.toString();
+    }
+
+    function generatePagination(totalRecords, currentPage, recordsPerPage) {
+      const pagination = document.getElementById('pagination');
+      const footerNav  = document.querySelector('.results-footer');
+      pagination.innerHTML = '';
+      const totalPages = Math.ceil(totalRecords / recordsPerPage);
+      if (totalPages <= 1) {
+        pagination.style.display = 'none';
+        if (footerNav) footerNav.classList.add('no-pagination');
+        return;
+      }
+      if (footerNav) footerNav.classList.remove('no-pagination');
+      pagination.style.display = 'inline-flex';
+
+      // Previous button
+      const prevLi = document.createElement('li');
+      prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+      const prevLink = document.createElement('a');
+      prevLink.className = 'page-link';
+      prevLink.href = '#';
+      prevLink.setAttribute('aria-label', 'Previous');
+      prevLink.innerHTML = '<span aria-hidden="true">&laquo;</span>';
+      prevLink.onclick = function(e) {
+        e.preventDefault();
+        if (currentPage > 1) goToPage(currentPage - 1);
+      };
+      prevLi.appendChild(prevLink);
+      pagination.appendChild(prevLi);
+
+      // Page numbers (limit to maxVisiblePages)
+      const maxVisiblePages = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      for (let i = startPage; i <= endPage; i++) {
+        const pageLi = document.createElement('li');
+        pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+        const pageLink = document.createElement('a');
+        pageLink.className = 'page-link';
+        pageLink.href = '#';
+        pageLink.textContent = i;
+        pageLink.onclick = function(e) {
+          e.preventDefault();
+          goToPage(i);
+        };
+        pageLi.appendChild(pageLink);
+        pagination.appendChild(pageLi);
+      }
+
+      // Next button
+      const nextLi = document.createElement('li');
+      nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+      const nextLink = document.createElement('a');
+      nextLink.className = 'page-link';
+      nextLink.href = '#';
+      nextLink.setAttribute('aria-label', 'Next');
+      nextLink.innerHTML = '<span aria-hidden="true">&raquo;</span>';
+      nextLink.onclick = function(e) {
+        e.preventDefault();
+        if (currentPage < totalPages) goToPage(currentPage + 1);
+      };
+      nextLi.appendChild(nextLink);
+      pagination.appendChild(nextLi);
+    }
+
+    function goToPage(page) {
+      // Update the displayed records to the new page.
+      displayResultsPage(page);
+      // Re-generate the pagination controls with the new current page.
+      const recordsPerPage = 10;
+      generatePagination(allRecords.length, page, recordsPerPage);
+    }
+
+    function searchTable() {
+      const table      = document.getElementById('results-table');
+      const input   = document.getElementById('table-search');
+      const query   = input.value.trim().toLowerCase();
+
+      // Only bail when we've never loaded any records (initial empty‑state)
+      if (!fullRecords || fullRecords.length === 0) {
+        return;
+      }
+
+      // If they cleared the filter *and* we do have data, show all rows again
+      if (!query) {
+        displayResults(fullRecords);
+        return;
+      }
+
+      // Otherwise filter as before
+      const filtered = fullRecords.filter(rec =>
+        Object.values(rec).some(v =>
+          v != null && v.toString().toLowerCase().includes(query)
+        )
+      );
+
+    displayResults(filtered);
+  }
+
+
+    function copyResults() {
+      const table = document.getElementById('results-table');
+      const rows  = table.getElementsByTagName('tr');
+
+      // 1) Check if there are any data rows at all
+      let hasData = false;
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i].style.display !== 'none') {
+          hasData = true;
+          break;
+        }
+      }
+
+      if (!hasData) {
+        alert('⚠️ No results to copy');
+        return;
+      }
+
+      // 2) Build the tab‑delimited text
+      let text = '';
+      const headerCells = rows[0].getElementsByTagName('th');
+      for (let i = 0; i < headerCells.length; i++) {
+        text += headerCells[i].textContent + '\t';
+      }
+      text += '\n';
+
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i].style.display === 'none') continue;
+        const cells = rows[i].getElementsByTagName('td');
+        for (let j = 0; j < cells.length; j++) {
+          text += cells[j].textContent + '\t';
+        }
+        text += '\n';
+      }
+
+      // 3) Attempt to write to clipboard
+      navigator.clipboard.writeText(text)
+        .then(() => alert('✅ Results copied to clipboard'))
+        .catch(err => {
+          console.error('Error copying text: ', err);
+          alert('❌ Unable to copy results. Please try again.');
+        });
+    }
+
+    function exportToExcel() {
+      // 1) guard-clause
+      if (!allRecords || allRecords.length === 0) {
+        alert('❌ No data to export');
+        return;
+      }
+
+      // 2) grab display labels and map to backend keys (using your existing label2key map) :contentReference[oaicite:1]{index=1}
+      const label2key = {
+        'Protein'        : 'Protein',
+        'Patient ID'     : 'PatientID',
+        'Tissue Area'    : 'SampleArea',
+        'Experiment'     : 'Experiment',
+        'Abundance'      : 'Abundance',
+        'Avg. Abundance' : 'AvgAbundance',
+        'Min Abundance'  : 'MinAbundance',
+        'Max Abundance'  : 'MaxAbundance',
+        'Std. Deviation' : 'StdDeviation'
+      };
+      const ths = document.querySelectorAll('#results-table thead th');
+      const displayHeaders = Array.from(ths).map(th => th.textContent.trim());
+      let headerOrder = Array.from(ths)
+        .map(th => label2key[th.textContent.trim()] || th.textContent.trim())
+        // keep only keys you actually have in your data
+        .filter(k => Object.keys(allRecords[0]).includes(k));
+      if (!headerOrder.length) headerOrder = Object.keys(allRecords[0]);
+
+      // 3) build a single array-of-arrays: first row your labels, then each record in headerOrder :contentReference[oaicite:3]{index=3}
+      const aoa = [
+        displayHeaders,
+        ...allRecords.map(rec =>
+          headerOrder.map(key => {
+            const v = rec[key];
+            return v == null ? '' : v;
+          })
+        )
+      ];
+
+      // 4) dump it straight into a sheet
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Results');
+      XLSX.writeFile(wb, 'results.xlsx');
+    }
+
+    function exportToCSV() {
+      if (!allRecords || allRecords.length === 0) {
+        alert('❌ No data to export');
+        return;
+      }
+
+      // 1) Build header row from object keys
+      const headers = Object.keys(allRecords[0]);
+      const headerLine = headers.map(h => `"${h.replace(/"/g,'""')}"`).join(',');
+
+      // 2) Build data lines
+      const dataLines = allRecords.map(rec =>
+        headers
+          .map(key => {
+            const val = rec[key] == null ? '' : rec[key].toString();
+            return `"${val.replace(/"/g,'""')}"`;
+          })
+          .join(',')
+      );
+
+      // 3) Combine and download
+      const csvContent = [headerLine, ...dataLines].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'results_all.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportToTSV() {
+      // 1) guard-clause
+      if (!allRecords || allRecords.length === 0) {
+        alert('❌ No data to export');
+        return;
+      }
+
+      // 2) same header grab + mapping :contentReference[oaicite:5]{index=5}
+      const label2key = {
+        'Protein'        : 'Protein',
+        'Patient ID'     : 'PatientID',
+        'Tissue Area'    : 'SampleArea',
+        'Experiment'     : 'Experiment',
+        'Abundance'      : 'Abundance',
+        'Avg. Abundance' : 'AvgAbundance',
+        'Min Abundance'  : 'MinAbundance',
+        'Max Abundance'  : 'MaxAbundance',
+        'Std. Deviation' : 'StdDeviation'
+      };
+      const ths = document.querySelectorAll('#results-table thead th');
+      const displayHeaders = Array.from(ths).map(th => th.textContent.trim());
+      let headerOrder = Array.from(ths)
+        .map(th => label2key[th.textContent.trim()] || th.textContent.trim())
+        .filter(k => Object.keys(allRecords[0]).includes(k));
+      if (!headerOrder.length) headerOrder = Object.keys(allRecords[0]);
+
+      // 3) build TSV: headerLine from displayHeaders, then rows in headerOrder order
+      const headerLine = displayHeaders.join('\t');
+      const dataLines = allRecords.map(rec =>
+        headerOrder
+          .map(key => {
+            const v = rec[key];
+            return (v == null ? '' : String(v)).replace(/\t/g, ' ');
+          })
+          .join('\t')
+      );
+
+      // 4) download
+      const tsvContent = [headerLine, ...dataLines].join('\r\n');
+      const blob = new Blob([tsvContent], { type: 'text/tab-separated-values;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href      = url;
+      a.download  = 'results.tsv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.addEventListener('click', function(event) {
+      // if we didn't click inside a multiselect…
+      if (!event.target.closest('.multiselect')) {
+        document.querySelectorAll('.multiselect').forEach(ms => {
+          const dd = ms.querySelector('.checkboxes');
+          const sb = ms.querySelector('.selectBox');
+          if (dd) {
+            dd.style.display = 'none';
+            sb.classList.remove('expanded');
+          }
+        });
+      }
+    });
+
+    document.getElementById('search-form').addEventListener('submit', function(e) {
+      e.preventDefault();        // stop real form submit
+      submitQuery();             // only runs if inputs are valid
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+{% load navigation %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+    <script src="http://cdn.bootcss.com/typeahead.js/0.11.1/typeahead.bundle.js"></script>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" rel="stylesheet">
+    <!-- Google Fonts for Montserrat -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        /* Reset and base styles */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* PlaQuery Toolbar Styles - Start */
+        .main-toolbar {
+          background-color: #fff;
+          color: #333;
+          flex-wrap: wrap;
+          padding: 0 20px;
+          height: auto;
+          min-height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          border-bottom: 1px solid #ccc;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 9999;
+        }
+        .app-logo {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          color: #377ba8;
+          font-size: 27px;
+          font-weight: bold;
+          margin-right: 40px;
+          transform: translateY(3px) !important;
+        }
+        .app-logo:hover {
+          text-decoration: none;
+          border-color: transparent;
+        }
+        .app-logo:hover .app-title {
+          color: #4a90d9 !important;
+          text-decoration: none;
+        }
+        .app-title {
+          font-size: 27px;
+          font-weight: bold;
+          font-family: 'Montserrat', sans-serif;
+          color: #377ba8 !important;
+          padding-bottom: 8px;
+        }
+        .main-toolbar .nav-tabs {
+          margin-bottom: 0;
+          border-bottom: none !important;
+        }
+        .main-toolbar .nav-tabs > li > a {
+          font-family: 'Montserrat', sans-serif !important;
+          font-size: 16px !important;
+          padding: 10px 15px;
+          line-height: 1.42857143;
+          border: 1px solid transparent;
+          border-radius: 4px 4px 0 0;
+          margin-right: 2px;
+          color: #0d6efd;
+          text-decoration: none;
+          transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+        }
+
+        .main-toolbar .nav-tabs > li > a:hover,
+        .main-toolbar .nav-tabs > li > a:focus {
+          border-color: #e9ecef #e9ecef #dee2e6; /* Bootstrap 5.1.3 hover border colors */
+          background-color: #f8f9fa; /* Bootstrap 5.1.3 hover background */
+          color: #0a58ca; /* Bootstrap 5.1.3 darker primary color for hover */
+        }
+
+        .main-toolbar .nav-tabs > li.active > a,
+        .main-toolbar .nav-tabs > li.active > a:hover,
+        .main-toolbar .nav-tabs > li.active > a:focus {
+          color: #0a58ca !important;
+          background-color: #f8f9fa !important;
+          border-color: #e9ecef #e9ecef #dee2e6 !important;
+          cursor: pointer;
+        }
+
+        /* Sticky footer styles */
+        body {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+          padding-top: 60px;
+          overflow-x: hidden;
+        }
+
+        .main-content {
+          flex: 1;
+        }
+
+        .custom-footer {
+          width: 100%;
+          z-index: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: #e0e0e0;
+          padding: 1.5rem 0;
+          margin-top: auto;
+        }
+        .custom-footer p {
+          margin: 0;
+        }
+
+        /* Original protein.html styles */
+        .row {
+            padding-right: 30px;
+            padding-left: 30px;
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+
+{% load auth_extras %}
+<!-- Toolbar copied from Home.html -->
+<div class="main-toolbar">
+    <a class="app-logo">
+      <span class="app-title">PlaqueMS</span>
+    </a>
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="nav-item {% active 'proteins' %}">
+        <a class="nav-link" href="{% url 'proteins' %}">Proteins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'plot' %}">Differential Expression Analysis</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cy' %}">Protein Networks</a>
+      </li>
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'protein-abundance' %}">PlaQuery</a>
+        </li>
+      {% endif %}
+      {% if user.is_authenticated and user.is_staff %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+      </li>
+      {% endif %}
+    </ul>
+    <!--Right side of the toolbar-->
+    <ul class="nav nav-tabs navbar-right" style="margin-left: auto;">
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Log In</a>
+        </li>
+      {% endif %}
+    </ul>
+</div>
+
+<!-- Main content wrapper -->
+<div class="main-content">
+    <!-- container section start -->
+    <section id="container" class="">
+        <div class="row">
+            <div class="col-sm-3">
+                <section class="panel">
+                    <div class="panel-heading">
+                        Search By:
+                    </div>
+                    <form action="{% url 'proteins' %}" method="get">
+                        <a>Gene names:</a><br>
+                        <input placeholder="Gene names" name="gene_name" id="gene_name" type="text"
+                               value="{{gene_name}}" data-role="tagsinput">
+                        <br><br>
+                        <a>Uniprot Accession ID:</a><br>
+                        <input placeholder="Uniprot Accession ID" name="uniprotkb_id" id="uniprotkb_id" type="text"
+                               value="{{uniprotkb_id}}" data-role="tagsinput">
+                        <br><br>
+                        <button type="submit">search</button>
+
+                    </form>
+                    <!--                <button onclick="reset()">reset</button>-->
+                </section>
+            </div>
+            <div class="col-sm-9">
+                <section class="panel">
+                    <div class="panel-heading">
+                        Result List
+                    </div>
+                    <table class="table table-striped table-advance table-hover" id="proteinTable">
+                        <tbody>
+                        <tr>
+                            <th>Uniprot Accession ID</th>
+                            <th>UniProtKB ID</th>
+                            <th>Gene Name</th>
+                        </tr>
+                        {% for protein in result %}
+                        <tr>
+                            <td>{{ protein.uniprot_accession_id }}</td>
+                            <td>{{ protein.uniprotkb_id }}</td>
+                            <td>{{ protein.gene_name }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <ul class="pagination">
+                        {% if has_previous == True %}
+                        <a href="?gene_name={{gene_name}}&uniprotkb_id={{uniprotkb_id}}&page_number={{previous_page }}">previous</a>
+                        {% endif %}
+                        <span class="current">Page {{ page }} of {{ total_count }}</span>.
+                        {% if has_next == True %}
+                        <a href="?gene_name={{gene_name}}&uniprotkb_id={{uniprotkb_id}}&page_number={{next_page}}">next</a>
+                        {% endif %}
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Footer -->
+<footer class="custom-footer">
+    <p>&copy; 2025 PlaqueMS. All rights reserved.</p>
+</footer>
+
+<script>
+    // Move .active to the tab just clicked; skip tabs with .keep-active (PlaQuery)
+    $(function () {
+      $('.main-toolbar .nav-tabs').on('pointerdown', '.nav-link', function (e) {
+        const $li = $(this).parent('.nav-item'),
+              $nav = $li.closest('.nav-tabs'),
+              href = this.getAttribute('href');
+
+        if (href === '#') {
+          e.preventDefault();
+        } else {
+          e.preventDefault();
+          setTimeout(() => { window.location.href = href; }, 400);
+        }
+
+        $nav.find('.nav-item.active').not('.keep-active').removeClass('active');
+        $li.addClass('active');
+      });
+    });
+    
+    // Initialize any JavaScript needed for the toolbar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add any initialization code here if needed
+        
+        // Initialize Bootstrap tooltips
+        $(document).ready(function(){
+          $('[data-toggle="tooltip"]').tooltip({
+            container: 'body',
+            placement: 'auto',
+            trigger: 'hover'
+          });
+        });
+    });
+</script>
+</body>
+</html>

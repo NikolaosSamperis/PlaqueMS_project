@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - PlaqueMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 60px;
+            padding-bottom: 60px;
+        }
+        .auth-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-top: 2rem;
+        }
+        .auth-container button.btn-success {
+            background-color: #377ba8;   
+            border-color: #377ba8;       
+            color: #fff;                 
+        }
+
+        .auth-container button.btn-success:hover {
+            background-color: #4a90d9;   
+            border-color: #4a90d9;       
+        }
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+        .register-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #377ba8;
+        }
+        
+
+        /* PlaQuery Toolbar Styles - Start */
+        .main-toolbar {
+          background-color: #fff;
+          color: #333;
+          flex-wrap: wrap;
+          padding: 0 20px;
+          height: auto;
+          min-height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          border-bottom: 1px solid #ccc;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 9999;
+        }
+        .app-logo {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          color: #377ba8;
+          font-size: 27px;
+          font-weight: bold;
+          margin-right: 40px;
+          transform: translateY(3px) !important;
+        }
+        .app-logo:hover {
+          text-decoration: none;
+          border-color: transparent;
+        }
+        .app-logo:hover .app-title {
+          color: #4a90d9 !important;
+          text-decoration: none;
+        }
+        .app-title {
+          font-size: 27px;
+          font-weight: bold;
+          font-family: 'Montserrat', sans-serif;
+          color: #377ba8 !important;
+          padding-bottom: 8px;
+        }
+        .main-toolbar .nav-tabs {
+          margin-bottom: 0;
+          border-bottom: none !important;
+        }
+        .main-toolbar .nav-tabs > li > a {
+          font-family: 'Montserrat', sans-serif !important;
+          font-size: 16px !important;
+          padding: 10px 15px;
+          line-height: 1.42857143;
+          border: 1px solid transparent;
+          border-radius: 4px 4px 0 0;
+          margin-right: 2px;
+          color: #0d6efd;
+          text-decoration: none;
+          transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+        }
+
+        .main-toolbar .nav-tabs > li > a:hover,
+        .main-toolbar .nav-tabs > li > a:focus {
+          border-color: #e9ecef #e9ecef #dee2e6; /* Bootstrap 5.1.3 hover border colors */
+          background-color: #f8f9fa; /* Bootstrap 5.1.3 hover background */
+          color: #0a58ca; /* Bootstrap 5.1.3 darker primary color for hover */
+        }
+
+        .main-toolbar .nav-tabs > li.active > a,
+        .main-toolbar .nav-tabs > li.active > a:hover,
+        .main-toolbar .nav-tabs > li.active > a:focus {
+          color: #0a58ca !important;
+          background-color: #f8f9fa !important;
+          border-color: #e9ecef #e9ecef #dee2e6 !important;
+          cursor: pointer;
+        }
+
+        /* Toolbar button styles */
+        .main-toolbar .toolbar-btn {
+          cursor: pointer;
+          background-color: #eee;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin: 2px;
+          padding: 5px 8px;
+          font-size: 16px;
+        }
+        .main-toolbar .toolbar-btn:hover {
+          background-color: #ddd;
+        }
+        /* PlaQuery Toolbar Styles - End */
+    </style>
+</head>
+<body>
+    <!-- New PlaQuery-style Toolbar -->
+    <div class="main-toolbar">
+        <a class="app-logo">
+          <span class="app-title">PlaqueMS</span>
+        </a>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'proteins' %}">Proteins</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'plot' %}">Differential Expression Analysis</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'cy' %}">Protein Networks</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="auth-container">
+                    <h2 class="register-title">Register</h2>
+                    {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        <div class="mb-3">
+                            {{ form.email.errors }}
+                            <label for="{{ form.email.id_for_label }}">Email:</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.first_name.errors }}
+                            <label for="{{ form.first_name.id_for_label }}">First Name:</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.last_name.errors }}
+                            <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.password.errors }}
+                            <label for="{{ form.password.id_for_label }}">Password:</label>
+                            {{ form.password }}
+                            <div class="password-requirements">
+                                {{ form.password.help_text|safe }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form.confirm_password.errors }}
+                            <label for="{{ form.confirm_password.id_for_label }}">Confirm Password:</label>
+                            {{ form.confirm_password }}
+                        </div>
+                        <button type="submit" class="btn btn-success">Register</button>
+                    </form>
+                    <div class="login-link mt-3">
+                        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Find all password input fields with the password-input class
+            const passwordFields = document.querySelectorAll(".password-input")
+
+            // Add toggle button after each password field
+            passwordFields.forEach((field) => {
+                // Create the toggle button
+                const toggleButton = document.createElement("button")
+                toggleButton.type = "button"
+                toggleButton.className = "password-toggle-btn"
+                toggleButton.innerHTML = '<i class="fa fa-eye-slash"></i>'
+                toggleButton.setAttribute("aria-label", "Toggle password visibility")
+
+                // Style the button
+                toggleButton.style.position = "absolute"
+                toggleButton.style.right = "10px"
+                toggleButton.style.top = "50%"
+                toggleButton.style.transform = "translateY(-50%)"
+                toggleButton.style.border = "none"
+                toggleButton.style.background = "transparent"
+                toggleButton.style.cursor = "pointer"
+
+                // Create a wrapper div for positioning
+                const wrapper = document.createElement("div")
+                wrapper.style.position = "relative"
+
+                // Insert the wrapper in the DOM
+                field.parentNode.insertBefore(wrapper, field)
+                wrapper.appendChild(field)
+                wrapper.appendChild(toggleButton)
+
+                // Add click event to toggle password visibility
+                toggleButton.addEventListener("click", () => {
+                    if (field.type === "password") {
+                        field.type = "text"
+                        toggleButton.innerHTML = '<i class="fa fa-eye"></i>'
+                    } else {
+                        field.type = "password"
+                        toggleButton.innerHTML = '<i class="fa fa-eye-slash"></i>'
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>

@@ -34,7 +34,7 @@ schema_view = get_schema_view(
 
 from django.contrib import admin
 from django.urls import path, include
-from login import protein_views, cyviews, plot_views, pathTree, insert_views, networkTree, plaquery_views, auth_views, home_views, calc_pred_views, syntax_score_views
+from Plaque_MS_app import protein_views, cyviews, plot_views, pathTree, insert_views, networkTree, plaquery_views, auth_views, home_views, calc_pred_views, syntax_score_views
 
 urlpatterns = [
     path('', home_views.home_view, name='home'),  # Root path for Home.html

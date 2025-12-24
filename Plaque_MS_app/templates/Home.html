@@ -1,0 +1,384 @@
+{% load static %}
+{% load navigation %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+  <!-- Load jQuery and other libraries -->
+  <script src="https://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+  <script src="https://cdn.bootcss.com/typeahead.js/0.11.1/typeahead.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap-treeview@1.2.0/dist/bootstrap-treeview.min.js"></script>
+
+  <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <!-- Google Fonts for Montserrat -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+
+    body {
+      font-family: helvetica neue, helvetica, liberation sans, arial, sans-serif;
+      margin: 0;
+      overflow-x: hidden;
+      padding-top: 60px;
+      position: relative;
+      background: linear-gradient(to bottom,
+             #f8f8f8 0%,
+             #f6f6f6 25%,
+             #f4f4f4 50%,
+             #f2f2f2 75%,
+             #f0f0f0 100%);
+    }
+
+    /* PlaQuery Toolbar Styles - Start */
+    .main-toolbar {
+      background-color: #fff;
+      color: #333;
+      flex-wrap: wrap;
+      padding: 0 20px;
+      height: auto;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-bottom: 1px solid #ccc;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+    }
+    .app-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #377ba8;
+      font-size: 27px;
+      font-weight: bold;
+      margin-right: 40px;
+      transform: translateY(3px) !important;
+    }
+    .app-logo:hover {
+      text-decoration: none;
+      border-color: transparent;
+    }
+    .app-logo:hover .app-title {
+      color: #4a90d9 !important;
+      text-decoration: none;
+    }
+    .app-title {
+      font-size: 27px;
+      font-weight: bold;
+      font-family: 'Montserrat', sans-serif;
+      color: #377ba8 !important;
+      padding-bottom: 8px;
+    }
+    .main-toolbar .nav-tabs {
+      margin-bottom: 0;
+      border-bottom: none !important;
+    }
+    .main-toolbar .nav-tabs > li > a {
+      font-family: 'Montserrat', sans-serif !important;
+      font-size: 16px !important;
+      padding: 10px 15px;
+      line-height: 1.42857143;
+      border: 1px solid transparent;
+      border-radius: 4px 4px 0 0;
+      margin-right: 2px;
+      color: #0d6efd;
+      text-decoration: none;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+    .main-toolbar .nav-tabs > li > a:hover,
+    .main-toolbar .nav-tabs > li > a:focus {
+      border-color: #e9ecef #e9ecef #dee2e6; /* Bootstrap 5.1.3 hover border colors */
+      background-color: #f8f9fa; /* Bootstrap 5.1.3 hover background */
+      color: #0a58ca; /* Bootstrap 5.1.3 darker primary color for hover */
+    }
+
+    .main-toolbar .nav-tabs > li.active > a,
+    .main-toolbar .nav-tabs > li.active > a:hover,
+    .main-toolbar .nav-tabs > li.active > a:focus {
+      color: #0a58ca !important;
+      background-color: #f8f9fa !important;
+      border-color: #e9ecef #e9ecef #dee2e6 !important;
+      cursor: pointer;
+    }
+
+    .custom-footer {
+      position: relative;
+      width: 100%;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #e0e0e0;
+      padding: 1.5rem 0;
+    }
+    .custom-footer p {
+      margin: 0;
+    }
+
+    /* Home page specific styles */
+    .content-container {
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - 60px);
+      padding: 10px;
+      overflow-y: auto;
+      /* Reduced top padding to bring content higher */
+      padding-top: 0;
+    }
+
+    .logo-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .about-box {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 20px;
+    }
+
+    .logo-container {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 40px;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+      background-color: white;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+      /* Reduced padding to make logo box more compact */
+    }
+
+    .logo-title-wrapper {
+      display: inline-block;
+      padding: 8px 15px;
+      border: 7px solid #377ba8;
+      border-radius: 15px;
+      background-color: transparent;
+    }
+
+    .logo-title {
+      font-size: 60px;
+      font-weight: bold;
+      font-family: 'Montserrat', sans-serif;
+      color: #377ba8;
+    }
+
+    .logo-subtitle {
+      font-size: 18px;
+      text-align: center;
+      margin-top: 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: bold;
+    }
+
+    .about-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+      font-family: 'Montserrat', sans-serif;
+      /* Reduced bottom margin */
+    }
+
+    .about-text {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      /* Reduced bottom margin */
+    }
+
+    .feature-icons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin: 20px 0;
+      /* Reduced top and bottom margins */
+    }
+
+    .feature-icon {
+      width: 23%;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 10px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #fff;
+    }
+
+    .feature-icon img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .feature-icon img.heatmap {
+      margin-top: 20px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .feature-icon {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toolbar -->
+  <div class="main-toolbar">
+    <a class="app-logo">
+      <span class="app-title">PlaqueMS</span>
+    </a>
+    <ul class="nav nav-tabs">
+      <li class="nav-item {% active 'home' %}">
+        <a class="nav-link" href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'proteins' %}">Proteins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'plot' %}">Differential Expression Analysis</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cy' %}">Protein Networks</a>
+      </li>
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'protein-abundance' %}">PlaQuery</a>
+        </li>
+      {% endif %}
+      {% if user.is_authenticated and user.is_staff %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+      </li>
+      {% endif %}
+    </ul>
+    <!--Right side of the toolbar-->
+    <ul class="nav nav-tabs navbar-right" style="margin-left: auto;">
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Log In</a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-container">
+    <div class="logo-box">
+      <div class="logo-container">
+        <div class="logo-title-wrapper">
+          <div class="logo-title">PlaqueMS</div>
+        </div>
+        <div class="logo-subtitle">Atherosclerotic Plaques Multi-omics Knowledge Base</div>
+      </div>
+    </div>
+    <div class="about-box">
+      <h1 class="about-title">About Us</h1>
+      <p class="about-text">
+        This interactive web application is designed for researchers to explore complex multi-omics
+        datasets from human atherosclerotic plaques. PlaqueMS provides comprehensive analysis tools
+        for understanding the molecular mechanisms of atherosclerosis.
+      </p>
+
+      <!-- Feature Icons with the 4 attached images (removed captions) -->
+      <div class="feature-icons">
+        <div class="feature-icon">
+          <img src="{% static 'calcified_vs_noncalcified_periphery_vp.jpg' %}" alt="Calcified vs Non-Calcified">
+        </div>
+        <div class="feature-icon">
+          <img src="{% static 'symptomatic_vs_asymptomatic_periphery_vp.jpg' %}" alt="Symptomatic vs Asymptomatic">
+        </div>
+        <div class="feature-icon">
+          <img class="heatmap" src="{% static 'heatmap_all.png' %}" alt="Heatmap All">
+        </div>
+        <div class="feature-icon">
+          <img class="heatmap" src="{% static 'heatmap_significant_corrected.png' %}" alt="Heatmap Significant">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="custom-footer">
+    <p>&copy; 2025 PlaqueMS. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Move .active to the tab just clicked; skip tabs with .keep-active (PlaQuery)
+    $(function () {
+      $('.main-toolbar .nav-tabs').on('pointerdown', '.nav-link', function (e) {
+        const $li = $(this).parent('.nav-item'),
+              $nav = $li.closest('.nav-tabs'),
+              href = this.getAttribute('href');
+
+        if (href === '#') {
+          e.preventDefault();
+        } else {
+          e.preventDefault();
+          setTimeout(() => { window.location.href = href; }, 400);
+        }
+
+        $nav.find('.nav-item.active').not('.keep-active').removeClass('active');
+        $li.addClass('active');
+      });
+    });
+
+    function adjustLayout() {
+      // Get the header element
+      const header = document.querySelector('.main-toolbar');
+      // Calculate its current height
+      const headerHeight = header ? header.offsetHeight : 60; // Fallback to 60px if not found
+
+      // Apply the header height as top padding to your body
+      // so that content is pushed below the fixed header
+      document.body.style.paddingTop = headerHeight + 'px';
+
+      // Adjust the content container's top margin but keep it minimal
+      const contentContainer = document.querySelector('.content-container');
+      if (contentContainer) {
+        // Set a smaller top margin to bring content higher
+        contentContainer.style.marginTop = '10px';
+      }
+    }
+
+    // Run once when the DOM content is loaded
+    document.addEventListener('DOMContentLoaded', adjustLayout);
+    // Update the layout on window resize
+    window.addEventListener('resize', adjustLayout);
+
+    // Initialize Bootstrap tooltips
+    $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip({
+        container: 'body',
+        placement: 'auto',
+        trigger: 'hover'
+      });
+    });
+  </script>
+</body>
+</html>
