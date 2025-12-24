@@ -51,7 +51,7 @@ cd PlaqueMS_project
 ```
 PlaqueMS_project/
 ├── manage.py    # Django's command-line utility for administrative tasks
-├── login/    # Main Django app
+├── Plaque_MS_app/    # Main Django app
 │   ├── __init__.py    # Marks directory as python package
 │   ├── admin.py    # Admin interface config. for models (not used)
 │   ├── apps.py    # App config. settings
