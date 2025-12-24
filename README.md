@@ -122,30 +122,18 @@ PlaqueMS_project/
 └── model_artifacts/    # Pre-trained models and related files for predictions
     ├── Cellular_Proteome
     │   ├── 0finalSingleModel.pkl
-    │   ├── FeatureMaxNormdata.csv    # ignore
-    │   ├── FeatureMinNormdata.csv    # ignore
     │   ├── knn_imputer.pkl
-    │   ├── minmax_scaler.pkl
-    │   ├── sds_new_input.txt    # ignore
-    │   └── selected_features_best_model.csv    # ignore
+    │   └── minmax_scaler.pkl
     ├── Core_Matrisome
     │   ├── 0finalSingleModel.pkl
-    │   ├── FeatureMaxNormdata.csv    # ignore
-    │   ├── FeatureMinNormdata.csv    # ignore
-    │   ├── guhcl_new_input.txt    # ignore
     │   ├── knn_imputer.pkl
-    │   ├── minmax_scaler.pkl
-    │   └── selected_features_best_model1.csv    # ignore
+    │   └── minmax_scaler.pkl
     ├── GUHCL_syntax_score
     │   └── syntax_pipeline.pkl
     └── Soluble_Matrisome
         ├── 0finalSingleModel.pkl
-        ├── FeatureMaxNormdata.csv    # ignore
-        ├── FeatureMinNormdata.csv    # ignore
         ├── knn_imputer.pkl
-        ├── minmax_scaler.pkl
-        ├── nacl_new_input.txt    # ignore
-        └── selected_features_best_model.csv    # ignore
+        └── minmax_scaler.pkl
 ```
 </details>
 
